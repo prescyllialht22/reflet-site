@@ -1,0 +1,36 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Là où les images uploadées via le panneau seront rangées
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "planning"
+    label: "Planning du mois"
+    files:
+      - file: "data/planning.json"
+        label: "Planning du mois"
+        name: "planning"
+        fields:
+          - { label: "Mois affiché (ex: Juillet)", name: "month", widget: "string" }
+          - { label: "Date de l'événement exceptionnel (ex: 19/07)", name: "highlight_date", widget: "string", required: false, hint: "Laisser vide si aucun événement exceptionnel ce mois-ci" }
+          - { label: "Titre de l'événement exceptionnel", name: "highlight_title", widget: "string", required: false }
+          - label: "Événements du mois"
+            name: "events"
+            widget: "list"
+            summary: "{{fields.day}} — {{fields.title}}"
+            fields:
+              - { label: "Jour (2 chiffres, ex: 01)", name: "day", widget: "string" }
+              - { label: "Mois abrégé (ex: Juil.)", name: "month_short", widget: "string" }
+              - { label: "Titre de l'événement", name: "title", widget: "string" }
+              - label: "Catégorie"
+                name: "tag"
+                widget: "select"
+                options: ["Pilates", "Danse", "Run", "Sortie"]
+              - { label: "Résumé court (affiché sous le titre dans le planning)", name: "summary", widget: "string" }
+              - { label: "Horaire complet (affiché dans le détail)", name: "time", widget: "string" }
+              - { label: "Description complète (affichée quand on clique)", name: "description", widget: "text" }
+              - { label: "C'est l'événement exceptionnel du mois ?", name: "special", widget: "boolean", default: false }
+              - { label: "Lien de paiement Billetto (laisser vide si pas de billet)", name: "billetto", widget: "string", required: false }
