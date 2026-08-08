@@ -800,12 +800,19 @@
   <div class="wrap" style="max-width:640px; text-align:center;">
     <span class="eyebrow">Programme fidélité</span>
     <h2>La fidélité Reflet</h2>
-    <p style="margin:20px auto 24px;">Seuls les événements payants avec réservation (Pilates, Danse...) comptent pour votre fidélité — les sorties comme le Run, les pique-niques ou les brunchs ne sont pas comptabilisés. Une petite tolérance : un événement gratuit peut être compté parmi les dix, mais tous les autres doivent être des réservations payantes.</p>
+    <p style="margin:20px auto 24px;">Seuls les événements payants avec réservation (Pilates, Danse...) comptent pour votre fidélité — les sorties comme le Run, les pique-niques ou les brunchs ne sont pas comptabilisées.</p>
     <ul style="font-size:14.5px; color:var(--marron-soft); line-height:1.8; margin:0 0 28px; padding-left:0; list-style:none; text-align:center;">
       <li><strong style="color:var(--ink); font-family:'Playfair Display',serif; font-weight:400;">5 événements réservés</strong> → un petit cadeau</li>
       <li><strong style="color:var(--ink); font-family:'Playfair Display',serif; font-weight:400;">10 événements réservés</strong> → un événement offert</li>
     </ul>
     <a href="#" id="loyaltyOpenBtn" class="btn-pill btn-dark">Se connecter</a>
+
+    <div id="loyaltyDashboard" style="display:none; text-align:left; margin-top:36px; padding-top:28px; border-top:1px solid var(--line);">
+      <p style="font-size:14px; color:var(--marron-soft); margin:0 0 6px;">Connectée en tant que <strong id="loyaltyEmail" style="color:var(--ink);"></strong></p>
+      <p style="font-size:15px; margin:0 0 18px;"><strong id="loyaltyCount" style="font-family:'Playfair Display',serif; font-size:22px; color:var(--ink);"></strong> événement(s) payé(s)</p>
+      <div id="loyaltyEventsList"></div>
+      <button type="button" id="loyaltyLogoutBtn" class="event-toggle" style="margin-top:16px;">Se déconnecter</button>
+    </div>
   </div>
 </section>
 
@@ -913,21 +920,6 @@
       <button type="submit" class="btn-pill btn-dark" style="border:none; cursor:pointer; width:100%;">Être prévenue</button>
     </form>
     <p class="form-msg" id="boutiqueMsg" style="color:var(--marron-soft);">Merci ! On vous écrit dès l'ouverture de la boutique. 💛</p>
-  </div>
-</div>
-
-<!-- MODAL : connexion espace fidélité (aperçu) -->
-<div class="modal-overlay" id="loyaltyModal">
-  <div class="modal-box">
-    <button class="modal-close" id="loyaltyModalClose">×</button>
-    <span class="eyebrow">Espace fidélité</span>
-    <h3 class="serif" style="font-size:24px; margin-bottom:16px;">Connexion</h3>
-    <form id="loyaltyForm" class="booking-form">
-      <input type="email" name="email" placeholder="Adresse mail" required>
-      <input type="password" name="password" placeholder="Mot de passe" required>
-      <button type="submit" class="btn-pill btn-dark" style="border:none; cursor:pointer; width:100%;">Se connecter</button>
-    </form>
-    <p class="form-msg" id="loyaltyMsg" style="color:var(--marron-soft);">Merci ! L'espace fidélité arrive très bientôt — vous serez prévenue dès qu'il sera prêt. 💛</p>
   </div>
 </div>
 
@@ -1072,9 +1064,10 @@
 
   function saveCart(){ localStorage.setItem('refletCart', JSON.stringify(cart)); }
 
-  function addToCart(id, name, price){
+  function addToCart(id, name, price, type){
+    type = type || 'event';
     const existing = cart.find(i => i.id === id);
-    if(existing){ existing.qty += 1; } else { cart.push({id, name, price, qty:1}); }
+    if(existing){ existing.qty += 1; } else { cart.push({id, name, price, qty:1, type}); }
     saveCart();
     renderCart();
     openCart();
@@ -1229,7 +1222,7 @@
     }
     const id = p.hasSizes ? currentProductId + '-' + currentSize : currentProductId;
     const name = p.hasSizes ? p.name + ' (taille ' + currentSize + ')' : p.name;
-    addToCart(id, name, p.price);
+    addToCart(id, name, p.price, 'product');
     productModal.classList.remove('show');
   });
 
@@ -1291,6 +1284,23 @@
       const orderSummary = cart.map(i => i.name + ' x' + i.qty).join(', ') + ' — Total: ' + cartTotal() + ' € — Réf Stripe: ' + result.paymentIntent.id;
       document.getElementById('checkoutOrderSummary').value = orderSummary;
       submitToNetlify(checkoutForm);
+
+      // Fidélité : on enregistre uniquement les billets d'événements (pas les produits boutique)
+      cart.filter(i => i.type !== 'product').forEach(i => {
+        for(let n = 0; n < i.qty; n++){
+          fetch('/.netlify/functions/record-loyalty', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              email: formData.get('email'),
+              prenom: formData.get('prenom'),
+              nom: formData.get('nom'),
+              eventName: i.name,
+              paymentIntentId: result.paymentIntent.id
+            })
+          }).catch(() => {});
+        }
+      });
 
       const ticketPayload = 'REFLET-BILLET | ' + formData.get('prenom') + ' ' + formData.get('nom') + ' | ' + cart.map(i => i.name).join(', ') + ' | Réf: ' + result.paymentIntent.id;
       document.getElementById('ticketQr').innerHTML = '';
@@ -1400,24 +1410,56 @@
     boutiqueMsg.classList.add('show');
   });
 
-  // Modal : espace fidélité (aperçu — à connecter à un vrai système de comptes ensuite)
-  const loyaltyModal = document.getElementById('loyaltyModal');
-  const loyaltyForm = document.getElementById('loyaltyForm');
-  const loyaltyMsg = document.getElementById('loyaltyMsg');
-  document.getElementById('loyaltyOpenBtn').addEventListener('click', (e) => {
+  // Espace fidélité — vraie connexion Netlify Identity + historique des événements payés
+  const loyaltyDashboard = document.getElementById('loyaltyDashboard');
+  const loyaltyOpenBtn = document.getElementById('loyaltyOpenBtn');
+
+  function renderLoyaltyLoggedOut(){
+    loyaltyOpenBtn.style.display = 'inline-block';
+    loyaltyDashboard.style.display = 'none';
+  }
+
+  async function renderLoyaltyLoggedIn(user){
+    loyaltyOpenBtn.style.display = 'none';
+    loyaltyDashboard.style.display = 'block';
+    document.getElementById('loyaltyEmail').textContent = user.email;
+    document.getElementById('loyaltyEventsList').innerHTML = '<p style="font-size:13px; color:var(--marron-soft);">Chargement...</p>';
+
+    try {
+      const token = await user.jwt();
+      const res = await fetch('/.netlify/functions/get-loyalty', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const data = await res.json();
+      const events = data.events || [];
+      document.getElementById('loyaltyCount').textContent = events.length;
+
+      if(events.length === 0){
+        document.getElementById('loyaltyEventsList').innerHTML = '<p style="font-size:13px; color:var(--marron-soft);">Aucun événement payé enregistré pour l\'instant.</p>';
+      } else {
+        document.getElementById('loyaltyEventsList').innerHTML = '<ul style="list-style:none; padding:0; margin:0; font-size:13.5px; color:var(--marron-soft);">' +
+          events.map(ev => `<li style="padding:8px 0; border-top:1px solid var(--line);">${ev.eventName} — ${new Date(ev.date).toLocaleDateString('fr-FR')}</li>`).join('') +
+          '</ul>';
+      }
+    } catch(err) {
+      document.getElementById('loyaltyEventsList').innerHTML = '<p style="font-size:13px; color:var(--marron-soft);">Impossible de charger l\'historique pour le moment.</p>';
+    }
+  }
+
+  loyaltyOpenBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    loyaltyMsg.classList.remove('show');
-    loyaltyForm.style.display = 'flex';
-    loyaltyModal.classList.add('show');
+    if(window.netlifyIdentity) window.netlifyIdentity.open();
   });
-  document.getElementById('loyaltyModalClose').addEventListener('click', () => loyaltyModal.classList.remove('show'));
-  loyaltyModal.addEventListener('click', (e) => { if(e.target === loyaltyModal) loyaltyModal.classList.remove('show'); });
-  loyaltyForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    loyaltyForm.reset();
-    loyaltyForm.style.display = 'none';
-    loyaltyMsg.classList.add('show');
+
+  document.getElementById('loyaltyLogoutBtn').addEventListener('click', () => {
+    if(window.netlifyIdentity) window.netlifyIdentity.logout();
   });
+
+  if(window.netlifyIdentity){
+    window.netlifyIdentity.on('init', user => { user ? renderLoyaltyLoggedIn(user) : renderLoyaltyLoggedOut(); });
+    window.netlifyIdentity.on('login', user => { renderLoyaltyLoggedIn(user); window.netlifyIdentity.close(); });
+    window.netlifyIdentity.on('logout', () => renderLoyaltyLoggedOut());
+  }
 
   // Planning du mois — chargé dynamiquement depuis /data/planning.json (éditable via /admin)
   const planningModal = document.getElementById('planningModal');
