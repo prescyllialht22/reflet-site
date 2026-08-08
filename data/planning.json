@@ -1,34 +1,9 @@
 {
-  "month": "Juillet",
-  "highlight_date": "19/07",
-  "highlight_title": "Sunset Pilates",
-  "events": [
-    {
-      "day": "01",
-      "month_short": "Juil.",
-      "title": "Rooftop",
-      "tag": "Sortie",
-      "summary": "Sortie · voir Instagram",
-      "time": "Voir @reflet.events sur Instagram",
-      "description": "On s'occupe de réserver une table pour 20 personnes maximum à Bordeaux. Informez-nous simplement de votre présence ! Vous n'aurez qu'à financer votre consommation sur place — l'idée, c'est avant tout de rencontrer de nouvelles Bordelaises. Le lieu est communiqué individuellement après inscription. ✨",
-      "special": false,
-      "price": ""
-    },
-    {
-      "day": "08",
-      "month_short": "Juil.",
-      "title": "Run x Copains",
-      "tag": "Run",
-      "summary": "Voir Instagram pour l'horaire",
-      "time": "Voir @reflet.events sur Instagram",
-      "description": "Une session de running conviviale, ouverte à toutes les allures — venez accompagnée si le cœur vous en dit ! Horaire précisé dans le lien en bio Instagram @reflet.events.",
-      "special": false,
-      "price": ""
-    },
-    {
-      "day": "17",
-      "month_short": "Juil.",
-      "title": "Danse by REFLET",
-      "tag": "Danse",
-      "summary": "18h30-20h30 · Les Chartrons",
-      "time":
+  "name": "reflet-events-site",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "stripe": "^16.0.0",
+    "@netlify/blobs": "^8.1.0"
+  }
+}
