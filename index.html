@@ -954,10 +954,15 @@
     <span class="eyebrow">Paiement sécurisé</span>
     <h3 class="serif" style="font-size:24px; margin-bottom:6px;">Finaliser ma commande</h3>
     <p style="font-size:14px; color:var(--marron-soft); margin:0 0 18px;">Total à payer : <strong id="checkoutTotal">0 €</strong></p>
-    <form id="checkoutForm" class="booking-form">
+    <form id="checkoutForm" class="booking-form" name="achat" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="achat">
+      <p style="display:none;"><input name="bot-field"></p>
       <input type="text" name="prenom" placeholder="Prénom" required>
       <input type="text" name="nom" placeholder="Nom" required>
+      <input type="tel" name="telephone" placeholder="Numéro de téléphone" required>
       <input type="email" name="email" placeholder="Adresse mail" required>
+      <input type="text" name="insta" placeholder="Instagram (@pseudo)" required>
+      <input type="hidden" name="commande" id="checkoutOrderSummary">
       <div id="card-element" style="padding:14px 20px; border:1px solid var(--line); border-radius:999px;"></div>
       <div id="card-errors" role="alert" style="color:#b3413a; font-size:12.5px;"></div>
       <label class="consent-label">
@@ -1283,6 +1288,10 @@
       }
 
       // Paiement confirmé
+      const orderSummary = cart.map(i => i.name + ' x' + i.qty).join(', ') + ' — Total: ' + cartTotal() + ' € — Réf Stripe: ' + result.paymentIntent.id;
+      document.getElementById('checkoutOrderSummary').value = orderSummary;
+      submitToNetlify(checkoutForm);
+
       const ticketPayload = 'REFLET-BILLET | ' + formData.get('prenom') + ' ' + formData.get('nom') + ' | ' + cart.map(i => i.name).join(', ') + ' | Réf: ' + result.paymentIntent.id;
       document.getElementById('ticketQr').innerHTML = '';
       new QRCode(document.getElementById('ticketQr'), {
@@ -1424,6 +1433,7 @@
         <div class="planning-item${ev.special ? ' planning-item-special' : ''}"
              data-title="${ev.title}" data-date="${ev.day} ${(data.month||'').toLowerCase()}"
              data-time="${ev.time}" data-desc="${(ev.description||'').replace(/"/g,'&quot;')}"
+             data-price="${ev.price || ''}"
              ${ev.billetto ? `data-billetto="${ev.billetto}"` : ''}>
           <div class="planning-date">${ev.day}<br>${ev.month_short}</div>
           <div class="planning-info">
@@ -1450,8 +1460,16 @@
     document.getElementById('planningModalDate').textContent = item.dataset.date;
     document.getElementById('planningModalTime').textContent = item.dataset.time;
     document.getElementById('planningModalDesc').textContent = item.dataset.desc;
-    if(item.dataset.billetto){
+    if(item.dataset.price){
       planningModalBillettoLink.style.display = 'block';
+      planningModalBillettoLink.textContent = 'Ajouter au panier — ' + item.dataset.price + ' €';
+      planningModalBillettoLink.dataset.mode = 'cart';
+      planningModalBillettoLink.dataset.event = item.dataset.title;
+      planningModalBillettoLink.dataset.price = item.dataset.price;
+    } else if(item.dataset.billetto){
+      planningModalBillettoLink.style.display = 'block';
+      planningModalBillettoLink.textContent = 'Réserver ma place';
+      planningModalBillettoLink.dataset.mode = 'billetto';
       planningModalBillettoLink.dataset.event = item.dataset.title;
       planningModalBillettoLink.dataset.billetto = item.dataset.billetto;
     } else {
@@ -1485,11 +1503,15 @@
     });
   });
 
-  // Déclencheur depuis la modale planning (ferme le planning, ouvre le formulaire)
+  // Déclencheur depuis la modale planning (panier si un prix est renseigné, sinon Billetto en secours)
   planningModalBillettoLink.addEventListener('click', (e) => {
     e.preventDefault();
     planningModal.classList.remove('show');
-    openBookingModal(planningModalBillettoLink.dataset.event, planningModalBillettoLink.dataset.billetto);
+    if(planningModalBillettoLink.dataset.mode === 'cart'){
+      addToCart(planningModalBillettoLink.dataset.event, planningModalBillettoLink.dataset.event, parseFloat(planningModalBillettoLink.dataset.price));
+    } else {
+      openBookingModal(planningModalBillettoLink.dataset.event, planningModalBillettoLink.dataset.billetto);
+    }
   });
 
   document.getElementById('bookingModalClose').addEventListener('click', () => bookingModal.classList.remove('show'));
