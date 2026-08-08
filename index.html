@@ -1041,13 +1041,18 @@
 </div>
 
 <script>
-  // Redirection nécessaire pour que les invitations admin par email fonctionnent
+  // Redirection uniquement pour les invitations admin par email (lien avec un token spécial dans l'URL)
+  // — ne doit JAMAIS s'appliquer aux clientes qui créent un compte fidélité normal
   if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => { document.location.href = "/admin/index.html"; });
-      }
-    });
+    const hash = document.location.hash || '';
+    const isAdminInviteFlow = hash.includes('invite_token') || hash.includes('recovery_token');
+    if (isAdminInviteFlow) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => { document.location.href = "/admin/index.html"; });
+        }
+      });
+    }
   }
 </script>
 <script>
