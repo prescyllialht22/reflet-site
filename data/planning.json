@@ -1,9 +1,21 @@
 {
-  "name": "reflet-events-site",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "stripe": "^16.0.0",
-    "@netlify/blobs": "^8.1.0"
-  }
-}
+  "month": "Juillet",
+  "highlight_date": "19/07",
+  "highlight_title": "Sunset Pilates",
+  "events": [
+    {
+      "day": "01",
+      "month_short": "Juil.",
+      "title": "Rooftop",
+      "tag": "Sortie",
+      "summary": "Sortie · voir Instagram",
+      "time": "Voir @reflet.events sur Instagram",
+      "description": "On s'occupe de réserver une table pour 20 personnes maximum à Bordeaux. Informez-nous simplement de votre présence ! Vous n'aurez qu'à financer votre consommation sur place — l'idée, c'est avant tout de rencontrer de nouvelles Bordelaises. Le lieu est communiqué individuellement après inscription. ✨",
+      "special": false,
+      "price": ""
+    },
+    {
+      "day": "08",
+      "month_short": "Juil.",
+      "title": "Run x Copains",
+      "tag": "Run",
