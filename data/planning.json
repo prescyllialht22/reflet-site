@@ -1,0 +1,84 @@
+{
+  "month": "Juillet",
+  "highlight_date": "19/07",
+  "highlight_title": "Sunset Pilates",
+  "events": [
+    {
+      "day": "01",
+      "month_short": "Juil.",
+      "title": "Rooftop",
+      "tag": "Sortie",
+      "summary": "Sortie · voir Instagram",
+      "time": "Voir @reflet.events sur Instagram",
+      "description": "On s'occupe de réserver une table pour 20 personnes maximum à Bordeaux. Informez-nous simplement de votre présence ! Vous n'aurez qu'à financer votre consommation sur place — l'idée, c'est avant tout de rencontrer de nouvelles Bordelaises. Le lieu est communiqué individuellement après inscription. ✨",
+      "special": false,
+      "price": ""
+    },
+    {
+      "day": "08",
+      "month_short": "Juil.",
+      "title": "Run x Copains",
+      "tag": "Run",
+      "summary": "Voir Instagram pour l'horaire",
+      "time": "Voir @reflet.events sur Instagram",
+      "description": "Une session de running conviviale, ouverte à toutes les allures — venez accompagnée si le cœur vous en dit ! Horaire précisé dans le lien en bio Instagram @reflet.events.",
+      "special": false,
+      "price": ""
+    },
+    {
+      "day": "17",
+      "month_short": "Juil.",
+      "title": "Danse by REFLET",
+      "tag": "Danse",
+      "summary": "18h30-20h30 · Les Chartrons",
+      "time": "18h30-20h30 · Vendredi · Les Chartrons",
+      "description": "1h de danse hip-hop, commercial et afro, tous niveaux. Gaufres et thé glacé offerts après la séance. 27€.",
+      "special": false,
+      "price": "27"
+    },
+    {
+      "day": "19",
+      "month_short": "Juil.",
+      "title": "Sunset Pilates",
+      "tag": "Pilates",
+      "summary": "Coucher de soleil ✨",
+      "time": "Coucher de soleil · lieu surprise",
+      "description": "L'événement exceptionnel du mois ! Une séance de Pilates au coucher du soleil, dans un lieu tenu secret jusqu'au bout. ✨",
+      "special": true,
+      "price": "20"
+    },
+    {
+      "day": "21",
+      "month_short": "Juil.",
+      "title": "Run Reflet",
+      "tag": "Run",
+      "summary": "Voir Instagram pour l'horaire",
+      "time": "Voir @reflet.events sur Instagram",
+      "description": "4 km maximum, allure libre, tous niveaux. Gratuit, il suffit de vous inscrire pour qu'on sache compter sur vous. Horaire précisé dans le lien en bio Instagram @reflet.events.",
+      "special": false,
+      "price": ""
+    },
+    {
+      "day": "26",
+      "month_short": "Juil.",
+      "title": "Pilates'expérience",
+      "tag": "Pilates",
+      "summary": "9h30-11h · Place du Palais",
+      "time": "9h30-11h · Dimanche · Place du Palais",
+      "description": "40 min de Pilates sur tapis, matériel fourni, tous niveaux. Gaufres et thé glacé inclus après la séance. 20€. En été, l'horaire peut être avancé d'une demi-heure pour préserver une température confortable.",
+      "special": false,
+      "price": "20"
+    },
+    {
+      "day": "28",
+      "month_short": "Juil.",
+      "title": "Pique-nique",
+      "tag": "Sortie",
+      "summary": "Sortie · voir Instagram",
+      "time": "Voir @reflet.events sur Instagram",
+      "description": "On se retrouve sur les quais : chacune ramène une douceur sucrée et/ou salée, pour profiter d'un doux moment ensemble. Sans limite de places, mais informez-nous de votre présence ! ✨",
+      "special": false,
+      "price": ""
+    }
+  ]
+}
