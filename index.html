@@ -519,6 +519,16 @@
   .consent-label a{text-decoration:underline; text-underline-offset:2px; color:var(--bronze);}
   .consent-label-dark{color:rgba(237,230,217,0.75);}
   .consent-label-dark a{color:var(--travertine);}
+
+  .delivery-option{
+    display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border:1px solid var(--line);
+    border-radius:14px; cursor:pointer; font-size:13px;
+  }
+  .delivery-option.active{border-color:var(--bronze); background:rgba(140,98,57,0.06);}
+  .delivery-option input{margin-top:3px; flex-shrink:0;}
+  .delivery-option-title{font-weight:500; color:var(--ink);}
+  .delivery-option-desc{font-size:12px; color:var(--marron-soft); margin-top:2px;}
+  .delivery-option-fee{font-size:12px; color:var(--bronze); margin-left:auto; white-space:nowrap; padding-left:8px;}
 </style>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
@@ -1013,6 +1023,23 @@
       <input type="text" name="insta" placeholder="Instagram (@pseudo)" required>
       <input type="hidden" name="commande" id="checkoutOrderSummary">
 
+      <div id="deliveryBlock" style="display:none;">
+        <div style="font-size:13px; color:var(--ink); margin:6px 0 10px; font-weight:500;">Mode de livraison</div>
+        <div id="deliveryOptions" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;"></div>
+
+        <div id="deliveryFieldsRelais" style="display:none; flex-direction:column; gap:10px; margin-bottom:14px;">
+          <input type="text" id="relayName" placeholder="Nom du point relais">
+          <input type="text" id="relayAddress" placeholder="Adresse / ville">
+          <input type="text" id="relayPostalCode" placeholder="Code postal (facultatif)">
+        </div>
+
+        <div id="deliveryFieldsDomicile" style="display:none; flex-direction:column; gap:10px; margin-bottom:14px;">
+          <input type="text" id="homeAddress" placeholder="Adresse complète">
+          <input type="text" id="homePostalCode" placeholder="Code postal">
+          <input type="text" id="homeCity" placeholder="Ville">
+        </div>
+      </div>
+
       <label class="consent-label">
         <input type="checkbox" id="checkoutAllergyToggle">
         <span>J'ai une allergie ou une intolérance à signaler</span>
@@ -1342,11 +1369,82 @@
   const checkoutMsg = document.getElementById('checkoutMsg');
   const checkoutSubmitBtn = document.getElementById('checkoutSubmitBtn');
 
-  document.getElementById('cartCheckoutBtn').addEventListener('click', () => {
+  // Livraison — config chargée depuis data/shipping-config.json (modifiable sans toucher au code)
+  let shippingConfig = null;
+  let selectedDeliveryMode = null;
+
+  async function loadShippingConfig(){
+    if(shippingConfig) return shippingConfig;
+    try {
+      const res = await fetch('/data/shipping-config.json');
+      shippingConfig = await res.json();
+    } catch(err) {
+      shippingConfig = {
+        retrait:{label:"Retrait lors d'un événement Reflet", description:"Gratuit", fee:0},
+        relais:{label:"Livraison en point relais", description:"", fee:4.5},
+        domicile:{label:"Livraison à domicile", description:"", fee:6.9}
+      };
+    }
+    return shippingConfig;
+  }
+
+  function currentDeliveryFee(){
+    if(!selectedDeliveryMode || !shippingConfig) return 0;
+    return shippingConfig[selectedDeliveryMode].fee || 0;
+  }
+
+  function updateCheckoutTotalDisplay(){
+    const total = cartTotal() + currentDeliveryFee();
+    document.getElementById('checkoutTotal').textContent = total.toFixed(2).replace(/\.00$/,'') + ' €';
+    document.getElementById('checkoutSubmitAmount').textContent = total.toFixed(2).replace(/\.00$/,'') + ' €';
+  }
+
+  async function renderDeliveryOptions(){
+    const config = await loadShippingConfig();
+    const wrap = document.getElementById('deliveryOptions');
+    wrap.innerHTML = Object.keys(config).map(key => {
+      const opt = config[key];
+      const feeLabel = opt.fee > 0 ? opt.fee.toFixed(2).replace(/\.00$/,'') + ' €' : 'Gratuit';
+      return `
+        <label class="delivery-option" data-mode="${key}">
+          <input type="radio" name="deliveryMode" value="${key}">
+          <div style="flex:1;">
+            <div class="delivery-option-title">${opt.label}</div>
+            <div class="delivery-option-desc">${opt.description}</div>
+          </div>
+          <span class="delivery-option-fee">${feeLabel}</span>
+        </label>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('input[name="deliveryMode"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        selectedDeliveryMode = radio.value;
+        wrap.querySelectorAll('.delivery-option').forEach(el => el.classList.remove('active'));
+        radio.closest('.delivery-option').classList.add('active');
+        document.getElementById('deliveryFieldsRelais').style.display = radio.value === 'relais' ? 'flex' : 'none';
+        document.getElementById('deliveryFieldsDomicile').style.display = radio.value === 'domicile' ? 'flex' : 'none';
+        updateCheckoutTotalDisplay();
+      });
+    });
+  }
+
+  document.getElementById('cartCheckoutBtn').addEventListener('click', async () => {
     cartModal.classList.remove('show');
-    const total = cartTotal();
-    document.getElementById('checkoutTotal').textContent = total + ' €';
-    document.getElementById('checkoutSubmitAmount').textContent = total + ' €';
+    selectedDeliveryMode = null;
+
+    const hasProducts = cart.some(i => i.type !== 'event');
+    const deliveryBlock = document.getElementById('deliveryBlock');
+    if(hasProducts){
+      deliveryBlock.style.display = 'block';
+      await renderDeliveryOptions();
+      document.getElementById('deliveryFieldsRelais').style.display = 'none';
+      document.getElementById('deliveryFieldsDomicile').style.display = 'none';
+    } else {
+      deliveryBlock.style.display = 'none';
+    }
+
+    updateCheckoutTotalDisplay();
     checkoutMsg.classList.remove('show');
     document.getElementById('ticketQrWrap').style.display = 'none';
     checkoutForm.style.display = 'flex';
@@ -1363,16 +1461,50 @@
 
   checkoutForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // Validation de la livraison si le panier contient des produits
+    const hasProducts = cart.some(i => i.type !== 'event');
+    let deliveryInfo = {};
+    if(hasProducts){
+      if(!selectedDeliveryMode){
+        document.getElementById('card-errors').textContent = 'Choisissez un mode de livraison avant de payer.';
+        return;
+      }
+      if(selectedDeliveryMode === 'relais'){
+        deliveryInfo = {
+          relayName: document.getElementById('relayName').value,
+          relayAddress: document.getElementById('relayAddress').value,
+          relayPostalCode: document.getElementById('relayPostalCode').value,
+        };
+        if(!deliveryInfo.relayName || !deliveryInfo.relayAddress){
+          document.getElementById('card-errors').textContent = 'Merci d\'indiquer le nom et l\'adresse du point relais souhaité.';
+          return;
+        }
+      } else if(selectedDeliveryMode === 'domicile'){
+        deliveryInfo = {
+          address: document.getElementById('homeAddress').value,
+          postalCode: document.getElementById('homePostalCode').value,
+          city: document.getElementById('homeCity').value,
+        };
+        if(!deliveryInfo.address || !deliveryInfo.postalCode || !deliveryInfo.city){
+          document.getElementById('card-errors').textContent = 'Merci de compléter votre adresse de livraison.';
+          return;
+        }
+      }
+    }
+
     checkoutSubmitBtn.disabled = true;
     checkoutSubmitBtn.textContent = 'Paiement en cours...';
     const formData = new FormData(checkoutForm);
 
     try {
-      // Demande au serveur (fonction Netlify) de créer le paiement pour le montant du panier
+      // Demande au serveur (fonction Netlify) de créer le paiement pour le montant du panier + livraison
+      const deliveryFee = currentDeliveryFee();
+      const totalAmount = cartTotal() + deliveryFee;
       const res = await fetch('/.netlify/functions/create-payment-intent', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ amount: Math.round(cartTotal() * 100), items: cart })
+        body: JSON.stringify({ amount: Math.round(totalAmount * 100), items: cart })
       });
       const { clientSecret } = await res.json();
 
@@ -1386,14 +1518,33 @@
       if(result.error){
         document.getElementById('card-errors').textContent = result.error.message;
         checkoutSubmitBtn.disabled = false;
-        checkoutSubmitBtn.textContent = 'Payer ' + cartTotal() + ' €';
+        checkoutSubmitBtn.textContent = 'Payer ' + (cartTotal() + deliveryFee) + ' €';
         return;
       }
 
       // Paiement confirmé
-      const orderSummary = cart.map(i => i.name + ' x' + i.qty).join(', ') + ' — Total: ' + cartTotal() + ' € — Réf Stripe: ' + result.paymentIntent.id;
+      const orderSummary = cart.map(i => i.name + ' x' + i.qty).join(', ') + ' — Total: ' + totalAmount + ' € — Réf Stripe: ' + result.paymentIntent.id;
       document.getElementById('checkoutOrderSummary').value = orderSummary;
       submitToNetlify(checkoutForm);
+
+      // Création de la commande — la fonction serveur revérifie elle-même auprès de Stripe
+      // que le paiement a bien réussi avant d'enregistrer quoi que ce soit.
+      fetch('/.netlify/functions/create-order', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          paymentIntentId: result.paymentIntent.id,
+          email: formData.get('email'),
+          prenom: formData.get('prenom'),
+          nom: formData.get('nom'),
+          telephone: formData.get('telephone'),
+          insta: formData.get('insta'),
+          items: cart,
+          deliveryMode: selectedDeliveryMode,
+          deliveryInfo: deliveryInfo,
+          deliveryFee: deliveryFee
+        })
+      }).catch(() => {});
 
       // Fidélité : on enregistre uniquement les billets d'événements (pas les produits boutique)
       cart.filter(i => i.type !== 'product').forEach(i => {
