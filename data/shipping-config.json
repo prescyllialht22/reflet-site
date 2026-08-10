@@ -1,0 +1,17 @@
+{
+  "retrait": {
+    "label": "Retrait lors d'un événement Reflet",
+    "description": "Gratuit — récupérez votre commande lors d'un prochain événement Reflet.",
+    "fee": 0
+  },
+  "relais": {
+    "label": "Livraison en point relais (Mondial Relay)",
+    "description": "Indiquez le nom et l'adresse du point relais Mondial Relay que vous souhaitez. Nous vérifierons sa disponibilité avant l'expédition.",
+    "fee": 3.9
+  },
+  "domicile": {
+    "label": "Livraison à domicile (Mondial Relay)",
+    "description": "Livraison directement chez vous, en France métropolitaine.",
+    "fee": 7.9
+  }
+}
