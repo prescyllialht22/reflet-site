@@ -153,6 +153,7 @@
 
   /* PHOTO HERO — bannière plein écran avec photo en fond */
   .photo-hero{
+    background-color:var(--marron);
     background-size:cover; background-position:center 32%; background-repeat:no-repeat;
     min-height:78vh; display:flex; align-items:flex-end; padding-bottom:64px;
     padding-left:clamp(24px, 6vw, 90px); padding-right:24px;
@@ -1553,7 +1554,7 @@
     })
     .catch((err) => {
       console.error('Erreur de chargement du planning:', err);
-      planningListEl.innerHTML = '<p style="font-size:13px; color:var(--marron-soft); padding:20px 0;">Le planning n\\'a pas pu être chargé. Réessayez de recharger la page.</p>';
+      planningListEl.innerHTML = "<p style=\"font-size:13px; color:var(--marron-soft); padding:20px 0;\">Le planning n'a pas pu être chargé. Réessayez de recharger la page.</p>";
     });
 
   // Délégation : fonctionne même pour les items ajoutés dynamiquement après le fetch
