@@ -427,8 +427,7 @@
   .shop-price{font-family:'Playfair Display',serif; font-size:20px; color:var(--ink); margin-bottom:14px;}
   .shop-body .btn-pill{width:100%; text-align:center; border:none; cursor:pointer;}
 
-  /* FICHE PRODUIT */
-  /* FICHE PRODUIT — vraie page plein écran */
+  /* FICHE PRODUIT — vraie page e-commerce, photos à gauche / infos à droite */
   #productModal{padding:0; align-items:flex-start;}
   .product-page{
     background:var(--card); width:100%; min-height:100vh; max-width:none;
@@ -438,6 +437,11 @@
     position:fixed; top:20px; right:24px; background:var(--card); border-radius:50%;
     width:40px; height:40px; z-index:5; box-shadow:0 4px 12px rgba(42,31,25,0.15);
   }
+  .product-page-inner{display:block;}
+  @media(min-width:860px){
+    .product-page-inner{display:flex; align-items:flex-start; max-width:1160px; margin:0 auto; gap:56px; padding-top:70px;}
+  }
+
   .product-page-gallery{
     display:flex; gap:2px; overflow-x:auto; scroll-snap-type:x mandatory;
     scrollbar-width:none; -ms-overflow-style:none;
@@ -446,11 +450,18 @@
   .product-page .product-arch{
     flex:0 0 85%; scroll-snap-align:center; aspect-ratio:4/5; border-radius:0;
   }
-  @media(min-width:700px){
-    .product-page-gallery{gap:4px;}
-    .product-page .product-arch{flex:0 0 46%; aspect-ratio:4/5;}
+  @media(min-width:860px){
+    .product-page-gallery{
+      flex:0 0 52%; display:grid; grid-template-columns:repeat(2,1fr); gap:8px;
+      overflow:visible; scroll-snap-type:none;
+    }
+    .product-page .product-arch{flex:none; aspect-ratio:3/4; border-radius:6px;}
   }
+
   .product-page-body{max-width:640px; margin:0 auto; padding:36px 24px 64px;}
+  @media(min-width:860px){
+    .product-page-body{flex:0 0 40%; max-width:420px; margin:0; padding:0 24px 64px 0;}
+  }
   .product-page-body h1{font-size:clamp(28px,4vw,40px); margin:10px 0 12px;}
   .size-row{display:flex; gap:8px; flex-wrap:wrap;}
   .size-btn{
@@ -1037,6 +1048,7 @@
   <div class="product-page">
     <button class="modal-close product-page-close" id="productModalClose">×</button>
 
+    <div class="product-page-inner">
     <div class="product-page-gallery" id="productGallery">
       <div class="arch product-arch" data-label="Photo à venir"></div>
       <div class="arch product-arch" data-label="Photo à venir"></div>
@@ -1079,6 +1091,7 @@
       </div>
 
       <button type="button" id="productAddToCartBtn" class="btn-pill btn-dark" style="width:100%; border:none; cursor:pointer;">Ajouter au panier</button>
+    </div>
     </div>
   </div>
 </div>
