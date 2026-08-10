@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reflet — Commandes</title>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+  :root{
+    --travertine:#EDE6D9; --marron:#33251C; --bronze:#8C6239; --taupe:#A68A6D;
+    --card:#F6F2EA; --ink:#2A1F19; --line:rgba(51,37,28,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
+    background:var(--travertine); color:var(--ink); padding:24px;
+  }
+  h1{font-size:24px; margin:0 0 4px;}
+  .sub{color:var(--bronze); font-size:13px; margin:0 0 24px;}
+  #loginScreen{max-width:360px; margin:80px auto; text-align:center;}
+  #loginScreen button{
+    background:var(--marron); color:var(--travertine); border:none; border-radius:999px;
+    padding:14px 28px; font-size:14px; cursor:pointer;
+  }
+  #app{display:none;}
+  .filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+  .filters button{
+    background:var(--card); border:1px solid var(--line); border-radius:999px;
+    padding:8px 16px; font-size:12.5px; cursor:pointer; color:var(--ink);
+  }
+  .filters button.active{background:var(--marron); color:var(--travertine); border-color:var(--marron);}
+  .order-card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:18px 20px; margin-bottom:14px;
+  }
+  .order-head{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
+  .order-id{font-weight:600; font-size:14.5px;}
+  .order-date{font-size:12px; color:var(--bronze);}
+  .badge{
+    display:inline-block; font-size:11px; padding:4px 10px; border-radius:999px;
+    background:var(--marron); color:var(--travertine); text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .badge.event{background:var(--bronze);}
+  .order-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; font-size:13px; margin-bottom:14px;}
+  @media(max-width:600px){ .order-grid{grid-template-columns:1fr;} }
+  .order-grid strong{display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--bronze); margin-bottom:3px;}
+  .items-list{font-size:13px; line-height:1.6; margin:0 0 14px; padding-left:18px;}
+  .order-controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center; border-top:1px solid var(--line); padding-top:14px;}
+  select, input[type="text"]{
+    font-family:inherit; font-size:13px; padding:8px 12px; border-radius:8px;
+    border:1px solid var(--line); background:#fff;
+  }
+  .save-btn{
+    background:var(--marron); color:var(--travertine); border:none; border-radius:8px;
+    padding:8px 16px; font-size:13px; cursor:pointer;
+  }
+  .empty{text-align:center; padding:60px 20px; color:var(--bronze);}
+</style>
+</head>
+<body>
+
+  <div id="loginScreen">
+    <h1>Reflet — Commandes</h1>
+    <p class="sub">Connexion requise</p>
+    <button id="loginBtn">Se connecter</button>
+  </div>
+
+  <div id="app">
+    <h1>Commandes</h1>
+    <p class="sub" id="orderCount"></p>
+    <div class="filters" id="filters">
+      <button data-filter="all" class="active">Toutes</button>
+      <button data-filter="products">Avec livraison</button>
+      <button data-filter="events">Événements uniquement</button>
+    </div>
+    <div id="ordersList"></div>
+  </div>
+
+<script>
+  const STATUS_FLOWS = {
+    domicile: ['Nouvelle commande', 'À préparer', 'Préparée', 'Expédiée', 'Livrée'],
+    relais: ['Nouvelle commande', 'À préparer', 'Préparée', 'Expédiée', 'Livrée'],
+    retrait: ['Nouvelle commande', 'À préparer', 'Prête pour retrait', 'Retirée'],
+  };
+
+  let currentUser = null;
+  let allOrders = [];
+  let currentFilter = 'all';
+
+  window.netlifyIdentity.on('init', user => {
+    if (user) { onLogin(user); } else { showLogin(); }
+  });
+  window.netlifyIdentity.on('login', user => { onLogin(user); window.netlifyIdentity.close(); });
+  window.netlifyIdentity.on('logout', () => showLogin());
+
+  document.getElementById('loginBtn').addEventListener('click', () => window.netlifyIdentity.open());
+
+  function showLogin(){
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('app').style.display = 'none';
+  }
+
+  async function onLogin(user){
+    currentUser = user;
+    const roles = (user.app_metadata && user.app_metadata.roles) || [];
+    if (!roles.includes('admin')) {
+      document.getElementById('loginScreen').innerHTML = '<h1>Accès réservé</h1><p class="sub">Ce compte n\'a pas les droits nécessaires.</p>';
+      document.getElementById('loginScreen').style.display = 'block';
+      document.getElementById('app').style.display = 'none';
+      return;
+    }
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    await loadOrders();
+  }
+
+  async function loadOrders(){
+    document.getElementById('ordersList').innerHTML = '<p class="empty">Chargement...</p>';
+    try {
+      const token = await currentUser.jwt();
+      const res = await fetch('/.netlify/functions/get-orders', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const data = await res.json();
+      allOrders = data.orders || [];
+      renderOrders();
+    } catch(err) {
+      document.getElementById('ordersList').innerHTML = '<p class="empty">Erreur de chargement.</p>';
+    }
+  }
+
+  function renderOrders(){
+    const countEl = document.getElementById('orderCount');
+    countEl.textContent = allOrders.length + ' commande(s) au total';
+
+    let filtered = allOrders;
+    if (currentFilter === 'products') filtered = allOrders.filter(o => o.hasProducts);
+    if (currentFilter === 'events') filtered = allOrders.filter(o => !o.hasProducts);
+
+    const listEl = document.getElementById('ordersList');
+    if (!filtered.length) {
+      listEl.innerHTML = '<p class="empty">Aucune commande ici pour l\'instant.</p>';
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(o => {
+      const itemsHtml = o.items.map(i => `<li>${i.name} × ${i.qty} — ${i.price} €</li>`).join('');
+      const deliveryBlock = o.hasProducts ? renderDeliveryBlock(o) : '<div><strong>Livraison</strong>Aucune (billet d\'événement)</div>';
+      const statusOptions = o.hasProducts
+        ? (STATUS_FLOWS[o.deliveryMode] || STATUS_FLOWS.domicile)
+        : ['Payée'];
+      const statusSelect = `<select data-order="${o.orderId}" class="status-select" ${!o.hasProducts ? 'disabled' : ''}>${statusOptions.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}</select>`;
+
+      return `
+        <div class="order-card">
+          <div class="order-head">
+            <div>
+              <div class="order-id">${o.orderId}</div>
+              <div class="order-date">${new Date(o.date).toLocaleString('fr-FR')}</div>
+            </div>
+            <span class="badge ${o.hasProducts ? '' : 'event'}">${o.hasProducts ? (o.deliveryMode || 'livraison') : 'événement'}</span>
+          </div>
+          <div class="order-grid">
+            <div><strong>Cliente</strong>${o.prenom} ${o.nom}<br>${o.email}<br>${o.telephone || ''} ${o.insta ? '· ' + o.insta : ''}</div>
+            <div><strong>Montant</strong>${o.amount} € ${o.hasProducts && o.deliveryFee ? `(dont ${o.deliveryFee} € de livraison)` : ''}</div>
+            ${deliveryBlock}
+            <div><strong>Numéro de suivi</strong>
+              <input type="text" class="tracking-input" data-order="${o.orderId}" value="${o.trackingNumber || ''}" placeholder="Aucun pour l'instant">
+            </div>
+          </div>
+          <ul class="items-list">${itemsHtml}</ul>
+          <div class="order-controls">
+            <strong>Statut :</strong>
+            ${statusSelect}
+            <button class="save-btn" data-order="${o.orderId}">Enregistrer</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    listEl.querySelectorAll('.save-btn').forEach(btn => {
+      btn.addEventListener('click', () => saveOrder(btn.dataset.order));
+    });
+  }
+
+  function renderDeliveryBlock(o){
+    const info = o.deliveryInfo || {};
+    if (o.deliveryMode === 'retrait') {
+      return `<div><strong>Livraison</strong>Retrait lors d'un événement</div>`;
+    }
+    if (o.deliveryMode === 'relais') {
+      return `<div><strong>Point relais (préférence indiquée)</strong>${info.relayName || ''}<br>${info.relayAddress || ''} ${info.relayPostalCode || ''}</div>`;
+    }
+    if (o.deliveryMode === 'domicile') {
+      return `<div><strong>Adresse de livraison</strong>${info.address || ''}<br>${info.postalCode || ''} ${info.city || ''}</div>`;
+    }
+    return '<div><strong>Livraison</strong>Non renseignée</div>';
+  }
+
+  async function saveOrder(orderId){
+    const card = [...document.querySelectorAll('.order-card')].find(c => c.querySelector(`[data-order="${orderId}"]`));
+    const status = card.querySelector('.status-select').value;
+    const trackingNumber = card.querySelector('.tracking-input').value;
+
+    try {
+      const token = await currentUser.jwt();
+      await fetch('/.netlify/functions/update-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ orderId, status, trackingNumber })
+      });
+      await loadOrders();
+    } catch(err) {
+      alert('Erreur lors de la sauvegarde.');
+    }
+  }
+
+  document.getElementById('filters').addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON') return;
+    document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentFilter = e.target.dataset.filter;
+    renderOrders();
+  });
+</script>
+</body>
+</html>
