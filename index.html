@@ -305,6 +305,11 @@
     font-family:'Inter',sans-serif; font-size:13px; color:var(--bronze);
     text-decoration:underline; text-underline-offset:3px;
   }
+  .size-guide-toggle-btn{
+    background:none; border:none; padding:0; margin:12px 0 0; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:13px; color:var(--bronze);
+    text-decoration:underline; text-underline-offset:3px;
+  }
   .event-meta{display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--marron-soft); margin-bottom:20px; border-top:1px solid var(--line); padding-top:16px;}
   .event-meta strong{color:var(--ink); font-family:'Playfair Display',serif; font-size:16px; font-weight:400;}
   .event-body .btn-pill{width:100%; text-align:center;}
@@ -1225,7 +1230,7 @@
           <button type="button" class="size-btn" data-size="L">L</button>
           <button type="button" class="size-btn" data-size="XL">XL</button>
         </div>
-        <button type="button" id="sizeGuideToggle" class="event-toggle" style="margin-top:12px;">Voir le guide des tailles</button>
+        <button type="button" id="sizeGuideToggle" class="size-guide-toggle-btn" style="margin-top:12px;">Voir le guide des tailles</button>
         <div class="event-details" id="sizeGuideDetails">
           <p style="font-size:11.5px; color:var(--marron-soft); margin:0 0 10px;">Toutes les mesures sont indiquées en centimètres.</p>
           <table class="size-guide-table">
