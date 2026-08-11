@@ -278,7 +278,7 @@
 
   /* CARTE ÉVÉNEMENT ÉDITORIALE — simple, une seule photo, un seul CTA */
   .event-editorial-card{cursor:pointer;}
-  .event-editorial-photo{aspect-ratio:4/5; border-radius:14px; overflow:hidden; margin-bottom:16px;}
+  .event-editorial-photo{aspect-ratio:16/15; border-radius:14px; overflow:hidden; margin-bottom:16px;}
   .event-editorial-photo img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;}
   .event-editorial-card:hover .event-editorial-photo img{transform:scale(1.03);}
   .event-editorial-body h3{font-size:21px; margin:6px 0 8px;}
@@ -737,13 +737,6 @@
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="manifesto reveal" id="manifeste">
-  <div class="wrap">
-    <span class="eyebrow">Pourquoi Reflet</span>
-    <h2>« Pour rassembler les femmes sur Bordeaux, et créer une vraie safe place où chacune pourrait se sentir à sa place. »</h2>
   </div>
 </section>
 
@@ -1233,18 +1226,20 @@
         </div>
         <button type="button" id="sizeGuideToggle" class="event-toggle" style="margin-top:12px;">Voir le guide des tailles</button>
         <div class="event-details" id="sizeGuideDetails">
+          <p style="font-size:11.5px; color:var(--marron-soft); margin:0 0 10px;">Toutes les mesures sont indiquées en centimètres.</p>
           <table class="size-guide-table">
             <thead>
-              <tr><th>Taille</th><th>Tour de poitrine</th><th>Longueur</th></tr>
+              <tr><th>Taille</th><th>Largeur (cm)</th><th>Longueur (cm)</th></tr>
             </thead>
             <tbody>
-              <tr><td>XS</td><td>82-86 cm</td><td>64 cm</td></tr>
-              <tr><td>S</td><td>87-91 cm</td><td>66 cm</td></tr>
-              <tr><td>M</td><td>92-97 cm</td><td>68 cm</td></tr>
-              <tr><td>L</td><td>98-104 cm</td><td>70 cm</td></tr>
-              <tr><td>XL</td><td>105-111 cm</td><td>72 cm</td></tr>
+              <tr><td>XS</td><td>64</td><td>48</td></tr>
+              <tr><td>S</td><td>70</td><td>50</td></tr>
+              <tr><td>M</td><td>72</td><td>53</td></tr>
+              <tr><td>L</td><td>74</td><td>56</td></tr>
+              <tr><td>XL</td><td>76</td><td>59</td></tr>
             </tbody>
           </table>
+          <p style="font-size:11px; color:var(--taupe); line-height:1.5; margin:10px 0 0;">Largeur : mesurez le tee-shirt à plat, d'une aisselle à l'autre. Longueur : mesurez du haut de l'épaule jusqu'au bas du tee-shirt.<br>Coupe unisexe. En cas d'hésitation, nous vous conseillons de prendre votre taille habituelle.</p>
         </div>
         <div id="sizeError" style="display:none; color:#b3413a; font-size:12.5px; margin-top:8px;">Choisis une taille avant d'ajouter au panier.</div>
       </div>
