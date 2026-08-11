@@ -1,7 +1,13 @@
 // Crée une commande dans Netlify Blobs — mais SEULEMENT après avoir vérifié
 // directement auprès de Stripe que le paiement a bien réussi (jamais sur simple confiance du client).
+// Décompte aussi automatiquement le stock des produits achetés.
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { getStore } = require('@netlify/blobs');
+
+const INITIAL_STOCK = {
+  'tshirt-XS': 2, 'tshirt-S': 9, 'tshirt-M': 9, 'tshirt-L': 4, 'tshirt-XL': 1,
+  'totebag': 25, 'bandeau': 30,
+};
 
 function generateOrderId() {
   const now = new Date();
@@ -9,6 +15,21 @@ function generateOrderId() {
   const m = String(now.getMonth() + 1).padStart(2, '0');
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `RFL-${y}${m}-${rand}`;
+}
+
+async function decrementStock(items) {
+  const store = getStore('stock');
+  let stock = await store.get('current', { type: 'json' });
+  if (!stock) stock = { ...INITIAL_STOCK };
+
+  items.forEach(item => {
+    if (item.type === 'event') return; // seuls les produits boutique ont un stock
+    if (stock[item.id] !== undefined) {
+      stock[item.id] = Math.max(0, stock[item.id] - item.qty);
+    }
+  });
+
+  await store.setJSON('current', stock);
 }
 
 exports.handler = async function (event) {
@@ -29,6 +50,9 @@ exports.handler = async function (event) {
     if (paymentIntent.status !== 'succeeded') {
       return { statusCode: 402, body: JSON.stringify({ error: 'Paiement non confirmé, commande refusée' }) };
     }
+
+    // Le stock ne se décompte qu'une fois le paiement réellement confirmé auprès de Stripe.
+    await decrementStock(items);
 
     const hasProducts = items.some(i => i.type !== 'event');
     const hasEvents = items.some(i => i.type === 'event');
