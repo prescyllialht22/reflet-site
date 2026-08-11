@@ -251,6 +251,22 @@
 
   /* MANIFESTO */
   .manifesto{text-align:center;}
+
+  /* COLLABORATIONS DU MOIS — volontairement secondaire, plus discret que le planning */
+  .collabs-section{padding:56px 0;}
+  .collabs-head{text-align:center; margin-bottom:32px;}
+  .collabs-head h3{font-size:20px; font-weight:400; margin:6px 0 0; color:var(--marron-soft);}
+  .collabs-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:760px; margin:0 auto;}
+  @media(max-width:640px){
+    .collabs-grid{gap:8px; max-width:340px;}
+    .collab-photo{max-width:70px;}
+    .collab-x{font-size:10px;}
+    .collab-body p{font-size:10.5px;}
+  }
+  .collab-card{text-align:center;}
+  .collab-photo{aspect-ratio:1/1; border-radius:50%; max-width:110px; margin:0 auto 14px;}
+  .collab-x{display:block; font-size:12px; letter-spacing:0.04em; color:var(--bronze); font-weight:500; margin-bottom:2px;}
+  .collab-body p{font-size:12.5px; color:var(--marron-soft); margin:0;}
   .manifesto .wrap{max-width:760px;}
   .manifesto h2{font-size:clamp(19px,2.2vw,24px); line-height:1.6; font-style:italic; font-weight:300; letter-spacing:0.01em; color:var(--marron-soft);}
 
@@ -491,6 +507,7 @@
   /* FICHE PRODUIT — vraie page e-commerce, photos à gauche / infos à droite */
   #productModal{padding:0; align-items:flex-start;}
   #eventPageModal{padding:0; align-items:flex-start;}
+  #collabPageModal{padding:0; align-items:flex-start;}
   .product-page{
     background:var(--card); width:100%; height:100vh; max-width:none;
     margin:0 auto; overflow-y:auto; -webkit-overflow-scrolling:touch;
@@ -552,14 +569,6 @@
     border-radius:12px; font-size:13px; cursor:pointer; margin-bottom:8px;
   }
   .event-date-option.active{border-color:var(--bronze); background:rgba(140,98,57,0.06);}
-  @media(max-width:640px){
-    #eventPageModal .product-page{padding-bottom:88px;}
-    #eventPageModal #eventPageReserveBtn{
-      position:fixed; bottom:0; left:0; right:0; z-index:6; border-radius:0;
-      padding:16px 24px calc(16px + env(safe-area-inset-bottom));
-      box-shadow:0 -6px 16px rgba(42,31,25,0.12);
-    }
-  }
   .size-row{display:flex; gap:8px; flex-wrap:wrap;}
   .size-btn{
     width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--card);
@@ -695,6 +704,38 @@
       </div>
       <div class="planning-list" id="planningList"></div>
       <div class="planning-highlight" id="planningHighlight" style="display:none;"></div>
+    </div>
+  </div>
+</section>
+
+<section class="collabs-section">
+  <div class="wrap">
+    <div class="collabs-head reveal">
+      <span class="eyebrow">Ce mois-ci</span>
+      <h3 class="serif">REFLET × Nos collaborations du mois</h3>
+    </div>
+    <div class="collabs-grid">
+      <div class="collab-card reveal js-open-collab" data-collab="define">
+        <div class="arch collab-photo" data-label="Photo à venir"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × DEFINE</span>
+          <p>Pilates Reformer</p>
+        </div>
+      </div>
+      <div class="collab-card reveal js-open-collab" data-collab="mome">
+        <div class="arch collab-photo" data-label="Photo à venir"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × MOME</span>
+          <p>Café / pâtisserie</p>
+        </div>
+      </div>
+      <div class="collab-card reveal js-open-collab" data-collab="copains">
+        <div class="arch collab-photo" data-label="Photo à venir"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × COPAINS</span>
+          <p>Run / boulangerie</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1238,7 +1279,9 @@
       <ul class="event-list" id="eventPageInclus" style="margin:0 0 22px;"></ul>
 
       <h4 class="event-page-subhead">Elles en parlent</h4>
-      <div id="eventPageTestimonials" style="margin:0 0 26px;"></div>
+      <div class="testi-marquee event-testi-marquee" style="margin:0 0 26px;">
+        <div class="testi-track" id="eventPageTestimonials"></div>
+      </div>
 
       <div class="event-page-priceRow">
         <strong id="eventPagePrice"></strong>
@@ -1248,6 +1291,35 @@
       <div id="eventPageDateBlock" style="margin:16px 0 20px;"></div>
 
       <button type="button" id="eventPageReserveBtn" class="btn-pill btn-dark" style="width:100%; border:none; cursor:pointer;">Réserver ma place</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : fiche détaillée d'une collaboration -->
+<div class="modal-overlay" id="collabPageModal">
+  <div class="product-page">
+    <button class="modal-close product-page-close" id="collabPageClose">×</button>
+
+    <div class="product-page-inner">
+    <div class="product-page-gallery" id="collabPageGallery" style="display:block;">
+      <div class="arch product-arch" id="collabPagePhoto" style="aspect-ratio:4/5; border-radius:0;"></div>
+    </div>
+
+    <div class="product-page-body">
+      <span class="eyebrow" id="collabPageTag"></span>
+      <h1 class="serif" id="collabPageTitle"></h1>
+      <p id="collabPageTeaser" style="font-size:15px; line-height:1.6; color:var(--marron-soft); margin:8px 0 22px;"></p>
+
+      <div class="event-icon-row" id="collabPageIcons"></div>
+
+      <h4 class="event-page-subhead">Le partenariat</h4>
+      <p id="collabPageDesc" style="font-size:14.5px; line-height:1.7; color:var(--marron-soft); margin:0 0 22px;"></p>
+
+      <h4 class="event-page-subhead">À prévoir / Avantage Reflet</h4>
+      <ul class="event-list" id="collabPageInclus" style="margin:0 0 26px;"></ul>
+
+      <button type="button" id="collabPageReserveBtn" class="btn-pill btn-dark" style="width:100%; border:none; cursor:pointer;">Je suis intéressée</button>
     </div>
     </div>
   </div>
@@ -1447,27 +1519,34 @@
   let currentProductId = null;
   let currentSize = null;
 
+  // Témoignages réutilisés pour toutes les fiches événements (carrousel défilant)
+  const allTestimonials = [
+    {name:'Camille', text:"Les filles sont adorables, un moment de bonheur partagé entre girls, ça motive !"},
+    {name:'Emma', text:"C'est vraiment sympa de pouvoir se retrouver entre filles sans jugement et s'éclater"},
+    {name:'Déborah', text:"Un groupe plein de bienveillance et d'encouragement, j'ai terminé mon 1er run grâce à ce groupe !"},
+    {name:'Jade', text:"Les événements sont incroyables, on n'arrête jamais !!"},
+    {name:'Paula', text:"Les événements sont top et les filles nous mettent vraiment à l'aise, elles sont géniales."},
+    {name:'Jasmeen', text:"Rien à dire, c'était parfait, la prof était top et les filles super sympas !"},
+    {name:'Jeanne', text:"Une vraie safe place !!! Des événements pour chacune avec des girls topissimes"}
+  ];
+
   // Fiche événement éditoriale — contenu + logique de dates dynamiques (depuis data/planning.json)
   const eventPageData = {
     pilates: {
       tag: 'Pilates', title: "Pilates'expérience", price: 20,
       teaser: "Une parenthèse tout en douceur, entre respiration et mouvement, au cœur de Bordeaux.",
-      coach: 'Si-Ann', level: 'Tous niveaux', city: 'Bordeaux',
+      coach: 'Si-Ann', level: 'Tous niveaux', city: '7 rue Dufau, Bordeaux',
       desc: "40 minutes de Pilates sur tapis, pensées pour reconnecter le corps et l'esprit, dans un cadre chaleureux et bienveillant. Le reste du rendez-vous, c'est pour partager et se poser ensemble.",
       inclus: ["Tapis et matériel fournis", "Gaufres et thé glacé offerts après la séance", "En été, l'horaire peut être avancé d'une demi-heure"],
-      testimonials: [
-        {name:'Jasmeen', text:"Rien à dire, c'était parfait, la prof de Pilates était top et les filles super sympas !"}
-      ]
+      testimonials: allTestimonials
     },
     danse: {
       tag: 'Danse', title: 'Danse by REFLET', price: 27,
       teaser: "Une heure pour se dépenser, danser et repartir pleine d'énergie, entourée de nouvelles copines.",
-      coach: 'Maëlya', level: 'Tous niveaux', city: 'Bordeaux',
+      coach: 'Maëlya', level: 'Tous niveaux', city: '6 rue Ramonet, Bordeaux',
       desc: "1h de danse hip-hop, commercial et afro, dans une ambiance conviviale et sans jugement. Le reste du rendez-vous, c'est pour partager et se poser ensemble.",
       inclus: ["Aucune expérience requise", "Gaufres et thé glacé offerts après la séance"],
-      testimonials: [
-        {name:'Camille', text:"Les filles sont adorables, un moment de bonheur partagé entre girls, ça motive !"}
-      ]
+      testimonials: allTestimonials
     },
     run: {
       tag: 'Run', title: 'Run Reflet', price: 0,
@@ -1475,9 +1554,7 @@
       coach: null, level: 'Tous niveaux', city: 'Bordeaux',
       desc: "4 km maximum, à l'allure de toutes, tous niveaux acceptés. Départ généralement de l'Hôtel de Ville. Horaire précisé dans le lien en bio Instagram @reflet.events.",
       inclus: ["Gratuit", "Ouvert à toutes les allures"],
-      testimonials: [
-        {name:'Déborah', text:"Un groupe plein de bienveillance et d'encouragement, j'ai terminé mon 1er run grâce à ce groupe !"}
-      ]
+      testimonials: allTestimonials
     }
   };
 
@@ -1535,9 +1612,11 @@
     photoEl.innerHTML = cardImg ? `<img src="${cardImg.src}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">` : '';
 
     document.getElementById('eventPageInclus').innerHTML = data.inclus.map(t => `<li>${t}</li>`).join('');
-    document.getElementById('eventPageTestimonials').innerHTML = data.testimonials.map(t =>
-      `<p class="event-page-testimonial">« ${t.text} »<span>${t.name}</span></p>`
+    const testiCards = data.testimonials.map(t =>
+      `<div class="testi-card event-testi-card"><p>« ${t.text} »</p><span class="event-testi-name">${t.name}</span></div>`
     ).join('');
+    // On duplique la liste pour que le défilement boucle sans coupure, comme le carrousel principal
+    document.getElementById('eventPageTestimonials').innerHTML = testiCards + testiCards;
 
     const planning = await loadEventPlanning();
     const dates = datesForTag(planning, data.tag);
@@ -1615,6 +1694,71 @@
     const label = currentEventDate ? `${data.title} — ${currentEventDate.day} ${currentEventDate.month_short || ''}` : data.title;
     addToCart(currentEventId + (currentEventDate ? '-' + currentEventDate.day : ''), label, data.price, 'event');
     document.getElementById('eventPageModal').classList.remove('show');
+  });
+
+  // Fiche collaboration — même format que la fiche événement, réservation = inscription d'intérêt gratuite
+  const collabPageData = {
+    define: {
+      tag: 'REFLET × DEFINE', title: 'DEFINE — Pilates Reformer',
+      teaser: "Un partenariat pour découvrir le Pilates Reformer dans un studio d'exception, à tarif préférentiel Reflet.",
+      city: 'Bordeaux', level: 'Tous niveaux',
+      desc: "Ce mois-ci, Reflet s'associe à DEFINE pour vous faire découvrir le Pilates Reformer, une pratique douce et exigeante à la fois, dans un cadre premium.",
+      inclus: ["Tarif préférentiel réservé aux membres Reflet", "Places limitées"]
+    },
+    mome: {
+      tag: 'REFLET × MOME', title: 'MOME — Café / Pâtisserie',
+      teaser: "Une pause gourmande signée MOME, le café-pâtisserie qui accompagne les moments Reflet ce mois-ci.",
+      city: 'Bordeaux', level: 'Tous niveaux',
+      desc: "Reflet s'associe à MOME pour vous offrir un moment gourmand — l'adresse idéale pour prolonger une sortie entre filles autour d'un bon café.",
+      inclus: ["Avantage réservé aux membres Reflet", "Voir Instagram pour les détails"]
+    },
+    copains: {
+      tag: 'REFLET × COPAINS', title: 'COPAINS — Run / Boulangerie',
+      teaser: "Le duo parfait après l'effort : une session Run suivie d'une pause boulangerie chez Copains.",
+      city: 'Bordeaux', level: 'Tous niveaux',
+      desc: "Reflet s'associe à Copains pour clôturer certaines sessions de running par une pause bien méritée, entre bonnes odeurs de pain frais et bonne humeur.",
+      inclus: ["Avantage réservé aux membres Reflet", "Voir Instagram pour les détails"]
+    }
+  };
+
+  let currentCollabId = null;
+
+  function openCollabPage(id){
+    const data = collabPageData[id];
+    if(!data) return;
+    currentCollabId = id;
+
+    document.getElementById('collabPageTag').textContent = data.tag;
+    document.getElementById('collabPageTitle').textContent = data.title;
+    document.getElementById('collabPageTeaser').textContent = data.teaser;
+    document.getElementById('collabPageDesc').textContent = data.desc;
+    document.getElementById('collabPageInclus').innerHTML = data.inclus.map(t => `<li>${t}</li>`).join('');
+
+    const cardImg = document.querySelector(`.js-open-collab[data-collab="${id}"] .collab-photo img`);
+    const photoEl = document.getElementById('collabPagePhoto');
+    photoEl.innerHTML = cardImg ? `<img src="${cardImg.src}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">` : '';
+
+    document.getElementById('collabPageIcons').innerHTML = `
+      <div>📍 ${data.city}</div>
+      <div>♡ ${data.level}</div>
+    `;
+
+    document.getElementById('collabPageModal').classList.add('show');
+    document.querySelector('#collabPageModal .product-page').scrollTop = 0;
+  }
+
+  document.querySelectorAll('.js-open-collab').forEach(card => {
+    card.addEventListener('click', () => openCollabPage(card.dataset.collab));
+  });
+  document.getElementById('collabPageClose').addEventListener('click', () => document.getElementById('collabPageModal').classList.remove('show'));
+  document.getElementById('collabPageModal').addEventListener('click', (e) => {
+    if(e.target.id === 'collabPageModal') e.target.classList.remove('show');
+  });
+  document.getElementById('collabPageReserveBtn').addEventListener('click', () => {
+    const data = collabPageData[currentCollabId];
+    if(!data) return;
+    document.getElementById('collabPageModal').classList.remove('show');
+    openBookingModal(data.title, null);
   });
 
   function openProduct(id){
