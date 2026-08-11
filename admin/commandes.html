@@ -29,6 +29,20 @@
     padding:8px 16px; font-size:12.5px; cursor:pointer; color:var(--ink);
   }
   .filters button.active{background:var(--marron); color:var(--travertine); border-color:var(--marron);}
+  .page-tabs{display:flex; gap:10px; margin-bottom:24px; border-bottom:1px solid var(--line); padding-bottom:12px;}
+  .page-tabs button{
+    background:none; border:none; font-size:14px; padding:6px 4px; cursor:pointer;
+    color:var(--bronze); font-weight:600;
+  }
+  .page-tabs button.active{color:var(--ink); text-decoration:underline; text-underline-offset:4px;}
+  .stock-row{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:10px;
+  }
+  .stock-row-name{font-size:14px; font-weight:500;}
+  .stock-row-controls{display:flex; align-items:center; gap:10px;}
+  .stock-row input[type="number"]{width:70px; padding:8px; border-radius:8px; border:1px solid var(--line); font-size:13px;}
+  .stock-empty-tag{font-size:11px; color:#b3413a; font-weight:600;}
   .order-card{
     background:var(--card); border:1px solid var(--line); border-radius:16px;
     padding:18px 20px; margin-bottom:14px;
@@ -66,14 +80,27 @@
   </div>
 
   <div id="app">
-    <h1>Commandes</h1>
-    <p class="sub" id="orderCount"></p>
-    <div class="filters" id="filters">
-      <button data-filter="all" class="active">Toutes</button>
-      <button data-filter="products">Avec livraison</button>
-      <button data-filter="events">Événements uniquement</button>
+    <div class="page-tabs" id="pageTabs">
+      <button data-page="orders" class="active">Commandes</button>
+      <button data-page="stock">Stock</button>
     </div>
-    <div id="ordersList"></div>
+
+    <div id="ordersPage">
+      <h1>Commandes</h1>
+      <p class="sub" id="orderCount"></p>
+      <div class="filters" id="filters">
+        <button data-filter="all" class="active">Toutes</button>
+        <button data-filter="products">Avec livraison</button>
+        <button data-filter="events">Événements uniquement</button>
+      </div>
+      <div id="ordersList"></div>
+    </div>
+
+    <div id="stockPage" style="display:none;">
+      <h1>Stock</h1>
+      <p class="sub">Modifiez une quantité puis cliquez sur Enregistrer.</p>
+      <div id="stockList"></div>
+    </div>
   </div>
 
 <script>
@@ -104,7 +131,8 @@
     currentUser = user;
     const roles = (user.app_metadata && user.app_metadata.roles) || [];
     if (!roles.includes('admin')) {
-      document.getElementById('loginScreen').innerHTML = '<h1>Accès réservé</h1><p class="sub">Ce compte n\'a pas les droits nécessaires.</p>';
+      document.getElementById('loginScreen').innerHTML = '<h1>Accès réservé</h1><p class="sub">Ce compte n\'a pas les droits nécessaires.</p><button id="logoutBtn">Se déconnecter</button>';
+      document.getElementById('logoutBtn').addEventListener('click', () => window.netlifyIdentity.logout());
       document.getElementById('loginScreen').style.display = 'block';
       document.getElementById('app').style.display = 'none';
       return;
@@ -222,6 +250,72 @@
     currentFilter = e.target.dataset.filter;
     renderOrders();
   });
+
+  // Onglets Commandes / Stock
+  const STOCK_LABELS = {
+    'tshirt-XS': 'Tee-shirt — XS', 'tshirt-S': 'Tee-shirt — S', 'tshirt-M': 'Tee-shirt — M',
+    'tshirt-L': 'Tee-shirt — L', 'tshirt-XL': 'Tee-shirt — XL',
+    'totebag': 'Tote bag', 'bandeau': 'Bandeau',
+  };
+
+  document.getElementById('pageTabs').addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON') return;
+    document.querySelectorAll('.page-tabs button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    const page = e.target.dataset.page;
+    document.getElementById('ordersPage').style.display = page === 'orders' ? 'block' : 'none';
+    document.getElementById('stockPage').style.display = page === 'stock' ? 'block' : 'none';
+    if (page === 'stock') loadStock();
+  });
+
+  async function loadStock(){
+    document.getElementById('stockList').innerHTML = '<p class="empty">Chargement...</p>';
+    try {
+      const res = await fetch('/.netlify/functions/get-stock');
+      const data = await res.json();
+      renderStock(data.stock || {});
+    } catch(err) {
+      document.getElementById('stockList').innerHTML = '<p class="empty">Erreur de chargement.</p>';
+    }
+  }
+
+  function renderStock(stock){
+    const listEl = document.getElementById('stockList');
+    listEl.innerHTML = Object.keys(STOCK_LABELS).map(sku => {
+      const qty = stock[sku] !== undefined ? stock[sku] : 0;
+      return `
+        <div class="stock-row">
+          <span class="stock-row-name">${STOCK_LABELS[sku]} ${qty === 0 ? '<span class="stock-empty-tag">ÉPUISÉ</span>' : ''}</span>
+          <div class="stock-row-controls">
+            <input type="number" min="0" id="stock-input-${sku}" value="${qty}">
+            <button class="save-btn" data-sku="${sku}">Enregistrer</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    listEl.querySelectorAll('.save-btn').forEach(btn => {
+      btn.addEventListener('click', () => saveStock(btn.dataset.sku));
+    });
+  }
+
+  async function saveStock(sku){
+    const input = document.getElementById('stock-input-' + sku);
+    const quantity = parseInt(input.value, 10);
+    if(isNaN(quantity) || quantity < 0) return;
+
+    try {
+      const token = await currentUser.jwt();
+      await fetch('/.netlify/functions/update-stock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ sku, quantity })
+      });
+      await loadStock();
+    } catch(err) {
+      alert('Erreur lors de la sauvegarde du stock.');
+    }
+  }
 </script>
 </body>
 </html>
