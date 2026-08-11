@@ -581,6 +581,8 @@
     color:var(--ink); font-size:13px; cursor:pointer; font-family:'Inter',sans-serif;
   }
   .size-btn.active{background:var(--ink); color:var(--travertine); border-color:var(--ink);}
+  .size-btn-out{opacity:0.35; text-decoration:line-through; cursor:not-allowed;}
+  #productAddToCartBtn:disabled{opacity:0.5; cursor:not-allowed;}
   .size-guide-table{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:12px; color:var(--marron-soft);}
   .size-guide-table th, .size-guide-table td{padding:8px 6px; text-align:center; border-bottom:1px solid var(--line);}
   .size-guide-table th{color:var(--ink); font-weight:500;}
@@ -1520,6 +1522,22 @@
   let currentProductId = null;
   let currentSize = null;
 
+  // Stock — chargé une fois, réutilisé pour afficher "Épuisé" le cas échéant
+  let stockData = null;
+  async function loadStock(){
+    if(stockData) return stockData;
+    try {
+      const res = await fetch('/.netlify/functions/get-stock');
+      const data = await res.json();
+      stockData = data.stock || {};
+    } catch(err) { stockData = {}; }
+    return stockData;
+  }
+  function stockFor(sku){
+    if(!stockData) return 99; // avant chargement, on n'affiche rien de bloquant
+    return stockData[sku] !== undefined ? stockData[sku] : 99;
+  }
+
   // Témoignages réutilisés pour toutes les fiches événements (carrousel défilant)
   const allTestimonials = [
     {name:'Camille', text:"Les filles sont adorables, un moment de bonheur partagé entre girls, ça motive !"},
@@ -1762,7 +1780,7 @@
     openBookingModal(data.title, null);
   });
 
-  function openProduct(id){
+  async function openProduct(id){
     const p = productData[id];
     if(!p) return;
     currentProductId = id;
@@ -1775,9 +1793,35 @@
     sizeError.style.display = 'none';
     document.getElementById('sizeGuideDetails').classList.remove('open');
     document.getElementById('sizeGuideToggle').textContent = 'Voir le guide des tailles';
-    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.size-btn').forEach(b => { b.classList.remove('active'); b.disabled = false; b.classList.remove('size-btn-out'); });
+    productAddToCartBtn.disabled = false;
+    productAddToCartBtn.textContent = 'Ajouter au panier';
     productModal.classList.add('show');
     document.querySelector('.product-page').scrollTop = 0;
+
+    await loadStock();
+
+    if(p.hasSizes){
+      let anyAvailable = false;
+      document.querySelectorAll('.size-btn').forEach(btn => {
+        const sku = 'tshirt-' + btn.dataset.size;
+        if(stockFor(sku) <= 0){
+          btn.disabled = true;
+          btn.classList.add('size-btn-out');
+        } else {
+          anyAvailable = true;
+        }
+      });
+      if(!anyAvailable){
+        productAddToCartBtn.disabled = true;
+        productAddToCartBtn.textContent = 'Épuisé';
+      }
+    } else {
+      if(stockFor(id) <= 0){
+        productAddToCartBtn.disabled = true;
+        productAddToCartBtn.textContent = 'Épuisé';
+      }
+    }
   }
 
   document.querySelectorAll('.js-open-product').forEach(el => {
