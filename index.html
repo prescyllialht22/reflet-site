@@ -196,7 +196,10 @@
     text-transform:uppercase; font-size:clamp(28px,4.2vw,46px); letter-spacing:0.08em;
     line-height:1.35; margin:14px 0 18px; text-shadow:0 4px 24px rgba(0,0,0,0.4);
   }
-  .photo-hero-lede{color:rgba(237,230,217,0.88); max-width:460px; font-size:15.5px; text-shadow:0 2px 14px rgba(0,0,0,0.4);}
+  .photo-hero-lede{
+    color:rgba(237,230,217,0.9); max-width:480px; font-size:13px; text-shadow:0 2px 14px rgba(0,0,0,0.4);
+    text-transform:uppercase; letter-spacing:0.1em; font-weight:600; line-height:1.7;
+  }
   .photo-hero-actions{margin-top:8px;}
   .btn-light{background:var(--travertine); color:var(--ink); border:1px solid var(--travertine);}
   .btn-outline-light{background:transparent; color:var(--travertine); border:1px solid rgba(237,230,217,0.6);}
@@ -395,7 +398,7 @@
   }
   .event-gallery{
     display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;
-    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; touch-action:pan-x;
   }
   .event-gallery::-webkit-scrollbar{display:none;}
   .gallery-item{
@@ -498,7 +501,7 @@
     .shop-grid{
       display:flex; grid-template-columns:none; overflow-x:auto; gap:16px;
       margin-left:-24px; margin-right:-24px; padding:0 24px 8px; scroll-snap-type:x mandatory;
-      scrollbar-width:none; -ms-overflow-style:none;
+      scrollbar-width:none; -ms-overflow-style:none; touch-action:pan-x;
     }
     .shop-grid::-webkit-scrollbar{display:none;}
     .shop-card{flex:0 0 78%; scroll-snap-align:start;}
@@ -530,7 +533,7 @@
 
   .product-page-gallery{
     display:flex; gap:2px; overflow-x:auto; scroll-snap-type:x mandatory;
-    scrollbar-width:none; -ms-overflow-style:none;
+    scrollbar-width:none; -ms-overflow-style:none; touch-action:pan-x;
   }
   .product-page-gallery::-webkit-scrollbar{display:none;}
   .product-page .product-arch{
@@ -618,6 +621,10 @@
   .modal-box{
     background:var(--card); border-radius:28px; padding:36px 32px; max-width:420px; width:100%;
     position:relative; max-height:86vh; overflow-y:auto;
+  }
+  @media(max-width:480px){
+    .modal-overlay{padding:12px;}
+    .modal-box{padding:28px 18px;}
   }
   .modal-close{
     position:absolute; top:16px; right:16px; background:none; border:none; cursor:pointer;
@@ -988,7 +995,6 @@
         </div>
       </div>
     </div>
-    <a href="#" id="boutiqueNotifyBtn" class="btn-pill btn-outline" style="margin-top:32px; display:inline-block;">Être prévenue de l'ouverture</a>
   </div>
 </section>
 
@@ -1108,26 +1114,6 @@
   </div>
 </div>
 
-<!-- MODAL : être prévenue pour la boutique (email uniquement) -->
-<div class="modal-overlay" id="boutiqueModal">
-  <div class="modal-box">
-    <button class="modal-close" id="boutiqueModalClose">×</button>
-    <span class="eyebrow">Boutique Reflet</span>
-    <h3 class="serif" style="font-size:24px; margin-bottom:16px;">Être prévenue de l'ouverture</h3>
-    <form id="boutiqueForm" class="booking-form" name="boutique" data-netlify="true" netlify-honeypot="bot-field">
-      <input type="hidden" name="form-name" value="boutique">
-      <p style="display:none;"><input name="bot-field"></p>
-      <input type="email" name="email" placeholder="Adresse mail" required>
-      <label class="consent-label">
-        <input type="checkbox" required>
-        <span>J'accepte que mon adresse mail soit utilisée pour être prévenue de l'ouverture, conformément à la <a href="#" class="js-open-privacy">politique de confidentialité</a>.</span>
-      </label>
-      <button type="submit" class="btn-pill btn-dark" style="border:none; cursor:pointer; width:100%;">Être prévenue</button>
-    </form>
-    <p class="form-msg" id="boutiqueMsg" style="color:var(--marron-soft);">Merci ! On vous écrit dès l'ouverture de la boutique. 💛</p>
-  </div>
-</div>
-
 <!-- PANIER -->
 <div class="modal-overlay" id="cartModal">
   <div class="modal-box" style="max-width:440px;">
@@ -1158,7 +1144,7 @@
       <input type="text" name="nom" placeholder="Nom" required>
       <input type="tel" name="telephone" placeholder="Numéro de téléphone" required>
       <input type="email" name="email" placeholder="Adresse mail" required>
-      <input type="text" name="insta" placeholder="Instagram (@pseudo)" required>
+      <input type="text" name="insta" placeholder="Instagram (@pseudo) — facultatif">
       <input type="hidden" name="commande" id="checkoutOrderSummary">
 
       <div id="deliveryBlock" style="display:none;">
@@ -1186,7 +1172,7 @@
         <input type="text" name="allergenes" id="checkoutAllergyField" placeholder="Laquelle / lesquelles ?">
       </div>
 
-      <div id="card-element" style="padding:14px 20px; border:1px solid var(--line); border-radius:999px;"></div>
+      <div id="card-element" style="padding:14px 16px; border:1px solid var(--line); border-radius:16px;"></div>
       <div id="card-errors" role="alert" style="color:#b3413a; font-size:12.5px;"></div>
       <label class="consent-label">
         <input type="checkbox" required>
@@ -1354,7 +1340,7 @@
       <input type="text" name="nom" placeholder="Nom" required>
       <input type="tel" name="telephone" placeholder="Numéro de téléphone" required>
       <input type="email" name="email" placeholder="Adresse mail" required>
-      <input type="text" name="insta" placeholder="Instagram (@pseudo)" required>
+      <input type="text" name="insta" placeholder="Instagram (@pseudo) — facultatif">
       <label class="consent-label">
         <input type="checkbox" required>
         <span>J'accepte que mes informations soient utilisées pour ma réservation, conformément à la <a href="#" class="js-open-privacy">politique de confidentialité</a>.</span>
@@ -2218,26 +2204,6 @@
       body: data
     }).catch(() => {});
   }
-
-  // Modal : être prévenue pour la boutique (email uniquement)
-  const boutiqueModal = document.getElementById('boutiqueModal');
-  const boutiqueForm = document.getElementById('boutiqueForm');
-  const boutiqueMsg = document.getElementById('boutiqueMsg');
-  document.getElementById('boutiqueNotifyBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    boutiqueMsg.classList.remove('show');
-    boutiqueForm.style.display = 'flex';
-    boutiqueModal.classList.add('show');
-  });
-  document.getElementById('boutiqueModalClose').addEventListener('click', () => boutiqueModal.classList.remove('show'));
-  boutiqueModal.addEventListener('click', (e) => { if(e.target === boutiqueModal) boutiqueModal.classList.remove('show'); });
-  boutiqueForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    submitToNetlify(boutiqueForm);
-    boutiqueForm.reset();
-    boutiqueForm.style.display = 'none';
-    boutiqueMsg.classList.add('show');
-  });
 
   // Espace fidélité — vraie connexion Netlify Identity + historique des événements payés
   const loyaltyDashboard = document.getElementById('loyaltyDashboard');
