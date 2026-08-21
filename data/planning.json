@@ -34,7 +34,8 @@
       "time": "Samedi · voir le CANAL en bio Instagram",
       "description": "Un déjeuner convivial entre filles chez MOME, café-pâtisserie au cœur de Bordeaux. 15 femmes autour d'une même table pour partager un bon moment, échanger et profiter d'un déjeuner dans une ambiance chaleureuse et décontractée. Uniquement sur réservation, infos dans le CANAL en bio Instagram @reflet.events.",
       "special": true,
-      "price": ""
+      "price": "",
+      "display_tag": "Sortie"
     },
     {
       "day": "13",
@@ -67,7 +68,8 @@
       "time": "Samedi · voir @reflet.events sur Instagram",
       "description": "Une séance de Pilates Reformer au studio DEFINE, à tarif préférentiel réservé aux membres Reflet. Places limitées, infos et réservation sur Instagram @reflet.events.",
       "special": false,
-      "price": ""
+      "price": "",
+      "display_tag": "Pilates"
     },
     {
       "day": "25",
