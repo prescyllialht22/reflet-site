@@ -591,6 +591,7 @@
   .size-btn.active{background:var(--ink); color:var(--travertine); border-color:var(--ink);}
   .size-btn-out{opacity:0.35; text-decoration:line-through; cursor:not-allowed;}
   #productAddToCartBtn:disabled{opacity:0.5; cursor:not-allowed;}
+  #eventPageReserveBtn:disabled{opacity:0.5; cursor:not-allowed;}
   .size-guide-table{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:12px; color:var(--marron-soft);}
   .size-guide-table th, .size-guide-table td{padding:8px 6px; text-align:center; border-bottom:1px solid var(--line);}
   .size-guide-table th{color:var(--ink); font-weight:500;}
@@ -1662,11 +1663,13 @@
     }
 
     if(dates.length === 1){
+      reserveBtn.disabled = false;
       currentEventDate = dates[0];
       iconsEl.innerHTML = iconsHtml(dates[0].day + ' ' + (dates[0].month_short || ''), dates[0].time);
       dateBlock.innerHTML = '';
       updateReserveButtonForDate(reserveBtn, currentEventDate);
     } else if(dates.length > 1){
+      reserveBtn.disabled = false;
       iconsEl.innerHTML = iconsHtml('Plusieurs dates', 'Voir ci-dessous');
       dateBlock.innerHTML = '<div style="font-size:12px; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Choisissez votre date</div>' +
         dates.map((d, i) => {
@@ -1675,9 +1678,9 @@
           <label class="event-date-option" data-index="${i}">
             <span style="display:flex; align-items:center; gap:10px;">
               <input type="radio" name="eventDate" value="${i}">
-              <span>${d.day} ${d.month_short || ''} · ${isCollab ? 'Run × Copains' : 'Run classique'}</span>
+              <span>${d.day} ${d.month_short || ''} · ${data.tag === 'Run' ? (isCollab ? 'Run × Copains' : 'Run classique') : d.time}</span>
             </span>
-            ${isCollab ? '<span class="event-date-badge">Collab</span>' : ''}
+            ${(data.tag === 'Run' && isCollab) ? '<span class="event-date-badge">Collab</span>' : ''}
           </label>
         `;
         }).join('') +
@@ -1694,7 +1697,8 @@
     } else {
       iconsEl.innerHTML = iconsHtml('Voir Instagram', '@reflet.events');
       dateBlock.innerHTML = '';
-      reserveBtn.textContent = 'Réserver ma place';
+      reserveBtn.textContent = 'Aucune date programmée';
+      reserveBtn.disabled = true;
     }
 
     document.getElementById('eventPageModal').classList.add('show');
