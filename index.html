@@ -206,7 +206,7 @@
   @media(min-width:1400px){ .photo-hero{min-height:70vh;} }
   @media(max-width:640px){
     .photo-hero{min-height:46vh; padding-bottom:32px; background-position:center 34%; background-size:cover; padding-left:24px;}
-    .photo-hero-lede{font-size:14px;}
+    .photo-hero-lede{font-size:9.5px; letter-spacing:0.06em; max-width:250px; line-height:1.6;}
   }
 
   .planning-section{padding:72px 0;}
@@ -496,7 +496,7 @@
   .boutique{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
   @media(max-width:900px){ .boutique{grid-template-columns:1fr;} }
   .boutique-arch{aspect-ratio:16/11; border-radius:32px;}
-  .shop-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:40px;}
+  .shop-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:32px; margin-top:40px;}
   @media(max-width:800px){
     .shop-grid{
       display:flex; grid-template-columns:none; overflow-x:auto; gap:16px;
@@ -508,8 +508,12 @@
   }
   .shop-card{cursor:pointer;}
   .shop-card{background:var(--card); border:1px solid var(--line); border-radius:28px; padding:18px; text-align:left;}
-  .shop-arch{aspect-ratio:4/5; border-radius:80px 80px 16px 16px; margin-bottom:18px;}
-  @media(min-width:900px){ .shop-arch{aspect-ratio:5/4;} }
+  .shop-arch{aspect-ratio:4/5; border-radius:52px 52px 12px 12px; margin-bottom:18px;}
+  @media(min-width:900px){
+    .shop-card{padding:24px;}
+    .shop-arch{aspect-ratio:4/5;}
+    #boutique .wrap{max-width:1280px;}
+  }
   .shop-body h3{font-size:19px; margin:8px 0 6px;}
   .shop-price{font-family:'Playfair Display',serif; font-size:20px; color:var(--ink); margin-bottom:14px;}
   .shop-body .btn-pill{width:100%; text-align:center; border:none; cursor:pointer;}
@@ -1544,12 +1548,19 @@
     }
   };
 
-  // Affiche la 1ère photo de chaque produit directement sur la carte boutique (pas seulement dans la fiche)
+  // Affiche la photo de chaque produit sur la carte boutique, avec un cadrage sur-mesure
+  const shopCardPhotoConfig = {
+    tshirt: { index: 0, position: 'center 15%', scale: 1.25 },
+    totebag: { index: 0, position: 'center 10%', scale: 1.25 },
+    bandeau: { index: 2, position: 'center', scale: 1 }
+  };
   Object.keys(productData).forEach(id => {
     const p = productData[id];
     const archEl = document.getElementById('shopArch-' + id);
+    const cfg = shopCardPhotoConfig[id] || { index: 0, position: 'center', scale: 1 };
     if(archEl && p.photos && p.photos.length){
-      archEl.innerHTML = `<img src="${p.photos[0]}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover;">`;
+      const src = p.photos[cfg.index] || p.photos[0];
+      archEl.innerHTML = `<img src="${src}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover; object-position:${cfg.position}; transform:scale(${cfg.scale});">`;
     }
   });
 
