@@ -1,0 +1,25 @@
+{
+  "pilates": {
+    "label": "Pilates'expérience",
+    "limit": 10
+  },
+  "danse": {
+    "label": "Danse by REFLET",
+    "limit": 15
+  },
+  "define": {
+    "label": "Pilates Reformer × DEFINE",
+    "limit": 11,
+    "price": 35
+  },
+  "mome": {
+    "label": "Déjeuner Reflet × MOME",
+    "limit": 15,
+    "price": 20
+  },
+  "copains": {
+    "label": "Run × Copains",
+    "limit": 35,
+    "price": 4
+  }
+}
