@@ -2249,11 +2249,13 @@
     checkoutSubmitBtn.disabled = true;
     checkoutSubmitBtn.textContent = 'Paiement en cours...';
     const formData = new FormData(checkoutForm);
+    const deliveryFee = currentDeliveryFee();
+    const totalAmount = cartTotal() + deliveryFee;
+    let paymentResult = null;
 
+    // ÉTAPE 1 — Paiement Stripe uniquement. C'est la SEULE étape où on peut légitimement
+    // dire à la cliente de réessayer, car ici on est certain qu'elle n'a pas encore été débitée.
     try {
-      // Demande au serveur (fonction Netlify) de créer le paiement pour le montant du panier + livraison
-      const deliveryFee = currentDeliveryFee();
-      const totalAmount = cartTotal() + deliveryFee;
       const res = await fetch('/.netlify/functions/create-payment-intent', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -2261,21 +2263,31 @@
       });
       const { clientSecret } = await res.json();
 
-      const result = await stripe.confirmCardPayment(clientSecret, {
+      paymentResult = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
           billing_details: { name: formData.get('prenom') + ' ' + formData.get('nom'), email: formData.get('email') }
         }
       });
 
-      if(result.error){
-        document.getElementById('card-errors').textContent = result.error.message;
+      if(paymentResult.error){
+        document.getElementById('card-errors').textContent = paymentResult.error.message;
         checkoutSubmitBtn.disabled = false;
         checkoutSubmitBtn.textContent = 'Payer ' + (cartTotal() + deliveryFee) + ' €';
         return;
       }
+    } catch(err){
+      document.getElementById('card-errors').textContent = "Une erreur est survenue, réessayez.";
+      checkoutSubmitBtn.disabled = false;
+      checkoutSubmitBtn.textContent = 'Payer ' + cartTotal() + ' €';
+      return;
+    }
 
-      // Paiement confirmé
+    // ÉTAPE 2 — Le paiement a réussi, la cliente a été débitée par Stripe.
+    // À partir d'ici, JAMAIS de message "réessayez" ni de bouton de paiement réactivé,
+    // même si une étape secondaire (email, QR code...) rencontre un problème d'affichage.
+    const result = paymentResult;
+    try {
       const orderSummary = cart.map(i => i.name + ' x' + i.qty).join(', ') + ' — Total: ' + totalAmount + ' € — Réf Stripe: ' + result.paymentIntent.id;
       document.getElementById('checkoutOrderSummary').value = orderSummary;
       submitToNetlify(checkoutForm);
@@ -2296,6 +2308,18 @@
           deliveryMode: selectedDeliveryMode,
           deliveryInfo: deliveryInfo,
           deliveryFee: deliveryFee
+        })
+      }).catch(() => {});
+
+      // E-mail de confirmation avec le billet (QR code) envoyé directement à la cliente
+      fetch('/.netlify/functions/send-ticket-email', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          paymentIntentId: result.paymentIntent.id,
+          email: formData.get('email'),
+          prenom: formData.get('prenom'),
+          items: cart
         })
       }).catch(() => {});
 
@@ -2324,19 +2348,19 @@
       });
       document.getElementById('ticketQrLabel').textContent = cart.map(i => i.name).join(', ') + ' — Réf. ' + result.paymentIntent.id.slice(-8);
       document.getElementById('ticketQrWrap').style.display = 'block';
-
-      cart = [];
-      saveCart();
-      renderCart();
-      checkoutForm.reset();
-      checkoutForm.style.display = 'none';
-      checkoutSubmitBtn.style.display = 'none';
-      checkoutMsg.classList.add('show');
     } catch(err){
-      document.getElementById('card-errors').textContent = "Une erreur est survenue, réessayez.";
-      checkoutSubmitBtn.disabled = false;
-      checkoutSubmitBtn.textContent = 'Payer ' + cartTotal() + ' €';
+      // Une étape secondaire a échoué (affichage du QR code, etc.) mais le paiement,
+      // lui, a bel et bien réussi — on ne doit surtout pas laisser croire le contraire.
+      console.error('Erreur post-paiement (paiement déjà confirmé) :', err);
     }
+
+    cart = [];
+    saveCart();
+    renderCart();
+    checkoutForm.reset();
+    checkoutForm.style.display = 'none';
+    checkoutSubmitBtn.style.display = 'none';
+    checkoutMsg.classList.add('show');
   });
 
   renderCart();
