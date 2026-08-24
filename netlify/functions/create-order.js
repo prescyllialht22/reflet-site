@@ -1,6 +1,7 @@
 // Crée une commande dans Netlify Blobs — mais SEULEMENT après avoir vérifié
 // directement auprès de Stripe que le paiement a bien réussi (jamais sur simple confiance du client).
-// Décompte aussi automatiquement le stock des produits achetés.
+// Décompte aussi automatiquement le stock des produits achetés, et les places pour les
+// événements à capacité limitée (Pilates, Danse, DEFINE, MOME).
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { getStore } = require('@netlify/blobs');
 
@@ -8,6 +9,8 @@ const INITIAL_STOCK = {
   'tshirt-XS': 2, 'tshirt-S': 9, 'tshirt-M': 9, 'tshirt-L': 4, 'tshirt-XL': 1,
   'totebag': 25, 'bandeau': 30,
 };
+
+const CAPACITY_GROUPS = ['pilates', 'danse', 'define', 'mome', 'copains']; // groupes d'événements à capacité limitée, décomptés ici
 
 function generateOrderId() {
   const now = new Date();
@@ -32,6 +35,21 @@ async function decrementStock(items) {
   await store.setJSON('current', stock);
 }
 
+async function recordEventCapacity(items) {
+  const store = getStore('event-capacity');
+  let counts = await store.get('counts', { type: 'json' });
+  if (!counts) counts = {};
+
+  items.forEach(item => {
+    if (item.type !== 'event') return;
+    const group = (item.id || '').split('-')[0];
+    if (!CAPACITY_GROUPS.includes(group)) return; // pas de limite configurée pour ce type
+    counts[item.id] = (counts[item.id] || 0) + item.qty;
+  });
+
+  await store.setJSON('counts', counts);
+}
+
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -51,13 +69,13 @@ exports.handler = async function (event) {
       return { statusCode: 402, body: JSON.stringify({ error: 'Paiement non confirmé, commande refusée' }) };
     }
 
-    // Le stock ne se décompte qu'une fois le paiement réellement confirmé auprès de Stripe.
+    // Le stock et les places d'événements ne se décomptent qu'une fois le paiement réellement confirmé.
     await decrementStock(items);
+    await recordEventCapacity(items);
 
     const hasProducts = items.some(i => i.type !== 'event');
     const hasEvents = items.some(i => i.type === 'event');
 
-    // Statut initial selon le type de commande
     let status;
     if (!hasProducts) {
       status = 'Payée'; // billet(s) d'événement uniquement — pas de logistique de livraison
