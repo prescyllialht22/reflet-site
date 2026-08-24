@@ -232,14 +232,19 @@
 
     try {
       const token = await currentUser.jwt();
-      await fetch('/.netlify/functions/update-order', {
+      const res = await fetch('/.netlify/functions/update-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
         body: JSON.stringify({ orderId, status, trackingNumber })
       });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok){
+        alert('La sauvegarde a échoué (' + res.status + ') : ' + (data.error || 'erreur inconnue.'));
+        return;
+      }
       await loadOrders();
     } catch(err) {
-      alert('Erreur lors de la sauvegarde.');
+      alert('Erreur lors de la sauvegarde : ' + err.message);
     }
   }
 
@@ -306,14 +311,19 @@
 
     try {
       const token = await currentUser.jwt();
-      await fetch('/.netlify/functions/update-stock', {
+      const res = await fetch('/.netlify/functions/update-stock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
         body: JSON.stringify({ sku, quantity })
       });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok){
+        alert('La sauvegarde a échoué (' + res.status + ') : ' + (data.error || 'erreur inconnue.'));
+        return;
+      }
       await loadStock();
     } catch(err) {
-      alert('Erreur lors de la sauvegarde du stock.');
+      alert('Erreur lors de la sauvegarde du stock : ' + err.message);
     }
   }
 </script>
