@@ -10,9 +10,10 @@
       "tag": "Run",
       "summary": "Voir Instagram pour l'horaire",
       "time": "Dimanche · voir @reflet.events sur Instagram",
-      "description": "Une session de running suivie d'une pause chez Copains. Départ à 19h à la Cité du Vin, uniquement sur réservation. Envoyez « RUN » à Marie en message privé sur Instagram pour réserver votre place.",
+      "description": "Une session de running suivie d'une pause chez Copains. Départ à 19h à la Cité du Vin. Réservation directement en ligne — 4€, places limitées à 35 personnes.",
       "special": false,
-      "price": ""
+      "price": "4",
+      "capacity_key": "copains-06"
     },
     {
       "day": "09",
@@ -80,9 +81,10 @@
       "tag": "Run",
       "summary": "Voir Instagram pour l'horaire",
       "time": "Vendredi · voir @reflet.events sur Instagram",
-      "description": "Une session de running suivie d'une pause chez Copains. Départ à 19h à la Cité du Vin, uniquement sur réservation. Envoyez « RUN » à Marie en message privé sur Instagram pour réserver votre place.",
+      "description": "Une session de running suivie d'une pause chez Copains. Départ à 19h à la Cité du Vin. Réservation directement en ligne — 4€, places limitées à 35 personnes.",
       "special": false,
-      "price": ""
+      "price": "4",
+      "capacity_key": "copains-25"
     },
     {
       "day": "27",
