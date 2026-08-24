@@ -1877,7 +1877,8 @@
       teaser: "Le duo parfait après l'effort : une session Run suivie d'une pause boulangerie chez Copains.",
       city: 'Bordeaux', level: 'Tous niveaux',
       desc: "Reflet s'associe à Copains pour clôturer certaines sessions de running par une pause bien méritée, entre bonnes odeurs de pain frais et bonne humeur.",
-      inclus: ["Avantage réservé aux membres Reflet", "Voir Instagram pour les détails"]
+      inclus: ["Avantage réservé aux membres Reflet", "Réservation obligatoire : envoyer « RUN » à Marie sur Instagram"],
+      marieLink: true
     }
   };
 
@@ -1897,8 +1898,12 @@
     document.getElementById('collabPageInclus').innerHTML = data.inclus.map(t => `<li>${t}</li>`).join('');
 
     const photoEl = document.getElementById('collabPagePhoto');
+    const cardImg = document.querySelector(`.js-open-collab[data-collab="${id}"] .collab-photo img`);
     if(data.detailPhoto){
       photoEl.innerHTML = `<img src="${data.detailPhoto}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">`;
+      photoEl.removeAttribute('data-label');
+    } else if(cardImg){
+      photoEl.innerHTML = `<img src="${cardImg.src}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">`;
       photoEl.removeAttribute('data-label');
     } else {
       photoEl.innerHTML = '';
@@ -1911,7 +1916,7 @@
     `;
 
     const reserveBtn = document.getElementById('collabPageReserveBtn');
-    reserveBtn.textContent = data.price ? 'Ajouter au panier' : (data.instagramLink ? 'Voir sur Instagram' : 'Je suis intéressée');
+    reserveBtn.textContent = data.marieLink ? 'Envoyer "RUN" à Marie' : (data.price ? 'Ajouter au panier' : (data.instagramLink ? 'Voir sur Instagram' : 'Je suis intéressée'));
     reserveBtn.disabled = false;
 
     // Places limitées pour DEFINE (Pilates Reformer) et MOME (déjeuner) — recherche de leur date dans le planning
@@ -1944,6 +1949,10 @@
   document.getElementById('collabPageReserveBtn').addEventListener('click', () => {
     const data = collabPageData[currentCollabId];
     if(!data) return;
+    if(data.marieLink){
+      window.open('https://instagram.com/marie_ithbd', '_blank', 'noopener');
+      return;
+    }
     if(data.price){
       const cartId = currentCollabCapacityKey || currentCollabId;
       addToCart(cartId, data.title, data.price, 'event');
