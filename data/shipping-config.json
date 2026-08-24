@@ -6,12 +6,12 @@
   },
   "relais": {
     "label": "Livraison en point relais (Mondial Relay)",
-    "description": "Indiquez le nom et l'adresse du point relais Mondial Relay que vous souhaitez. Nous vérifierons sa disponibilité avant l'expédition.",
+    "description": "Indiquez le nom et l'adresse du point relais Mondial Relay que vous souhaitez. Nous vérifierons sa disponibilité avant l'expédition. Colis expédiés tous les lundis.",
     "fee": 3.9
   },
   "domicile": {
     "label": "Livraison à domicile (Mondial Relay)",
-    "description": "Livraison directement chez vous, en France métropolitaine.",
+    "description": "Livraison directement chez vous, en France métropolitaine. Colis expédiés tous les lundis.",
     "fee": 7.9
   }
 }
