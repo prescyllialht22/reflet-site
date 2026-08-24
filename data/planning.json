@@ -10,7 +10,7 @@
       "tag": "Run",
       "summary": "Voir Instagram pour l'horaire",
       "time": "Dimanche · voir @reflet.events sur Instagram",
-      "description": "Une session de running suivie d'une pause chez Copains, pour prolonger le moment autour d'une bonne odeur de pain frais. Lieu de rendez-vous et horaire précisés sur Instagram @reflet.events la semaine avant l'événement.",
+      "description": "Une session de running suivie d'une pause chez Copains. Départ à 19h à la Cité du Vin, uniquement sur réservation. Lieu de rendez-vous précisé sur Instagram @reflet.events la semaine avant l'événement.",
       "special": false,
       "price": ""
     },
@@ -31,19 +31,20 @@
       "title": "Déjeuner REFLET × MOME",
       "tag": "Collab",
       "summary": "15 places · sur réservation",
-      "time": "Samedi · voir le CANAL en bio Instagram",
-      "description": "Un déjeuner convivial entre filles chez MOME, café-pâtisserie au cœur de Bordeaux. 15 femmes autour d'une même table pour partager un bon moment, échanger et profiter d'un déjeuner dans une ambiance chaleureuse et décontractée. Uniquement sur réservation, infos dans le CANAL en bio Instagram @reflet.events.",
+      "time": "Samedi · réservation en ligne",
+      "description": "Un déjeuner convivial entre filles chez MOME, café-pâtisserie au cœur de Bordeaux. 15 femmes autour d'une même table pour partager un bon moment, échanger et profiter d'un déjeuner dans une ambiance chaleureuse et décontractée. Réservation directement dans la partie « Collaborations du mois » du site.",
       "special": true,
-      "price": "",
-      "display_tag": "Sortie"
+      "price": "20",
+      "display_tag": "Sortie",
+      "capacity_key": "mome-12"
     },
     {
       "day": "13",
       "month_short": "Sept.",
       "title": "Pilates'expérience",
       "tag": "Pilates",
-      "summary": "9h30-11h · Place du Palais",
-      "time": "9h30-11h · Dimanche · Place du Palais",
+      "summary": "9h-10h30 · Place du Palais",
+      "time": "9h-10h30 · Dimanche · Place du Palais",
       "description": "40 min de Pilates sur tapis, matériel fourni, tous niveaux. Gaufres et thé glacé inclus après la séance. 20€.",
       "special": false,
       "price": "20"
@@ -65,11 +66,12 @@
       "title": "Pilates Reformer × DEFINE",
       "tag": "Collab",
       "summary": "Studio DEFINE · tarif préférentiel",
-      "time": "Samedi · voir @reflet.events sur Instagram",
-      "description": "Une séance de Pilates Reformer au studio DEFINE, à tarif préférentiel réservé aux membres Reflet. Places limitées, infos et réservation sur Instagram @reflet.events.",
+      "time": "Samedi · réservation en ligne",
+      "description": "Une séance de Pilates Reformer au studio DEFINE, à tarif préférentiel réservé aux membres Reflet. Places limitées. Réservation directement dans la partie « Collaborations du mois » du site.",
       "special": false,
-      "price": "",
-      "display_tag": "Pilates"
+      "price": "35",
+      "display_tag": "Pilates",
+      "capacity_key": "define-19"
     },
     {
       "day": "25",
@@ -78,7 +80,7 @@
       "tag": "Run",
       "summary": "Voir Instagram pour l'horaire",
       "time": "Vendredi · voir @reflet.events sur Instagram",
-      "description": "Une session de running suivie d'une pause chez Copains, pour prolonger le moment autour d'une bonne odeur de pain frais. Lieu de rendez-vous et horaire précisés sur Instagram @reflet.events la semaine avant l'événement.",
+      "description": "Une session de running suivie d'une pause chez Copains. Départ à 19h à la Cité du Vin, uniquement sur réservation. Lieu de rendez-vous précisé sur Instagram @reflet.events la semaine avant l'événement.",
       "special": false,
       "price": ""
     },
@@ -87,8 +89,8 @@
       "month_short": "Sept.",
       "title": "Pilates'expérience",
       "tag": "Pilates",
-      "summary": "9h30-11h · Place du Palais",
-      "time": "9h30-11h · Dimanche · Place du Palais",
+      "summary": "9h-10h30 · Place du Palais",
+      "time": "9h-10h30 · Dimanche · Place du Palais",
       "description": "40 min de Pilates sur tapis, matériel fourni, tous niveaux. Gaufres et thé glacé inclus après la séance. 20€.",
       "special": false,
       "price": "20"
