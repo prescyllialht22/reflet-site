@@ -69,6 +69,38 @@
     padding:8px 16px; font-size:13px; cursor:pointer;
   }
   .empty{text-align:center; padding:60px 20px; color:var(--bronze);}
+  .planning-month-row{display:flex; align-items:center; gap:12px; margin-bottom:24px;}
+  .planning-month-row input{flex:1; max-width:280px; font-size:15px; padding:10px 14px;}
+  .planning-event-card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:18px 20px; margin-bottom:14px;
+  }
+  .planning-event-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;}
+  @media(max-width:600px){ .planning-event-grid{grid-template-columns:1fr;} }
+  .planning-field{display:flex; flex-direction:column; gap:4px;}
+  .planning-field label{font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:var(--bronze); font-weight:600;}
+  .planning-field input, .planning-field select, .planning-field textarea{
+    font-family:inherit; font-size:13px; padding:9px 12px; border-radius:8px;
+    border:1px solid var(--line); background:#fff; width:100%;
+  }
+  .planning-field textarea{resize:vertical; min-height:60px;}
+  .planning-field-full{grid-column:1 / -1;}
+  .planning-checkbox-row{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+  .planning-checkbox-row label{font-size:13px;}
+  .planning-event-actions{display:flex; justify-content:flex-end;}
+  .delete-btn{
+    background:none; color:#b3413a; border:1px solid #b3413a; border-radius:8px;
+    padding:7px 14px; font-size:12.5px; cursor:pointer;
+  }
+  .add-event-btn{
+    background:none; color:var(--marron); border:1px dashed var(--bronze); border-radius:12px;
+    padding:14px; font-size:14px; cursor:pointer; width:100%; margin-bottom:20px;
+  }
+  .save-planning-btn{
+    background:var(--marron); color:var(--travertine); border:none; border-radius:999px;
+    padding:12px 28px; font-size:14px; cursor:pointer;
+  }
+  .planning-hint{font-size:12px; color:var(--bronze); margin:0 0 20px; line-height:1.6;}
 </style>
 </head>
 <body>
@@ -83,6 +115,7 @@
     <div class="page-tabs" id="pageTabs">
       <button data-page="orders" class="active">Commandes</button>
       <button data-page="stock">Stock</button>
+      <button data-page="planning">Planning</button>
     </div>
 
     <div id="ordersPage">
@@ -100,6 +133,26 @@
       <h1>Stock</h1>
       <p class="sub">Modifiez une quantité puis cliquez sur Enregistrer.</p>
       <div id="stockList"></div>
+    </div>
+
+    <div id="planningPage" style="display:none;">
+      <h1>Planning</h1>
+      <p class="planning-hint">
+        Le type détermine où l'événement apparaît sur le site (Pilates, Danse, Run) et sa couleur de badge.
+        Pour les collaborations (déjeuner MOME, Pilates Reformer DEFINE...), choisissez « Collaboration » et gardez leur nom habituel dans le titre
+        (ex : garder le mot « MOME » ou « DEFINE ») — le site s'occupe automatiquement du reste (places limitées, etc.).
+        N'oubliez pas de cliquer sur « Enregistrer le planning » tout en bas une fois vos modifications terminées : rien n'est sauvegardé avant ça.
+      </p>
+      <div class="planning-month-row">
+        <div class="planning-field" style="flex:none;">
+          <label>Mois affiché</label>
+          <input type="text" id="planningMonthInput" placeholder="Ex : Octobre">
+        </div>
+      </div>
+      <div id="planningEventsList"></div>
+      <button class="add-event-btn" id="addPlanningEventBtn">+ Ajouter un événement</button>
+      <button class="save-planning-btn" id="savePlanningBtn">Enregistrer le planning</button>
+      <p class="sub" id="planningSaveMsg"></p>
     </div>
   </div>
 
@@ -270,7 +323,9 @@
     const page = e.target.dataset.page;
     document.getElementById('ordersPage').style.display = page === 'orders' ? 'block' : 'none';
     document.getElementById('stockPage').style.display = page === 'stock' ? 'block' : 'none';
+    document.getElementById('planningPage').style.display = page === 'planning' ? 'block' : 'none';
     if (page === 'stock') loadStock();
+    if (page === 'planning') loadPlanning();
   });
 
   async function loadStock(){
@@ -326,6 +381,150 @@
       alert('Erreur lors de la sauvegarde du stock : ' + err.message);
     }
   }
+
+  // Onglet Planning
+  const PLANNING_TAGS = ['Pilates', 'Danse', 'Run', 'Sortie', 'Collaboration'];
+  let planningEvents = [];
+
+  async function loadPlanning(){
+    document.getElementById('planningEventsList').innerHTML = '<p class="empty">Chargement...</p>';
+    try {
+      const res = await fetch('/.netlify/functions/get-planning');
+      const data = await res.json();
+      document.getElementById('planningMonthInput').value = data.month || '';
+      planningEvents = (data.events || []).map(ev => ({
+        ...ev,
+        tag: ev.tag === 'Collab' ? 'Collaboration' : ev.tag
+      }));
+      renderPlanningEvents();
+    } catch(err) {
+      document.getElementById('planningEventsList').innerHTML = '<p class="empty">Erreur de chargement.</p>';
+    }
+  }
+
+  function renderPlanningEvents(){
+    const listEl = document.getElementById('planningEventsList');
+    if(!planningEvents.length){
+      listEl.innerHTML = '<p class="empty">Aucun événement pour l\'instant — ajoutez-en un ci-dessous.</p>';
+      return;
+    }
+    listEl.innerHTML = planningEvents.map((ev, i) => `
+      <div class="planning-event-card" data-index="${i}">
+        <div class="planning-event-grid">
+          <div class="planning-field">
+            <label>Jour du mois</label>
+            <input type="text" class="pe-day" value="${ev.day || ''}" placeholder="Ex : 13">
+          </div>
+          <div class="planning-field">
+            <label>Type</label>
+            <select class="pe-tag">
+              ${PLANNING_TAGS.map(t => `<option value="${t}" ${ev.tag === t ? 'selected' : ''}>${t}</option>`).join('')}
+            </select>
+          </div>
+          <div class="planning-field planning-field-full">
+            <label>Titre</label>
+            <input type="text" class="pe-title" value="${(ev.title || '').replace(/"/g, '&quot;')}" placeholder="Ex : Pilates'expérience">
+          </div>
+          <div class="planning-field">
+            <label>Horaire affiché</label>
+            <input type="text" class="pe-time" value="${(ev.time || '').replace(/"/g, '&quot;')}" placeholder="Ex : 10h · Samedi · Studio DEFINE">
+          </div>
+          <div class="planning-field">
+            <label>Prix en € (vide = gratuit)</label>
+            <input type="text" class="pe-price" value="${ev.price || ''}" placeholder="Ex : 20">
+          </div>
+          <div class="planning-field planning-field-full">
+            <label>Résumé court (affiché dans la liste du planning)</label>
+            <input type="text" class="pe-summary" value="${(ev.summary || '').replace(/"/g, '&quot;')}" placeholder="Ex : 9h-10h30 · Place du Palais">
+          </div>
+          <div class="planning-field planning-field-full">
+            <label>Description complète (affichée en cliquant sur l'événement)</label>
+            <textarea class="pe-desc">${ev.description || ''}</textarea>
+          </div>
+        </div>
+        <div class="planning-checkbox-row">
+          <input type="checkbox" class="pe-special" id="pe-special-${i}" ${ev.special ? 'checked' : ''}>
+          <label for="pe-special-${i}">Mettre en avant cet événement (encadré spécial)</label>
+        </div>
+        <div class="planning-event-actions">
+          <button type="button" class="delete-btn" data-index="${i}">Supprimer cet événement</button>
+        </div>
+      </div>
+    `).join('');
+
+    listEl.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        planningEvents.splice(parseInt(btn.dataset.index, 10), 1);
+        renderPlanningEvents();
+      });
+    });
+  }
+
+  document.getElementById('addPlanningEventBtn').addEventListener('click', () => {
+    planningEvents.push({
+      day: '', title: '', tag: 'Pilates', summary: '', time: '', description: '', special: false, price: ''
+    });
+    renderPlanningEvents();
+  });
+
+  function collectPlanningEventsFromForm(){
+    const cards = [...document.querySelectorAll('.planning-event-card')];
+    return cards.map(card => {
+      const index = parseInt(card.dataset.index, 10);
+      const original = planningEvents[index] || {};
+      const tag = card.querySelector('.pe-tag').value;
+      return {
+        ...original, // conserve les champs avancés non affichés ici (display_tag, capacity_key…)
+        day: card.querySelector('.pe-day').value.trim(),
+        month_short: '', // calculé automatiquement à la sauvegarde à partir du mois
+        title: card.querySelector('.pe-title').value.trim(),
+        tag: tag === 'Collaboration' ? 'Collab' : tag,
+        time: card.querySelector('.pe-time').value.trim(),
+        price: card.querySelector('.pe-price').value.trim(),
+        summary: card.querySelector('.pe-summary').value.trim(),
+        description: card.querySelector('.pe-desc').value.trim(),
+        special: card.querySelector('.pe-special').checked,
+      };
+    });
+  }
+
+  document.getElementById('savePlanningBtn').addEventListener('click', async () => {
+    const month = document.getElementById('planningMonthInput').value.trim();
+    const monthShort = month ? (month.slice(0, 4) + '.') : '';
+    const msgEl = document.getElementById('planningSaveMsg');
+
+    if(!month){
+      msgEl.textContent = 'Merci de renseigner le mois affiché.';
+      return;
+    }
+
+    const events = collectPlanningEventsFromForm().map(ev => ({ ...ev, month_short: monthShort }));
+    for(const ev of events){
+      if(!ev.day || !ev.title){
+        msgEl.textContent = 'Chaque événement doit avoir au minimum un jour et un titre.';
+        return;
+      }
+    }
+
+    msgEl.textContent = 'Enregistrement...';
+    try {
+      const token = await currentUser.jwt();
+      const res = await fetch('/.netlify/functions/update-planning', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ month, events })
+      });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok){
+        msgEl.textContent = 'La sauvegarde a échoué (' + res.status + ') : ' + (data.error || 'erreur inconnue.');
+        return;
+      }
+      msgEl.textContent = 'Planning enregistré ! Les visiteuses le verront tout de suite.';
+      await loadPlanning();
+    } catch(err) {
+      msgEl.textContent = 'Erreur lors de la sauvegarde : ' + err.message;
+    }
+  });
 </script>
 </body>
 </html>
