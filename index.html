@@ -1662,7 +1662,7 @@
   async function loadEventPlanning(){
     if(eventPlanningData) return eventPlanningData;
     try {
-      const res = await fetch('/data/planning.json');
+      const res = await fetch('/.netlify/functions/get-planning');
       eventPlanningData = await res.json();
     } catch(err) { eventPlanningData = { events: [] }; }
     return eventPlanningData;
@@ -2505,18 +2505,28 @@
     window.netlifyIdentity.on('logout', () => renderLoyaltyLoggedOut());
   }
 
-  // Planning du mois — chargé dynamiquement depuis /data/planning.json (éditable via /admin)
+  // Planning du mois — chargé dynamiquement, éditable directement depuis l'admin
   const planningModal = document.getElementById('planningModal');
   const planningModalBillettoLink = document.getElementById('planningModalBillettoLink');
   const planningListEl = document.getElementById('planningList');
 
-  fetch('/data/planning.json')
+  fetch('/.netlify/functions/get-planning')
     .then(r => r.json())
     .then(data => {
       document.getElementById('planningMonth').textContent = data.month || '';
 
       planningListEl.innerHTML = data.events.map(ev => {
-        const autoCapacityKey = ['Pilates','Danse'].includes(ev.tag) ? `${ev.tag.toLowerCase()}-${ev.day}` : '';
+        const titleLower = (ev.title || '').toLowerCase();
+        let autoCapacityKey = '';
+        if(['Pilates','Danse'].includes(ev.tag)){
+          autoCapacityKey = `${ev.tag.toLowerCase()}-${ev.day}`;
+        } else if(titleLower.includes('copains')){
+          autoCapacityKey = `copains-${ev.day}`;
+        } else if(titleLower.includes('mome')){
+          autoCapacityKey = `mome-${ev.day}`;
+        } else if(titleLower.includes('define')){
+          autoCapacityKey = `define-${ev.day}`;
+        }
         const capacityKey = ev.capacity_key || autoCapacityKey;
         return `
         <div class="planning-item${ev.special ? ' planning-item-special' : ''}"
