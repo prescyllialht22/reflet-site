@@ -21,7 +21,7 @@ function generateOrderId() {
 }
 
 async function decrementStock(items) {
-  const store = getStore('stock');
+  const store = getStore({ name: 'stock', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
   let stock = await store.get('current', { type: 'json' });
   if (!stock) stock = { ...INITIAL_STOCK };
 
@@ -36,7 +36,7 @@ async function decrementStock(items) {
 }
 
 async function recordEventCapacity(items) {
-  const store = getStore('event-capacity');
+  const store = getStore({ name: 'event-capacity', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
   let counts = await store.get('counts', { type: 'json' });
   if (!counts) counts = {};
 
@@ -105,7 +105,7 @@ exports.handler = async function (event) {
       paymentIntentId,
     };
 
-    const store = getStore('orders');
+    const store = getStore({ name: 'orders', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
     await store.setJSON(order.orderId, order);
 
     // On maintient aussi un index simple des commandes par email, pour l'espace client
