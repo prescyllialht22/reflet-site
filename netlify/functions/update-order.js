@@ -19,7 +19,7 @@ exports.handler = async function (event, context) {
       return { statusCode: 400, body: JSON.stringify({ error: 'orderId requis' }) };
     }
 
-    const store = getStore('orders');
+    const store = getStore({ name: 'orders', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
     const order = await store.get(orderId, { type: 'json' });
     if (!order) {
       return { statusCode: 404, body: JSON.stringify({ error: 'Commande introuvable' }) };
