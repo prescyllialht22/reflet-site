@@ -20,7 +20,7 @@ const DEFAULT_PLANNING = {
 
 exports.handler = async function () {
   try {
-    const store = getStore('planning');
+    const store = getStore({ name: 'planning', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
     let planning = await store.get('current', { type: 'json' });
     if (!planning) {
       planning = DEFAULT_PLANNING;
