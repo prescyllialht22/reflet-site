@@ -15,7 +15,7 @@ const INITIAL_STOCK = {
 
 exports.handler = async function () {
   try {
-    const store = getStore('stock');
+    const store = getStore({ name: 'stock', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
     let stock = await store.get('current', { type: 'json' });
 
     if (!stock) {
