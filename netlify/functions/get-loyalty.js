@@ -9,7 +9,7 @@ exports.handler = async function (event, context) {
   }
 
   try {
-    const store = getStore('loyalty');
+    const store = getStore({ name: 'loyalty', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
     const key = user.email.trim().toLowerCase();
     const record = await store.get(key, { type: 'json' });
 
