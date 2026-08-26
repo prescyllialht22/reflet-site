@@ -1662,7 +1662,7 @@
   async function loadEventPlanning(){
     if(eventPlanningData) return eventPlanningData;
     try {
-      const res = await fetch('/.netlify/functions/get-planning');
+      const res = await fetch('/data/planning.json');
       eventPlanningData = await res.json();
     } catch(err) { eventPlanningData = { events: [] }; }
     return eventPlanningData;
@@ -2510,7 +2510,7 @@
   const planningModalBillettoLink = document.getElementById('planningModalBillettoLink');
   const planningListEl = document.getElementById('planningList');
 
-  fetch('/.netlify/functions/get-planning')
+  fetch('/data/planning.json')
     .then(r => r.json())
     .then(data => {
       document.getElementById('planningMonth').textContent = data.month || '';
