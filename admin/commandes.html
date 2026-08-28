@@ -68,6 +68,11 @@
     background:var(--marron); color:var(--travertine); border:none; border-radius:8px;
     padding:8px 16px; font-size:13px; cursor:pointer;
   }
+  .resend-email-btn{
+    background:none; color:var(--marron); border:1px solid var(--bronze); border-radius:8px;
+    padding:8px 16px; font-size:13px; cursor:pointer; margin-left:8px;
+  }
+  .resend-email-btn:disabled{opacity:0.6; cursor:not-allowed;}
   .empty{text-align:center; padding:60px 20px; color:var(--bronze);}
   .planning-month-row{display:flex; align-items:center; gap:12px; margin-bottom:24px;}
   .planning-month-row input{flex:1; max-width:280px; font-size:15px; padding:10px 14px;}
@@ -254,10 +259,45 @@
             <strong>Statut :</strong>
             ${statusSelect}
             <button class="save-btn" data-order="${o.orderId}">Enregistrer</button>
+            <button type="button" class="resend-email-btn" data-order="${o.orderId}">Renvoyer le mail de confirmation</button>
           </div>
         </div>
       `;
     }).join('');
+
+    listEl.querySelectorAll('.resend-email-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const order = allOrders.find(o => o.orderId === btn.dataset.order);
+        if(!order) return;
+        btn.disabled = true;
+        btn.textContent = 'Envoi en cours...';
+        try {
+          const res = await fetch('/.netlify/functions/send-ticket-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              paymentIntentId: order.paymentIntentId,
+              email: order.email,
+              prenom: order.prenom,
+              items: order.items,
+              orderId: order.orderId
+            })
+          });
+          const data = await res.json().catch(() => ({}));
+          if(!res.ok || data.ok === false){
+            alert('Échec de l\'envoi : ' + (data.error || data.reason || 'erreur inconnue.'));
+            btn.textContent = 'Renvoyer le mail de confirmation';
+            btn.disabled = false;
+            return;
+          }
+          btn.textContent = 'Mail envoyé ✓';
+        } catch(err){
+          alert('Erreur : ' + err.message);
+          btn.textContent = 'Renvoyer le mail de confirmation';
+          btn.disabled = false;
+        }
+      });
+    });
 
     listEl.querySelectorAll('.save-btn').forEach(btn => {
       btn.addEventListener('click', () => saveOrder(btn.dataset.order));
