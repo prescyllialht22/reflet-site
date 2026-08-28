@@ -61,7 +61,7 @@ exports.handler = async function (event) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Reflet Events <onboarding@resend.dev>',
+        from: 'Reflet Events <billets@reflet.events>',
         to: email,
         subject: `✅ Confirmation de votre commande Reflet — ${reference}`,
         html,
