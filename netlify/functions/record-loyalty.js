@@ -1,5 +1,7 @@
 // Enregistre un événement payé dans l'historique fidélité de la cliente (par email),
-// et envoie un mail à l'équipe dès qu'elle atteint 5 ou 10 événements.
+// et envoie un mail à l'équipe dès qu'elle atteint 5 ou 10 événements réellement effectués
+// (les événements remboursés restent dans l'historique mais ne comptent pas dans le total).
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { getStore } = require('@netlify/blobs');
 
 exports.handler = async function (event) {
@@ -14,7 +16,7 @@ exports.handler = async function (event) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Email et événement requis' }) };
     }
 
-    const store = getStore('loyalty');
+    const store = getStore({ name: 'loyalty', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
     const key = email.trim().toLowerCase();
 
     let record = await store.get(key, { type: 'json' });
@@ -30,7 +32,19 @@ exports.handler = async function (event) {
 
     await store.setJSON(key, record);
 
-    const count = record.events.length;
+    // On ne compte, pour les paliers de fidélité, que les événements qui n'ont pas été remboursés
+    const refundChecks = await Promise.all(
+      record.events.map(async (ev) => {
+        if (!ev.paymentIntentId) return false;
+        try {
+          const pi = await stripe.paymentIntents.retrieve(ev.paymentIntentId, { expand: ['latest_charge'] });
+          return !!(pi.latest_charge && pi.latest_charge.refunded);
+        } catch (e) {
+          return false;
+        }
+      })
+    );
+    const count = refundChecks.filter(refunded => !refunded).length;
     let notified = false;
 
     if (count === 5 || count === 10) {
