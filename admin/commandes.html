@@ -301,39 +301,97 @@
 
   // Vue "Par événement" — regroupe les billets vendus par date précise (ex: pilates-13),
   // avec le nombre de participantes et, quand une limite existe, la jauge de remplissage.
-  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 15, copains: 35 };
+
+  // Reconnaît la "famille" d'un billet à partir de son libellé (peu importe l'identifiant
+  // technique utilisé au moment de l'achat, qui a changé plusieurs fois au fil du temps),
+  // puis tente d'en extraire la date pour regrouper précisément billet par date.
+  const EVENT_FAMILIES = [
+    { key: 'pilates', match: /pilates.?exp[ée]rience/i, max: 10 },
+    { key: 'danse', match: /danse/i, max: 15 },
+    { key: 'copains', match: /run.*copains/i, max: 35 },
+    { key: 'run', match: /run reflet/i, max: null },
+    { key: 'define', match: /define/i, max: 11 },
+    { key: 'mome', match: /mome/i, max: 15 },
+  ];
+
+  function detectFamily(label){
+    const found = EVENT_FAMILIES.find(f => f.match.test(label));
+    return found || { key: label, match: null, max: null };
+  }
+
+  function extractDate(label){
+    const m = label.match(/(\d{1,2})\s*(sept|septembre|oct|octobre|nov|novembre|d[ée]c|d[ée]cembre|jan|janvier|f[ée]v|f[ée]vrier|mars|avr|avril|mai|juin|juil|juillet|ao[ûu]t)/i);
+    return m ? m[0] : null;
+  }
 
   function renderByEventView(){
-    const groups = {};
+    // 1ère passe : regroupe chaque billet par famille, en séparant les entrées datées
+    // (par date précise) des entrées historiques sans date lisible.
+    const byFamily = {};
 
     allOrders.forEach(order => {
       (order.items || []).forEach(item => {
         if(item.type !== 'event') return;
-        if(!groups[item.id]){
-          groups[item.id] = { label: item.name, count: 0, participants: [] };
+        const family = detectFamily(item.name);
+        const date = extractDate(item.name);
+        if(!byFamily[family.key]) byFamily[family.key] = { max: family.max, dated: {}, dateless: [] };
+
+        const entry = {
+          prenom: order.prenom || '', nom: order.nom || '', email: order.email || '',
+          qty: item.qty || 1, refunded: !!order.refunded,
+        };
+
+        if(date){
+          if(!byFamily[family.key].dated[date]){
+            byFamily[family.key].dated[date] = { label: item.name, count: 0, participants: [] };
+          }
+          if(!order.refunded) byFamily[family.key].dated[date].count += item.qty || 1;
+          byFamily[family.key].dated[date].participants.push(entry);
+        } else {
+          byFamily[family.key].dateless.push({ ...entry, label: item.name });
         }
-        groups[item.id].count += item.qty || 1;
-        groups[item.id].participants.push({
-          prenom: order.prenom || '',
-          nom: order.nom || '',
-          email: order.email || '',
-          qty: item.qty || 1,
-        });
       });
     });
 
-    const sortedKeys = Object.keys(groups).sort((a, b) => groups[a].label.localeCompare(groups[b].label));
+    // 2ème passe : construit la liste finale de groupes à afficher — si une famille n'a
+    // qu'une seule date connue, les entrées sans date lisible lui sont rattachées
+    // automatiquement (aucune ambiguïté possible) ; sinon elles restent à part, clairement
+    // signalées, plutôt que d'être rattachées au hasard à la mauvaise date.
+    const groups = [];
+    Object.keys(byFamily).forEach(familyKey => {
+      const fam = byFamily[familyKey];
+      const dateKeys = Object.keys(fam.dated);
+
+      if(dateKeys.length === 1 && fam.dateless.length){
+        const only = fam.dated[dateKeys[0]];
+        fam.dateless.forEach(d => {
+          if(!d.refunded) only.count += d.qty;
+          only.participants.push(d);
+        });
+        fam.dateless = [];
+      }
+
+      dateKeys.forEach(dk => groups.push({ label: fam.dated[dk].label, count: fam.dated[dk].count, participants: fam.dated[dk].participants, max: fam.max }));
+
+      if(fam.dateless.length){
+        const count = fam.dateless.filter(d => !d.refunded).reduce((sum, d) => sum + d.qty, 0);
+        groups.push({
+          label: (fam.dateless[0].label) + ' — date à vérifier',
+          count, participants: fam.dateless, max: null,
+        });
+      }
+    });
+
+    groups.sort((a, b) => a.label.localeCompare(b.label));
     const byEventEl = document.getElementById('byEventView');
 
-    if(!sortedKeys.length){
+    if(!groups.length){
       byEventEl.innerHTML = '<p class="empty">Aucun billet d\'événement pour l\'instant.</p>';
       return;
     }
 
-    byEventEl.innerHTML = sortedKeys.map((key, i) => {
-      const g = groups[key];
-      const group = key.split('-')[0];
-      const max = CAPACITY_LIMITS[group];
+    byEventEl.innerHTML = groups.map((g, i) => {
+      const max = g.max;
       const isFull = max && g.count >= max;
       const pct = max ? Math.min(100, Math.round((g.count / max) * 100)) : null;
 
@@ -345,7 +403,7 @@
           </div>
           ${max ? `<div class="event-group-bar"><div class="event-group-bar-fill ${isFull ? 'full' : ''}" style="width:${pct}%;"></div></div>` : ''}
           <div class="event-group-participants" id="event-group-participants-${i}">
-            <ul>${g.participants.map(p => `<li>${p.prenom} ${p.nom} — ${p.email}${p.qty > 1 ? ' (x' + p.qty + ')' : ''}</li>`).join('')}</ul>
+            <ul>${g.participants.map(p => `<li>${p.prenom} ${p.nom} — ${p.email}${p.qty > 1 ? ' (x' + p.qty + ')' : ''}${p.refunded ? ' <span style="color:#b3413a; font-size:11px;">(Remboursé)</span>' : ''}</li>`).join('')}</ul>
           </div>
         </div>
       `;
