@@ -29,6 +29,27 @@
     padding:8px 16px; font-size:12.5px; cursor:pointer; color:var(--ink);
   }
   .filters button.active{background:var(--marron); color:var(--travertine); border-color:var(--marron);}
+  .view-toggle-btn{
+    background:var(--card); border:1px solid var(--line); border-radius:999px;
+    padding:8px 16px; font-size:12.5px; cursor:pointer; color:var(--ink);
+  }
+  .view-toggle-btn.active{background:var(--marron); color:var(--travertine); border-color:var(--marron);}
+  .event-group-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:16px 20px; margin-bottom:12px; cursor:pointer;
+  }
+  .event-group-header{display:flex; justify-content:space-between; align-items:center; gap:12px;}
+  .event-group-title{font-size:15px; font-weight:600;}
+  .event-group-count{font-size:15px; font-weight:700; color:var(--marron); white-space:nowrap;}
+  .event-group-count.full{color:#b3413a;}
+  .event-group-bar{height:6px; background:var(--line); border-radius:999px; margin-top:10px; overflow:hidden;}
+  .event-group-bar-fill{height:100%; background:var(--marron); border-radius:999px;}
+  .event-group-bar-fill.full{background:#b3413a;}
+  .event-group-participants{display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);}
+  .event-group-participants.open{display:block;}
+  .event-group-participants ul{list-style:none; padding:0; margin:0;}
+  .event-group-participants li{padding:6px 0; font-size:13px; color:var(--marron-soft); border-top:1px solid var(--line);}
+  .event-group-participants li:first-child{border-top:none;}
   .page-tabs{display:flex; gap:10px; margin-bottom:24px; border-bottom:1px solid var(--line); padding-bottom:12px;}
   .page-tabs button{
     background:none; border:none; font-size:14px; padding:6px 4px; cursor:pointer;
@@ -129,6 +150,7 @@
       <div style="background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:20px;">
         <p style="font-size:13px; color:var(--marron-soft); margin:0 0 10px;">Rattrape les commandes et la fidélité pour les paiements Stripe passés qui ne se sont pas enregistrés correctement. Sans risque à relancer plusieurs fois.</p>
         <button type="button" id="backfillBtn" style="background:var(--marron); color:var(--travertine); border:none; border-radius:8px; padding:10px 18px; font-size:13px; cursor:pointer;">Rattraper depuis Stripe</button>
+        <button type="button" id="cleanupBtn" style="background:none; color:#b3413a; border:1px solid #b3413a; border-radius:8px; padding:10px 18px; font-size:13px; cursor:pointer; margin-left:8px;">Retirer les paiements remboursés</button>
         <p class="sub" id="backfillMsg" style="margin-top:10px;"></p>
       </div>
       <div class="filters" id="filters">
@@ -136,7 +158,12 @@
         <button data-filter="products">Avec livraison</button>
         <button data-filter="events">Événements uniquement</button>
       </div>
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <button type="button" id="viewListBtn" class="view-toggle-btn active">Liste</button>
+        <button type="button" id="viewByEventBtn" class="view-toggle-btn">Par événement</button>
+      </div>
       <div id="ordersList"></div>
+      <div id="byEventView" style="display:none;"></div>
     </div>
 
     <div id="stockPage" style="display:none;">
@@ -205,6 +232,32 @@
     await loadOrders();
   }
 
+  document.getElementById('cleanupBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('cleanupBtn');
+    const msgEl = document.getElementById('backfillMsg');
+    btn.disabled = true;
+    btn.textContent = 'Nettoyage en cours...';
+    msgEl.textContent = '';
+    try {
+      const token = await currentUser.jwt();
+      const res = await fetch('/.netlify/functions/cleanup-refunded', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok){
+        msgEl.textContent = 'Échec (' + res.status + ') : ' + (data.error || 'erreur inconnue.');
+      } else {
+        msgEl.textContent = `Terminé — ${data.ordersChecked} commande(s) vérifiée(s), ${data.ordersRemoved} retirée(s) (remboursées), ${data.loyaltyEventsRemoved} entrée(s) fidélité retirée(s).`;
+        await loadOrders();
+      }
+    } catch(err) {
+      msgEl.textContent = 'Erreur : ' + err.message;
+    }
+    btn.disabled = false;
+    btn.textContent = 'Retirer les paiements remboursés';
+  });
+
   document.getElementById('backfillBtn').addEventListener('click', async () => {
     const btn = document.getElementById('backfillBtn');
     const msgEl = document.getElementById('backfillMsg');
@@ -245,6 +298,82 @@
       document.getElementById('ordersList').innerHTML = '<p class="empty">Erreur de chargement.</p>';
     }
   }
+
+  // Vue "Par événement" — regroupe les billets vendus par date précise (ex: pilates-13),
+  // avec le nombre de participantes et, quand une limite existe, la jauge de remplissage.
+  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 15, copains: 35 };
+
+  function renderByEventView(){
+    const groups = {};
+
+    allOrders.forEach(order => {
+      (order.items || []).forEach(item => {
+        if(item.type !== 'event') return;
+        if(!groups[item.id]){
+          groups[item.id] = { label: item.name, count: 0, participants: [] };
+        }
+        groups[item.id].count += item.qty || 1;
+        groups[item.id].participants.push({
+          prenom: order.prenom || '',
+          nom: order.nom || '',
+          email: order.email || '',
+          qty: item.qty || 1,
+        });
+      });
+    });
+
+    const sortedKeys = Object.keys(groups).sort((a, b) => groups[a].label.localeCompare(groups[b].label));
+    const byEventEl = document.getElementById('byEventView');
+
+    if(!sortedKeys.length){
+      byEventEl.innerHTML = '<p class="empty">Aucun billet d\'événement pour l\'instant.</p>';
+      return;
+    }
+
+    byEventEl.innerHTML = sortedKeys.map((key, i) => {
+      const g = groups[key];
+      const group = key.split('-')[0];
+      const max = CAPACITY_LIMITS[group];
+      const isFull = max && g.count >= max;
+      const pct = max ? Math.min(100, Math.round((g.count / max) * 100)) : null;
+
+      return `
+        <div class="event-group-card" data-index="${i}">
+          <div class="event-group-header">
+            <span class="event-group-title">${g.label}</span>
+            <span class="event-group-count ${isFull ? 'full' : ''}">${g.count}${max ? ' / ' + max : ' participante(s)'}</span>
+          </div>
+          ${max ? `<div class="event-group-bar"><div class="event-group-bar-fill ${isFull ? 'full' : ''}" style="width:${pct}%;"></div></div>` : ''}
+          <div class="event-group-participants" id="event-group-participants-${i}">
+            <ul>${g.participants.map(p => `<li>${p.prenom} ${p.nom} — ${p.email}${p.qty > 1 ? ' (x' + p.qty + ')' : ''}</li>`).join('')}</ul>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    byEventEl.querySelectorAll('.event-group-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.getElementById('event-group-participants-' + card.dataset.index).classList.toggle('open');
+      });
+    });
+  }
+
+  document.getElementById('viewListBtn').addEventListener('click', () => {
+    document.getElementById('viewListBtn').classList.add('active');
+    document.getElementById('viewByEventBtn').classList.remove('active');
+    document.getElementById('ordersList').style.display = 'block';
+    document.getElementById('filters').style.display = 'flex';
+    document.getElementById('byEventView').style.display = 'none';
+  });
+
+  document.getElementById('viewByEventBtn').addEventListener('click', () => {
+    document.getElementById('viewByEventBtn').classList.add('active');
+    document.getElementById('viewListBtn').classList.remove('active');
+    document.getElementById('ordersList').style.display = 'none';
+    document.getElementById('filters').style.display = 'none';
+    document.getElementById('byEventView').style.display = 'block';
+    renderByEventView();
+  });
 
   function renderOrders(){
     const countEl = document.getElementById('orderCount');
