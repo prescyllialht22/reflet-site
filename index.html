@@ -2476,13 +2476,13 @@
       });
       const data = await res.json();
       const events = data.events || [];
-      document.getElementById('loyaltyCount').textContent = events.length;
+      document.getElementById('loyaltyCount').textContent = data.count !== undefined ? data.count : events.length;
 
       if(events.length === 0){
         document.getElementById('loyaltyEventsList').innerHTML = '<p style="font-size:13px; color:var(--marron-soft);">Aucun événement payé enregistré pour l\'instant.</p>';
       } else {
         document.getElementById('loyaltyEventsList').innerHTML = '<ul style="list-style:none; padding:0; margin:0; font-size:13.5px; color:var(--marron-soft);">' +
-          events.map(ev => `<li style="padding:8px 0; border-top:1px solid var(--line);">${ev.eventName} — ${new Date(ev.date).toLocaleDateString('fr-FR')}</li>`).join('') +
+          events.map(ev => `<li style="padding:8px 0; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:10px;"><span>${ev.eventName} — ${new Date(ev.date).toLocaleDateString('fr-FR')}</span>${ev.refunded ? '<span style="font-size:11px; color:#b3413a; white-space:nowrap;">Remboursé</span>' : ''}</li>`).join('') +
           '</ul>';
       }
     } catch(err) {
