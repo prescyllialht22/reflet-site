@@ -162,9 +162,11 @@
       <div style="display:flex; gap:8px; margin-bottom:20px;">
         <button type="button" id="viewListBtn" class="view-toggle-btn active">Liste</button>
         <button type="button" id="viewByEventBtn" class="view-toggle-btn">Par événement</button>
+        <button type="button" id="viewRawBtn" class="view-toggle-btn">Données brutes</button>
       </div>
       <div id="ordersList"></div>
       <div id="byEventView" style="display:none;"></div>
+      <div id="rawView" style="display:none;"></div>
     </div>
 
     <div id="stockPage" style="display:none;">
@@ -462,19 +464,90 @@
   document.getElementById('viewListBtn').addEventListener('click', () => {
     document.getElementById('viewListBtn').classList.add('active');
     document.getElementById('viewByEventBtn').classList.remove('active');
+    document.getElementById('viewRawBtn').classList.remove('active');
     document.getElementById('ordersList').style.display = 'block';
     document.getElementById('filters').style.display = 'flex';
     document.getElementById('byEventView').style.display = 'none';
+    document.getElementById('rawView').style.display = 'none';
   });
 
   document.getElementById('viewByEventBtn').addEventListener('click', () => {
     document.getElementById('viewByEventBtn').classList.add('active');
     document.getElementById('viewListBtn').classList.remove('active');
+    document.getElementById('viewRawBtn').classList.remove('active');
     document.getElementById('ordersList').style.display = 'none';
     document.getElementById('filters').style.display = 'none';
     document.getElementById('byEventView').style.display = 'block';
+    document.getElementById('rawView').style.display = 'none';
     renderByEventView();
   });
+
+  document.getElementById('viewRawBtn').addEventListener('click', () => {
+    document.getElementById('viewRawBtn').classList.add('active');
+    document.getElementById('viewListBtn').classList.remove('active');
+    document.getElementById('viewByEventBtn').classList.remove('active');
+    document.getElementById('ordersList').style.display = 'none';
+    document.getElementById('filters').style.display = 'none';
+    document.getElementById('byEventView').style.display = 'none';
+    document.getElementById('rawView').style.display = 'block';
+    renderRawView();
+  });
+
+  // Vue "Données brutes" — aucun regroupement, aucune interprétation : chaque billet
+  // d'événement de chaque commande, exactement tel qu'il est enregistré, pour vérifier
+  // soi-même sans avoir à faire confiance à un système de reconnaissance automatique.
+  function renderRawView(){
+    const rows = [];
+    allOrders.forEach(order => {
+      (order.items || []).forEach(item => {
+        if(item.type !== 'event') return;
+        rows.push({
+          name: item.name,
+          id: item.id,
+          qty: item.qty || 1,
+          date: order.date,
+          email: order.email,
+          refunded: !!order.refunded,
+          orderId: order.orderId,
+        });
+      });
+    });
+    rows.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const rawEl = document.getElementById('rawView');
+    if(!rows.length){
+      rawEl.innerHTML = '<p class="empty">Aucun billet d\'événement.</p>';
+      return;
+    }
+    rawEl.innerHTML = `
+      <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+        <thead>
+          <tr style="text-align:left; border-bottom:2px solid var(--line);">
+            <th style="padding:8px 6px;">Libellé (item.name)</th>
+            <th style="padding:8px 6px;">Identifiant (item.id)</th>
+            <th style="padding:8px 6px;">Qté</th>
+            <th style="padding:8px 6px;">Date paiement</th>
+            <th style="padding:8px 6px;">Cliente</th>
+            <th style="padding:8px 6px;">Remboursé</th>
+            <th style="padding:8px 6px;">N° commande</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr style="border-bottom:1px solid var(--line); ${r.refunded ? 'opacity:0.5;' : ''}">
+              <td style="padding:6px;">${r.name}</td>
+              <td style="padding:6px; font-family:monospace;">${r.id}</td>
+              <td style="padding:6px;">${r.qty}</td>
+              <td style="padding:6px;">${new Date(r.date).toLocaleDateString('fr-FR')}</td>
+              <td style="padding:6px;">${r.email}</td>
+              <td style="padding:6px;">${r.refunded ? 'Oui' : 'Non'}</td>
+              <td style="padding:6px; font-family:monospace;">${r.orderId}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
 
   function renderOrders(){
     const countEl = document.getElementById('orderCount');
