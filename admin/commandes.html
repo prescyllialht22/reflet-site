@@ -446,7 +446,7 @@
           </div>
           ${max ? `<div class="event-group-bar"><div class="event-group-bar-fill ${isFull ? 'full' : ''}" style="width:${pct}%;"></div></div>` : ''}
           <div class="event-group-participants" id="event-group-participants-${i}">
-            <ul>${g.participants.map(p => `<li>${p.prenom} ${p.nom} — ${p.email}${p.qty > 1 ? ' (x' + p.qty + ')' : ''}${p.refunded ? ' <span style="color:#b3413a; font-size:11px;">(Remboursé)</span>' : ''}</li>`).join('')}</ul>
+            <ul>${g.participants.map(p => `<li>${p.prenom} ${p.nom} — ${p.email}${p.qty > 1 ? ' (x' + p.qty + ')' : ''}</li>`).join('')}</ul>
           </div>
         </div>
       `;
