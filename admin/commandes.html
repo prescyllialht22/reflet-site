@@ -162,11 +162,9 @@
       <div style="display:flex; gap:8px; margin-bottom:20px;">
         <button type="button" id="viewListBtn" class="view-toggle-btn active">Liste</button>
         <button type="button" id="viewByEventBtn" class="view-toggle-btn">Par événement</button>
-        <button type="button" id="viewRawBtn" class="view-toggle-btn">Données brutes</button>
       </div>
       <div id="ordersList"></div>
       <div id="byEventView" style="display:none;"></div>
-      <div id="rawView" style="display:none;"></div>
     </div>
 
     <div id="stockPage" style="display:none;">
@@ -331,111 +329,78 @@
   // Vue "Par événement" — regroupe les billets vendus par date précise (ex: pilates-13),
   // avec le nombre de participantes et, quand une limite existe, la jauge de remplissage.
 
-  // Reconnaît la "famille" d'un billet à partir de son libellé (peu importe l'identifiant
-  // technique utilisé au moment de l'achat, qui a changé plusieurs fois au fil du temps),
-  // puis tente d'en extraire la date pour regrouper précisément billet par date.
-  const EVENT_FAMILIES = [
-    { key: 'pilates', match: /pilates.?exp[ée]rience/i, max: 10 },
-    { key: 'danse', match: /danse/i, max: 15 },
-    { key: 'copains', match: /run.*copains/i, max: 35 },
-    { key: 'run', match: /run reflet/i, max: null },
-    { key: 'define', match: /define/i, max: 11 },
-    { key: 'mome', match: /mome/i, max: 15 },
+  // Reconnaît la famille d'un billet à partir de son identifiant technique propre
+  // (ex: "pilates-13"), fiable pour toute réservation faite depuis la correction de ce
+  // système. Sert uniquement à retrouver le nom lisible et la limite de places.
+  const FAMILY_LABELS = {
+    pilates: { label: "Pilates'expérience", max: 10 },
+    danse: { label: 'Danse by REFLET', max: 15 },
+    copains: { label: 'Run × Copains', max: 35 },
+    define: { label: 'Pilates Reformer × DEFINE', max: 11 },
+    mome: { label: 'Déjeuner REFLET × MOME', max: 15 },
+  };
+
+  // Pour les anciennes commandes dont l'identifiant ne suit pas ce format propre
+  // (id-jour), on reconnaît quand même la famille par mot-clé dans le libellé, mais on
+  // ne tente plus de deviner la date exacte à partir du texte — trop peu fiable.
+  const LEGACY_FAMILY_MATCH = [
+    { key: 'pilates', match: /pilates.?exp[ée]rience/i },
+    { key: 'danse', match: /danse/i },
+    { key: 'copains', match: /run.*copains/i },
+    { key: 'define', match: /define/i },
+    { key: 'mome', match: /mome/i },
   ];
 
-  function detectFamily(label){
-    const found = EVENT_FAMILIES.find(f => f.match.test(label));
-    return found || { key: label, match: null, max: null };
-  }
-
-  function extractDate(label){
-    const m = label.match(/(\d{1,2})\s*(sept|septembre|oct|octobre|nov|novembre|d[ée]c|d[ée]cembre|jan|janvier|f[ée]v|f[ée]vrier|mars|avr|avril|mai|juin|juil|juillet|ao[ûu]t)/i);
-    if(!m) return null;
-    const day = m[1].padStart(2, '0');
-    const monthMap = {
-      jan:'jan', janvier:'jan', fev:'fév', 'fév':'fév', fevrier:'fév', 'février':'fév',
-      mars:'mars', avr:'avr', avril:'avr', mai:'mai', juin:'juin',
-      juil:'juil', juillet:'juil', aout:'août', 'août':'août',
-      sept:'sept', septembre:'sept', oct:'oct', octobre:'oct',
-      nov:'nov', novembre:'nov', dec:'déc', 'déc':'déc', decembre:'déc', 'décembre':'déc',
-    };
-    const month = monthMap[m[2].toLowerCase()] || m[2].toLowerCase();
-    return `${day} ${month}`; // ex: "13 sept" — même forme peu importe le texte d'origine
-  }
-
   function renderByEventView(){
-    // 1ère passe : regroupe chaque billet par famille, en séparant les entrées datées
-    // (par date précise) des entrées historiques sans date lisible.
-    const byFamily = {};
+    // Chaque groupe est identifié par une clé stable : soit l'identifiant technique
+    // propre (ex: "pilates-13"), soit "légacy:<famille>" pour les anciennes commandes
+    // qu'on ne peut pas rattacher à une date précise avec certitude.
+    const groups = {};
 
     allOrders.forEach(order => {
       (order.items || []).forEach(item => {
         if(item.type !== 'event') return;
-        const family = detectFamily(item.name);
-        const date = extractDate(item.name);
-        if(!byFamily[family.key]) byFamily[family.key] = { max: family.max, dated: {}, dateless: [] };
 
-        const entry = {
+        const cleanMatch = item.id && item.id.match(/^([a-z]+)-(\d{1,2})$/);
+        let groupKey, label, max;
+
+        if(cleanMatch && FAMILY_LABELS[cleanMatch[1]]){
+          const family = cleanMatch[1];
+          const day = cleanMatch[2].padStart(2, '0');
+          groupKey = `${family}-${day}`;
+          label = item.name; // déjà bien formaté (ex: "Pilates'expérience — 13 sept") pour toute commande récente
+          max = FAMILY_LABELS[family].max;
+        } else {
+          const legacy = LEGACY_FAMILY_MATCH.find(f => f.match.test(item.name || ''));
+          const family = legacy ? legacy.key : 'autre';
+          groupKey = `légacy:${family}`;
+          label = (FAMILY_LABELS[family] ? FAMILY_LABELS[family].label : item.name) + ' — anciennes commandes (date à vérifier au cas par cas)';
+          max = null;
+        }
+
+        if(!groups[groupKey]){
+          groups[groupKey] = { label, count: 0, participants: [], max };
+        }
+        if(!order.refunded){
+          groups[groupKey].count += item.qty || 1;
+        }
+        groups[groupKey].participants.push({
           prenom: order.prenom || '', nom: order.nom || '', email: order.email || '',
           qty: item.qty || 1, refunded: !!order.refunded,
-        };
-
-        if(date){
-          if(!byFamily[family.key].dated[date]){
-            byFamily[family.key].dated[date] = { label: item.name, count: 0, participants: [] };
-          }
-          if(!order.refunded) byFamily[family.key].dated[date].count += item.qty || 1;
-          byFamily[family.key].dated[date].participants.push(entry);
-        } else {
-          byFamily[family.key].dateless.push({ ...entry, label: item.name });
-        }
+        });
       });
     });
 
-    // 2ème passe : construit la liste finale de groupes à afficher — si une famille n'a
-    // qu'une seule date connue, les entrées sans date lisible lui sont rattachées
-    // automatiquement (aucune ambiguïté possible) ; sinon elles restent à part, clairement
-    // signalées, plutôt que d'être rattachées au hasard à la mauvaise date.
-    const groups = [];
-    Object.keys(byFamily).forEach(familyKey => {
-      const fam = byFamily[familyKey];
-      const dateKeys = Object.keys(fam.dated);
-
-      if(dateKeys.length === 1 && fam.dateless.length){
-        const only = fam.dated[dateKeys[0]];
-        fam.dateless.forEach(d => {
-          if(!d.refunded) only.count += d.qty;
-          only.participants.push(d);
-        });
-        fam.dateless = [];
-      }
-
-      dateKeys.forEach(dk => groups.push({ label: fam.dated[dk].label, count: fam.dated[dk].count, participants: fam.dated[dk].participants, max: fam.max }));
-
-      if(fam.dateless.length){
-        if(dateKeys.length === 0){
-          // Aucune date connue du tout pour cette famille — rien à distinguer, un seul groupe
-          const count = fam.dateless.filter(d => !d.refunded).reduce((sum, d) => sum + d.qty, 0);
-          groups.push({ label: fam.dateless[0].label, count, participants: fam.dateless, max: fam.max });
-        } else {
-          const count = fam.dateless.filter(d => !d.refunded).reduce((sum, d) => sum + d.qty, 0);
-          groups.push({
-            label: (fam.dateless[0].label) + ' — date à vérifier',
-            count, participants: fam.dateless, max: null,
-          });
-        }
-      }
-    });
-
-    groups.sort((a, b) => a.label.localeCompare(b.label));
+    const sortedKeys = Object.keys(groups).sort((a, b) => groups[a].label.localeCompare(groups[b].label));
     const byEventEl = document.getElementById('byEventView');
 
-    if(!groups.length){
+    if(!sortedKeys.length){
       byEventEl.innerHTML = '<p class="empty">Aucun billet d\'événement pour l\'instant.</p>';
       return;
     }
 
-    byEventEl.innerHTML = groups.map((g, i) => {
+    byEventEl.innerHTML = sortedKeys.map((key, i) => {
+      const g = groups[key];
       const max = g.max;
       const isFull = max && g.count >= max;
       const pct = max ? Math.min(100, Math.round((g.count / max) * 100)) : null;
@@ -464,90 +429,19 @@
   document.getElementById('viewListBtn').addEventListener('click', () => {
     document.getElementById('viewListBtn').classList.add('active');
     document.getElementById('viewByEventBtn').classList.remove('active');
-    document.getElementById('viewRawBtn').classList.remove('active');
     document.getElementById('ordersList').style.display = 'block';
     document.getElementById('filters').style.display = 'flex';
     document.getElementById('byEventView').style.display = 'none';
-    document.getElementById('rawView').style.display = 'none';
   });
 
   document.getElementById('viewByEventBtn').addEventListener('click', () => {
     document.getElementById('viewByEventBtn').classList.add('active');
     document.getElementById('viewListBtn').classList.remove('active');
-    document.getElementById('viewRawBtn').classList.remove('active');
     document.getElementById('ordersList').style.display = 'none';
     document.getElementById('filters').style.display = 'none';
     document.getElementById('byEventView').style.display = 'block';
-    document.getElementById('rawView').style.display = 'none';
     renderByEventView();
   });
-
-  document.getElementById('viewRawBtn').addEventListener('click', () => {
-    document.getElementById('viewRawBtn').classList.add('active');
-    document.getElementById('viewListBtn').classList.remove('active');
-    document.getElementById('viewByEventBtn').classList.remove('active');
-    document.getElementById('ordersList').style.display = 'none';
-    document.getElementById('filters').style.display = 'none';
-    document.getElementById('byEventView').style.display = 'none';
-    document.getElementById('rawView').style.display = 'block';
-    renderRawView();
-  });
-
-  // Vue "Données brutes" — aucun regroupement, aucune interprétation : chaque billet
-  // d'événement de chaque commande, exactement tel qu'il est enregistré, pour vérifier
-  // soi-même sans avoir à faire confiance à un système de reconnaissance automatique.
-  function renderRawView(){
-    const rows = [];
-    allOrders.forEach(order => {
-      (order.items || []).forEach(item => {
-        if(item.type !== 'event') return;
-        rows.push({
-          name: item.name,
-          id: item.id,
-          qty: item.qty || 1,
-          date: order.date,
-          email: order.email,
-          refunded: !!order.refunded,
-          orderId: order.orderId,
-        });
-      });
-    });
-    rows.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    const rawEl = document.getElementById('rawView');
-    if(!rows.length){
-      rawEl.innerHTML = '<p class="empty">Aucun billet d\'événement.</p>';
-      return;
-    }
-    rawEl.innerHTML = `
-      <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
-        <thead>
-          <tr style="text-align:left; border-bottom:2px solid var(--line);">
-            <th style="padding:8px 6px;">Libellé (item.name)</th>
-            <th style="padding:8px 6px;">Identifiant (item.id)</th>
-            <th style="padding:8px 6px;">Qté</th>
-            <th style="padding:8px 6px;">Date paiement</th>
-            <th style="padding:8px 6px;">Cliente</th>
-            <th style="padding:8px 6px;">Remboursé</th>
-            <th style="padding:8px 6px;">N° commande</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows.map(r => `
-            <tr style="border-bottom:1px solid var(--line); ${r.refunded ? 'opacity:0.5;' : ''}">
-              <td style="padding:6px;">${r.name}</td>
-              <td style="padding:6px; font-family:monospace;">${r.id}</td>
-              <td style="padding:6px;">${r.qty}</td>
-              <td style="padding:6px;">${new Date(r.date).toLocaleDateString('fr-FR')}</td>
-              <td style="padding:6px;">${r.email}</td>
-              <td style="padding:6px;">${r.refunded ? 'Oui' : 'Non'}</td>
-              <td style="padding:6px; font-family:monospace;">${r.orderId}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
-  }
 
   function renderOrders(){
     const countEl = document.getElementById('orderCount');
