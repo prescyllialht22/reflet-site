@@ -292,9 +292,6 @@
     mome: { label: 'Déjeuner REFLET × MOME', max: 15 },
   };
 
-  // Pour les anciennes commandes dont l'identifiant ne suit pas ce format propre
-  // (id-jour), on reconnaît quand même la famille par mot-clé dans le libellé, mais on
-  // ne tente plus de deviner la date exacte à partir du texte — trop peu fiable.
   const LEGACY_FAMILY_MATCH = [
     { key: 'pilates', match: /pilates.?exp[ée]rience/i },
     { key: 'danse', match: /danse/i },
@@ -303,54 +300,99 @@
     { key: 'mome', match: /mome/i },
   ];
 
-  function renderByEventView(){
-    // Chaque groupe est identifié par une clé stable : soit l'identifiant technique
-    // propre (ex: "pilates-13"), soit "légacy:<famille>" pour les anciennes commandes
-    // qu'on ne peut pas rattacher à une date précise avec certitude.
-    const groups = {};
+  function extractDay(label){
+    const m = (label || '').match(/(\d{1,2})\s*(sept|septembre|oct|octobre|nov|novembre|d[ée]c|d[ée]cembre|jan|janvier|f[ée]v|f[ée]vrier|mars|avr|avril|mai|juin|juil|juillet|ao[ûu]t)/i);
+    return m ? m[1].padStart(2, '0') : null;
+  }
 
+  async function renderByEventView(){
+    // Récupère le planning actuel, pour retrouver la bonne date des familles qui n'ont
+    // qu'un seul rendez-vous ce mois-ci et dont le texte ne précise jamais le jour.
+    let planningDayByFamily = {};
+    try {
+      const res = await fetch('/data/planning.json');
+      const planning = await res.json();
+      (planning.events || []).forEach(ev => {
+        const fam = LEGACY_FAMILY_MATCH.find(f => f.match.test(ev.title || ''));
+        if(fam){
+          planningDayByFamily[fam.key] = planningDayByFamily[fam.key] || [];
+          if(!planningDayByFamily[fam.key].includes(ev.day)) planningDayByFamily[fam.key].push(ev.day);
+        }
+      });
+    } catch(e){ planningDayByFamily = {}; }
+
+    // 1ère passe : on regroupe chaque billet par famille, avec sa date quand on peut la
+    // déterminer (identifiant propre en priorité, sinon texte reconnu) ; les billets sans
+    // date déterminable sont mis de côté par famille, pour être répartis ensuite.
+    const byFamily = {};
     allOrders.forEach(order => {
       (order.items || []).forEach(item => {
         if(item.type !== 'event') return;
 
         const cleanMatch = item.id && item.id.match(/^([a-z]+)-(\d{1,2})$/);
-        let groupKey, label, max;
+        let family, day;
 
         if(cleanMatch && FAMILY_LABELS[cleanMatch[1]]){
-          const family = cleanMatch[1];
-          const day = cleanMatch[2].padStart(2, '0');
-          groupKey = `${family}-${day}`;
-          label = item.name; // déjà bien formaté (ex: "Pilates'expérience — 13 sept") pour toute commande récente
-          max = FAMILY_LABELS[family].max;
+          family = cleanMatch[1];
+          day = cleanMatch[2].padStart(2, '0');
         } else {
           const legacy = LEGACY_FAMILY_MATCH.find(f => f.match.test(item.name || ''));
-          const family = legacy ? legacy.key : 'autre';
-          groupKey = `légacy:${family}`;
-          label = (FAMILY_LABELS[family] ? FAMILY_LABELS[family].label : item.name) + ' — anciennes commandes (date à vérifier au cas par cas)';
-          max = null;
+          if(!legacy) return; // type inconnu (ex: Run classique, pas de limite) : on ignore
+          family = legacy.key;
+          day = extractDay(item.name);
         }
 
-        if(!groups[groupKey]){
-          groups[groupKey] = { label, count: 0, participants: [], max };
+        if(!byFamily[family]) byFamily[family] = { dated: {}, dateless: [] };
+        const entry = { prenom: order.prenom || '', nom: order.nom || '', email: order.email || '', qty: item.qty || 1 };
+
+        if(day){
+          if(!byFamily[family].dated[day]) byFamily[family].dated[day] = [];
+          byFamily[family].dated[day].push(entry);
+        } else {
+          byFamily[family].dateless.push(entry);
         }
-        groups[groupKey].count += item.qty || 1;
-        groups[groupKey].participants.push({
-          prenom: order.prenom || '', nom: order.nom || '', email: order.email || '',
-          qty: item.qty || 1,
-        });
       });
     });
 
-    const sortedKeys = Object.keys(groups).sort((a, b) => groups[a].label.localeCompare(groups[b].label));
+    // 2ème passe : répartit les billets sans date déterminable — automatiquement s'il n'y a
+    // qu'une seule date possible pour cette famille, sinon sur toutes les dates connues par
+    // précaution (mieux vaut compter en trop que pas assez), plutôt que de créer une ligne à part.
+    const groups = [];
+    Object.keys(byFamily).forEach(family => {
+      const fam = byFamily[family];
+      let dayKeys = Object.keys(fam.dated);
+      if(!dayKeys.length && planningDayByFamily[family]) dayKeys = planningDayByFamily[family].slice();
+
+      if(fam.dateless.length){
+        if(dayKeys.length === 0){
+          // Aucune date connue nulle part : on garde ces billets ensemble, sans limite affichée
+          fam.dated['?'] = (fam.dated['?'] || []).concat(fam.dateless);
+        } else {
+          dayKeys.forEach(day => {
+            fam.dated[day] = (fam.dated[day] || []).concat(fam.dateless);
+          });
+        }
+      }
+
+      Object.keys(fam.dated).forEach(day => {
+        const participants = fam.dated[day];
+        const count = participants.reduce((sum, p) => sum + p.qty, 0);
+        const label = day === '?'
+          ? `${FAMILY_LABELS[family].label} — date à préciser`
+          : `${FAMILY_LABELS[family].label} — ${day} sept`;
+        groups.push({ label, count, participants, max: FAMILY_LABELS[family].max });
+      });
+    });
+
+    groups.sort((a, b) => a.label.localeCompare(b.label));
     const byEventEl = document.getElementById('byEventView');
 
-    if(!sortedKeys.length){
+    if(!groups.length){
       byEventEl.innerHTML = '<p class="empty">Aucun billet d\'événement pour l\'instant.</p>';
       return;
     }
 
-    byEventEl.innerHTML = sortedKeys.map((key, i) => {
-      const g = groups[key];
+    byEventEl.innerHTML = groups.map((g, i) => {
       const max = g.max;
       const isFull = max && g.count >= max;
       const pct = max ? Math.min(100, Math.round((g.count / max) * 100)) : null;
