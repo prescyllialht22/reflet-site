@@ -148,10 +148,8 @@
       <h1>Commandes</h1>
       <p class="sub" id="orderCount"></p>
       <div style="background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; margin-bottom:20px;">
-        <p style="font-size:13px; color:var(--marron-soft); margin:0 0 10px;">Rattrape les commandes et la fidélité pour les paiements Stripe passés qui ne se sont pas enregistrés correctement. Sans risque à relancer plusieurs fois.</p>
+        <p style="font-size:13px; color:var(--marron-soft); margin:0 0 10px;">Actualise les commandes, la fidélité et les places restantes à partir de Stripe. Sans risque à relancer plusieurs fois.</p>
         <button type="button" id="backfillBtn" style="background:var(--marron); color:var(--travertine); border:none; border-radius:8px; padding:10px 18px; font-size:13px; cursor:pointer;">Rattraper depuis Stripe</button>
-        <button type="button" id="cleanupBtn" style="background:none; color:#b3413a; border:1px solid #b3413a; border-radius:8px; padding:10px 18px; font-size:13px; cursor:pointer; margin-left:8px;">Retirer les paiements remboursés</button>
-        <button type="button" id="recalcCapacityBtn" style="background:none; color:var(--marron); border:1px solid var(--bronze); border-radius:8px; padding:10px 18px; font-size:13px; cursor:pointer; margin-left:8px;">Recalculer les places restantes</button>
         <p class="sub" id="backfillMsg" style="margin-top:10px;"></p>
       </div>
       <div class="filters" id="filters">
@@ -233,77 +231,31 @@
     await loadOrders();
   }
 
-  document.getElementById('recalcCapacityBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('recalcCapacityBtn');
-    const msgEl = document.getElementById('backfillMsg');
-    btn.disabled = true;
-    btn.textContent = 'Recalcul en cours...';
-    msgEl.textContent = '';
-    try {
-      const token = await currentUser.jwt();
-      const res = await fetch('/.netlify/functions/recalculate-capacity', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + token },
-      });
-      const data = await res.json().catch(() => ({}));
-      if(!res.ok){
-        msgEl.textContent = 'Échec (' + res.status + ') : ' + (data.error || 'erreur inconnue.');
-      } else {
-        const detail = Object.entries(data.counts || {}).map(([k, v]) => `${k}: ${v}`).join(', ');
-        msgEl.textContent = `Terminé — ${detail || 'aucune réservation trouvée'}.` + (data.notes && data.notes.length ? ' ⚠️ ' + data.notes.join(' ') : '');
-      }
-    } catch(err) {
-      msgEl.textContent = 'Erreur : ' + err.message;
-    }
-    btn.disabled = false;
-    btn.textContent = 'Recalculer les places restantes';
-  });
-
-  document.getElementById('cleanupBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('cleanupBtn');
-    const msgEl = document.getElementById('backfillMsg');
-    btn.disabled = true;
-    btn.textContent = 'Nettoyage en cours...';
-    msgEl.textContent = '';
-    try {
-      const token = await currentUser.jwt();
-      const res = await fetch('/.netlify/functions/cleanup-refunded', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + token },
-      });
-      const data = await res.json().catch(() => ({}));
-      if(!res.ok){
-        msgEl.textContent = 'Échec (' + res.status + ') : ' + (data.error || 'erreur inconnue.');
-      } else {
-        msgEl.textContent = `Terminé — ${data.ordersChecked} commande(s) vérifiée(s), ${data.ordersRemoved} retirée(s) (remboursées), ${data.loyaltyEventsRemoved} entrée(s) fidélité retirée(s).`;
-        await loadOrders();
-      }
-    } catch(err) {
-      msgEl.textContent = 'Erreur : ' + err.message;
-    }
-    btn.disabled = false;
-    btn.textContent = 'Retirer les paiements remboursés';
-  });
-
   document.getElementById('backfillBtn').addEventListener('click', async () => {
     const btn = document.getElementById('backfillBtn');
     const msgEl = document.getElementById('backfillMsg');
     btn.disabled = true;
-    btn.textContent = 'Rattrapage en cours (peut prendre une minute)...';
     msgEl.textContent = '';
     try {
       const token = await currentUser.jwt();
-      const res = await fetch('/.netlify/functions/backfill-from-stripe', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + token },
-      });
+      const authHeader = { 'Authorization': 'Bearer ' + token };
+
+      btn.textContent = 'Rattrapage en cours (peut prendre une minute)...';
+      const res = await fetch('/.netlify/functions/backfill-from-stripe', { method: 'POST', headers: authHeader });
       const data = await res.json().catch(() => ({}));
       if(!res.ok){
         msgEl.textContent = 'Échec (' + res.status + ') : ' + (data.error || 'erreur inconnue.');
-      } else {
-        msgEl.textContent = `Terminé — ${data.totalScanned} paiements analysés, ${data.ordersCreated} commande(s) ajoutée(s), ${data.loyaltyEventsAdded} événement(s) fidélité ajouté(s), ${data.skippedNoItems} ignoré(s) (infos incomplètes).`;
-        await loadOrders();
+        btn.disabled = false;
+        btn.textContent = 'Rattraper depuis Stripe';
+        return;
       }
+
+      btn.textContent = 'Mise à jour des places restantes...';
+      const res2 = await fetch('/.netlify/functions/recalculate-capacity', { method: 'POST', headers: authHeader });
+      const data2 = await res2.json().catch(() => ({}));
+
+      msgEl.textContent = `Terminé — ${data.totalScanned} paiements analysés, ${data.ordersCreated} commande(s) ajoutée(s), ${data.loyaltyEventsAdded} événement(s) fidélité ajouté(s).` + (res2.ok ? ' Places à jour.' : ' (Places restantes non mises à jour.)');
+      await loadOrders();
     } catch(err) {
       msgEl.textContent = 'Erreur : ' + err.message;
     }
@@ -381,12 +333,10 @@
         if(!groups[groupKey]){
           groups[groupKey] = { label, count: 0, participants: [], max };
         }
-        if(!order.refunded){
-          groups[groupKey].count += item.qty || 1;
-        }
+        groups[groupKey].count += item.qty || 1;
         groups[groupKey].participants.push({
           prenom: order.prenom || '', nom: order.nom || '', email: order.email || '',
-          qty: item.qty || 1, refunded: !!order.refunded,
+          qty: item.qty || 1,
         });
       });
     });
