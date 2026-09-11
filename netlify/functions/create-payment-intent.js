@@ -1,6 +1,12 @@
+
 // Cette fonction tourne côté serveur (jamais visible des visiteuses du site).
 // Elle utilise la clé SECRÈTE Stripe (jamais la clé publique) pour créer un paiement en sécurité.
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { getStore } = require('@netlify/blobs');
+
+// Limites de places par type d'événement — la vraie limite, vérifiée ici, pas seulement
+// affichée sur le site (qui ne fait qu'un contrôle visuel, pas un verrou).
+const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 15, copains: 35 };
 
 exports.handler = async function (event) {
   if (event.httpMethod !== 'POST') {
@@ -13,6 +19,28 @@ exports.handler = async function (event) {
     // Sécurité de base : on vérifie que le montant est un nombre raisonnable
     if (!amount || typeof amount !== 'number' || amount <= 0 || amount > 100000) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Montant invalide' }) };
+    }
+
+    // VRAI contrôle de capacité, ici et pas seulement dans le navigateur : on refuse
+    // carrément de créer le paiement si la date demandée est déjà complète.
+    const eventItems = (items || []).filter(i => i.type === 'event' && i.id && i.id.includes('-'));
+    if (eventItems.length) {
+      const capacityStore = getStore({ name: 'event-capacity', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
+      const counts = (await capacityStore.get('counts', { type: 'json' })) || {};
+
+      for (const item of eventItems) {
+        const group = item.id.split('-')[0];
+        const limit = CAPACITY_LIMITS[group];
+        if (!limit) continue; // pas de limite pour ce type d'événement (ex: Run classique)
+
+        const currentCount = counts[item.id] || 0;
+        if (currentCount + (item.qty || 1) > limit) {
+          return {
+            statusCode: 409,
+            body: JSON.stringify({ error: `Cette date est complète (${item.name}). Merci de choisir une autre date.` }),
+          };
+        }
+      }
     }
 
     // Description lisible affichée directement dans la liste des paiements Stripe
