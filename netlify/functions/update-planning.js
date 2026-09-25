@@ -28,7 +28,7 @@ exports.handler = async function (event, context) {
     }
 
     const planning = { month, events };
-    const store = getStore('planning');
+    const store = getStore({ name: 'planning', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
     await store.setJSON('current', planning);
 
     return { statusCode: 200, body: JSON.stringify({ ok: true }) };
