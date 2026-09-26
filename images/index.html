@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REFLET — Bordeaux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --travertine:#EDE6D9;
+    --travertine-deep:#E1D6C2;
+    --marron:#33251C;
+    --marron-soft:#5A4636;
+    --bronze:#8C6239;
+    --taupe:#A68A6D;
+    --ink:#2A1F19;
+    --card:#F6F2EA;
+    --line: rgba(51,37,28,0.14);
+    --radius-arch: 240px 240px 8px 8px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--travertine);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{
+    font-family:'Playfair Display',serif;
+    font-weight:400;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--bronze);
+    font-weight:600;
+    margin-bottom:14px;
+    display:block;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{display:block; max-width:100%;}
+  .wrap{max-width:1160px; margin:0 auto; padding:0 24px;}
+  @media(min-width:1400px){ .wrap{max-width:1360px;} }
+  section{padding:96px 0; scroll-margin-top:90px;}
+  @media(max-width:640px){ section{padding:64px 0;} }
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(237,230,217,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-top:4px; padding-bottom:4px;
+  }
+  .logo{font-family:'Playfair Display',serif; font-size:22px; letter-spacing:0.04em; display:flex; align-items:center;}
+  .logo img{height:52px; width:auto; display:block;}
+
+  /* LOGO BANNER — bien plus visible, hors de la barre de nav */
+  .logo-banner{
+    background:var(--travertine); text-align:center;
+    padding:56px 0;
+    line-height:0;
+  }
+  .logo-big{display:inline-block;}
+  .logo-big{display:block; padding:0 16px;}
+  .logo-big img{
+    width:25%; max-width:250px; height:auto; margin:0 auto; display:block;
+  }
+  @media(max-width:640px){ .logo-big img{width:40%;} }
+  @media(max-width:640px){ header{display:none;} }
+  nav.wrap{justify-content:space-between;}
+  .cart-btn{flex-shrink:0;
+    position:relative; background:none; border:none; cursor:pointer; color:var(--ink);
+    padding:8px; display:flex; align-items:center; margin-left:4px;
+  }
+  .cart-count{
+    position:absolute; top:0; right:0; background:var(--bronze); color:#fff;
+    font-size:10px; font-weight:600; border-radius:999px; min-width:16px; height:16px;
+    display:flex; align-items:center; justify-content:center; padding:0 3px;
+  }
+
+  /* NAVIGATION MOBILE — barre fixe en bas, uniquement sur téléphone */
+  .mobile-tabbar{display:none;}
+  @media(max-width:640px){
+    .mobile-tabbar{
+      display:flex; align-items:center; justify-content:space-around;
+      position:fixed; bottom:0; left:0; right:0; z-index:80;
+      background:rgba(246,242,234,0.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+      border-top:1px solid var(--line); padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+    }
+    body{padding-bottom:64px;}
+  }
+  .mobile-tab{
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    color:var(--marron-soft); text-decoration:none; font-size:10px; letter-spacing:0.01em;
+    flex:1; padding:4px 0; position:relative;
+  }
+  .mobile-tab svg{color:var(--ink);}
+  .mobile-tab-center{flex:0 0 auto; margin:0 6px;}
+  .mobile-tab-r{
+    width:42px; height:42px; border-radius:50%; background:var(--marron); color:var(--travertine);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-size:19px; margin-top:-18px;
+    box-shadow:0 6px 14px rgba(51,37,28,0.28);
+  }
+  .mobile-tab-badge{
+    position:absolute; top:-2px; right:14px; background:var(--bronze); color:#fff;
+    font-size:9px; font-weight:600; border-radius:999px; min-width:14px; height:14px;
+    display:flex; align-items:center; justify-content:center; padding:0 3px;
+  }
+  .cart-item{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--line);}
+  .cart-item-name{font-size:14.5px; color:var(--ink); font-weight:500;}
+  .cart-item-price{font-size:13px; color:var(--marron-soft);}
+  .cart-item-qty{display:flex; align-items:center; gap:10px;}
+  .cart-qty-btn{
+    width:26px; height:26px; border-radius:50%; border:1px solid var(--line); background:var(--card);
+    cursor:pointer; font-size:14px; color:var(--ink); display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .cart-item-remove{background:none; border:none; color:var(--taupe); font-size:12px; text-decoration:underline; cursor:pointer; padding:0; margin-left:8px;}
+  .nav-links{display:flex; gap:28px; align-items:center; flex:1; min-width:0; justify-content:center;}
+  .nav-links a{font-size:14px; letter-spacing:0.02em; white-space:nowrap;}
+  .nav-links a:hover{color:var(--bronze);}
+  .btn-pill{
+    display:inline-block;
+    padding:13px 28px;
+    border-radius:999px;
+    font-size:14px;
+    letter-spacing:0.02em;
+    transition:transform .25s ease, background .25s ease;
+  }
+  .btn-dark{background:var(--marron); color:var(--travertine);}
+  .btn-dark:hover{transform:translateY(-2px); background:var(--ink);}
+  .btn-outline{border:1px solid var(--marron); color:var(--marron);}
+  .btn-outline:hover{transform:translateY(-2px); background:var(--marron); color:var(--travertine);}
+  nav.wrap{gap:16px;}
+  .nav-links{overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none;}
+  .nav-links::-webkit-scrollbar{display:none;}
+  @media(max-width:640px){
+    .nav-links{gap:20px;}
+    .nav-links .btn-pill{padding:10px 20px;}
+  }
+
+  /* ARCH */
+  .arch{
+    border-radius:var(--radius-arch);
+    overflow:hidden;
+    background:linear-gradient(160deg,var(--travertine-deep),var(--taupe) 140%);
+    position:relative;
+  }
+  .arch::after{
+    content:attr(data-label);
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:20px;
+    font-family:'Playfair Display',serif; font-size:14px; font-style:italic;
+    color:rgba(51,37,28,0.55);
+  }
+  .arch img{width:100%; height:100%; object-fit:cover; position:relative; z-index:1;}
+  #pilatesPhoto1 img, #pilatesPhoto2 img{object-fit:contain; background:var(--card);}
+  .arch video{width:100%; height:100%; object-fit:cover; position:relative; z-index:1; display:block;}
+  .arch.has-photo{background:var(--card);}
+  .arch.has-photo img{object-fit:cover; object-position:center 15%;}
+
+  /* HERO */
+  .hero{padding-top:36px; padding-bottom:40px;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr 0.95fr; gap:64px; align-items:center;}
+  @media(max-width:900px){ .hero-grid{grid-template-columns:1fr; gap:40px;} }
+  .hero h1{font-size:clamp(48px,7vw,86px); line-height:0.98;}
+  .hero p.lede{font-size:14.5px; line-height:1.65; color:var(--marron-soft); font-weight:300; max-width:400px; margin:18px 0 30px;}
+  .hero-actions{display:flex; gap:16px; flex-wrap:wrap;}
+  .hero-arch{aspect-ratio:3/4; width:100%;}
+  .hero-strip{display:flex; gap:48px; margin-top:64px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:28px;}
+
+  /* PHOTO HERO — bannière plein écran avec photo en fond */
+  .photo-hero{
+    background-color:var(--marron);
+    background-size:cover; background-position:center 32%; background-repeat:no-repeat;
+    min-height:78vh; display:flex; align-items:flex-end; padding-bottom:64px;
+    padding-left:clamp(24px, 6vw, 90px); padding-right:24px;
+  }
+  .photo-hero-content{max-width:600px; text-align:left; margin:0;}
+  .photo-hero-eyebrow{color:rgba(237,230,217,0.85); letter-spacing:0.14em; text-shadow:0 2px 12px rgba(0,0,0,0.35);}
+  .photo-hero-title{
+    font-family:'Playfair Display',serif; font-style:normal; font-weight:400; color:var(--travertine);
+    text-transform:uppercase; font-size:clamp(28px,4.2vw,46px); letter-spacing:0.08em;
+    line-height:1.35; margin:14px 0 18px; text-shadow:0 4px 24px rgba(0,0,0,0.4);
+  }
+  .photo-hero-actions{margin-top:8px;}
+  .hero-microline{
+    max-width:560px; margin:22px auto 0; padding:0 24px; text-align:center;
+    color:var(--marron-soft); font-size:15px; line-height:1.65;
+    font-family:'Playfair Display',serif; font-style:normal; font-weight:400; letter-spacing:0.01em;
+  }
+  .btn-light{background:var(--travertine); color:var(--ink); border:1px solid var(--travertine);}
+  .btn-outline-light{background:transparent; color:var(--travertine); border:1px solid rgba(237,230,217,0.6);}
+  @media(min-width:1400px){ .photo-hero{min-height:70vh;} }
+  @media(max-width:640px){
+    .photo-hero{min-height:46vh; padding-bottom:32px; background-position:center 34%; background-size:cover; padding-left:24px;}
+    .hero-microline{font-size:11.5px; margin-top:16px; padding:0 28px; line-height:1.6;}
+  }
+
+  .planning-section{padding:72px 0;}
+  .hero-strip div{font-size:13px; color:var(--marron-soft);}
+  .hero-strip strong{display:block; font-family:'Playfair Display',serif; font-size:26px; color:var(--ink); font-weight:400;}
+
+  /* PLANNING CARD (remplace la photo hero) */
+  .planning-card{scroll-margin-top:90px;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:48px 48px 20px 20px; padding:36px 30px;
+    max-width:640px; margin:0 auto;
+  }
+  .planning-month{font-size:32px; margin-top:2px;}
+  .planning-list{margin-top:26px; display:flex; flex-direction:column;}
+  .planning-item{
+    display:grid; grid-template-columns:48px 1fr auto; align-items:center; gap:16px;
+    padding:16px 0; border-top:1px solid var(--line);
+  }
+  .planning-item:first-child{border-top:none; padding-top:0;}
+  .planning-date{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; line-height:1.25; color:var(--bronze);
+    text-align:center; font-style:normal;
+  }
+  .planning-info{display:flex; flex-direction:column; gap:3px;}
+  .planning-info strong{font-family:'Playfair Display',serif; font-size:17px; font-weight:400; color:var(--ink);}
+  .planning-info span{font-size:12.5px; color:var(--marron-soft);}
+  .planning-item-muted .planning-date{font-size:20px; color:var(--taupe);}
+  .planning-item-muted .planning-info strong{color:var(--marron-soft);}
+  .planning-item{cursor:pointer; transition:background .2s ease;}
+  .planning-item:hover{background:rgba(140,98,57,0.06);}
+  .planning-item-special{position:relative;}
+  @media(max-width:640px){
+    .planning-card{padding:26px 20px; border-radius:32px 32px 16px 16px;}
+    .planning-item{padding:18px 0; gap:12px; grid-template-columns:42px 1fr auto;}
+    .planning-info strong{font-size:15.5px;}
+    .planning-info span{font-size:12px;}
+    .planning-date{font-size:12px;}
+  }
+  .planning-highlight{
+    margin-top:18px; padding:14px 16px; background:rgba(140,98,57,0.1);
+    border:1px solid rgba(140,98,57,0.25); border-radius:14px;
+    font-size:13px; color:var(--marron-soft); line-height:1.5;
+  }
+  .planning-highlight strong{color:var(--ink);}
+
+  /* MANIFESTO */
+  .manifesto{text-align:center;}
+
+  /* COLLABORATIONS DU MOIS — volontairement secondaire, plus discret que le planning */
+  .collabs-section{padding:56px 0;}
+  .collabs-head{text-align:center; margin-bottom:32px;}
+  .collabs-head h3{font-size:20px; font-weight:400; margin:6px 0 0; color:var(--marron-soft);}
+  .collabs-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:760px; margin:0 auto;}
+  @media(max-width:640px){
+    .collabs-grid{gap:8px; max-width:340px;}
+    .collab-photo{max-width:70px;}
+    .collab-x{font-size:10px;}
+    .collab-body p{font-size:10.5px;}
+  }
+  .collab-card{text-align:center;}
+  .collab-photo{aspect-ratio:1/1; border-radius:50%; max-width:110px; margin:0 auto 14px;}
+  .collab-photo-logo{border:1px solid var(--line);}
+  .collab-x{display:block; font-size:12px; letter-spacing:0.04em; color:var(--bronze); font-weight:500; margin-bottom:2px;}
+  .collab-body p{font-size:12.5px; color:var(--marron-soft); margin:0;}
+  .manifesto .wrap{max-width:760px;}
+  .manifesto h2{font-size:clamp(19px,2.2vw,24px); line-height:1.6; font-style:italic; font-weight:300; letter-spacing:0.01em; color:var(--marron-soft);}
+
+  /* EVENTS */
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:48px; flex-wrap:wrap;}
+  .section-head h2{font-size:clamp(32px,4.5vw,48px);}
+  .events-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px; max-width:none; margin:0;}
+  @media(max-width:900px){ .events-grid{grid-template-columns:1fr; max-width:460px; margin:0 auto;} }
+
+  /* CARTE ÉVÉNEMENT ÉDITORIALE — simple, une seule photo, un seul CTA */
+  .event-editorial-card{cursor:pointer;}
+  .event-editorial-photo{aspect-ratio:16/15; border-radius:14px; overflow:hidden; margin-bottom:16px;}
+  .event-editorial-photo img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;}
+  .event-editorial-card:hover .event-editorial-photo img{transform:scale(1.03);}
+  .event-editorial-body h3{font-size:21px; margin:6px 0 8px;}
+  .event-editorial-meta{font-size:12.5px; color:var(--marron-soft); margin:0 0 14px;}
+  .event-editorial-foot{display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--line);}
+  .event-editorial-price{font-family:'Playfair Display',serif; font-size:17px; color:var(--ink); font-weight:400;}
+  .event-editorial-cta{font-size:12.5px; color:var(--bronze); text-decoration:underline; text-underline-offset:3px;}
+  .event-run-wrap{max-width:390px; margin:24px auto 0;}
+  @media(max-width:900px){ .event-run-wrap{max-width:460px;} }
+  .event-card{background:var(--card); border-radius:24px; overflow:hidden; border:1px solid var(--line);}
+  .event-arch{aspect-ratio:4/5; border-radius:120px 120px 0 0;}
+  .event-body{padding:28px;}
+  .event-tag{font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--bronze); font-weight:600;}
+  .event-tag-above{font-size:clamp(26px,3vw,34px); letter-spacing:0.08em; text-transform:uppercase; color:var(--bronze); font-weight:600; display:block; margin-bottom:14px;}
+  .event-body h3{font-size:24px; margin:10px 0 10px;}
+  .event-body p{font-size:14.5px; line-height:1.55; color:var(--marron-soft); margin:0 0 20px;}
+  .event-details{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .event-details.open{max-height:260px;}
+  #sizeGuideDetails.open{max-height:520px;}
+  .event-list{margin:0 0 4px; padding-left:20px; font-size:14px; color:var(--marron-soft); line-height:1.8;}
+  .event-list li::marker{color:var(--bronze);}
+  .event-toggle{
+    background:none; border:none; padding:0; margin:2px 0 20px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:13px; color:var(--bronze);
+    text-decoration:underline; text-underline-offset:3px;
+  }
+  .size-guide-toggle-btn{
+    background:none; border:none; padding:0; margin:12px 0 0; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:13px; color:var(--bronze);
+    text-decoration:underline; text-underline-offset:3px;
+  }
+  .event-meta{display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--marron-soft); margin-bottom:20px; border-top:1px solid var(--line); padding-top:16px;}
+  .event-meta strong{color:var(--ink); font-family:'Playfair Display',serif; font-size:16px; font-weight:400;}
+  .event-body .btn-pill{width:100%; text-align:center;}
+
+  /* EVENT CARD v2 — test nouveau format */
+  .event-card-v2{
+    background:var(--card); border:1px solid var(--line); border-radius:28px;
+    padding:28px; position:relative;
+  }
+  .event-badge-v2{
+    position:absolute; top:-16px; right:24px; background:var(--card); border:1px solid var(--line);
+    border-radius:999px; padding:9px 18px; font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--bronze); font-weight:600; display:inline-flex; align-items:center; gap:6px;
+  }
+  .event-photos-v2{display:flex; gap:16px; margin-top:8px;}
+  .event-photos-v2 .arch{flex:1; aspect-ratio:3/4; border-radius:120px 120px 16px 16px;}
+  .event-content-v2{display:flex; justify-content:space-between; gap:28px; margin-top:28px; flex-wrap:wrap;}
+  .event-content-v2 .event-main{flex:1; min-width:220px;}
+  .event-content-v2 h3{font-size:30px; margin:8px 0 14px;}
+  .event-content-v2 .event-intro{font-size:14.5px; line-height:1.6; color:var(--marron-soft); margin:0 0 12px; max-width:360px;}
+  .event-toggle-v2{
+    font-size:13px; color:var(--bronze); text-decoration:underline; text-underline-offset:3px;
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer; background:none; border:none; padding:0; font-family:'Inter',sans-serif;
+  }
+  .price-box-v2{
+    background:var(--travertine); border-radius:20px; padding:20px 30px; text-align:center; min-width:130px; height:fit-content;
+  }
+  .price-box-v2 .amount{font-family:'Playfair Display',serif; font-size:30px; color:var(--ink);}
+  .price-box-v2 .label{font-size:12px; color:var(--marron-soft); margin-top:6px;}
+  .price-box-v2 hr{border:none; border-top:1px solid var(--line); width:28px; margin:10px auto 0;}
+  .event-divider-v2{border:none; border-top:1px solid var(--line); margin:26px 0 0;}
+  .icon-meta-row{display:flex; gap:20px; padding:22px 0 4px; flex-wrap:wrap;}
+  .icon-meta-item{display:flex; align-items:center; gap:12px; flex:1; min-width:150px; position:relative;}
+  .icon-meta-item + .icon-meta-item{padding-left:20px; border-left:1px solid var(--line);}
+  @media(max-width:640px){ .icon-meta-item + .icon-meta-item{border-left:none; padding-left:0;} }
+  .icon-circle{
+    width:42px; height:42px; border-radius:50%; background:var(--travertine); color:var(--bronze);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .icon-meta-item strong{display:block; font-size:13.5px; color:var(--ink); font-weight:500;}
+  .icon-meta-item span{font-size:12.5px; color:var(--marron-soft);}
+
+  /* EVENT CARD v3 — format de référence : grande photo + accent qui déborde */
+  .event-card-v3{background:var(--card); border:1px solid var(--line); border-radius:22px; overflow:hidden;}
+  .event-photo-wrap-v3{position:relative;}
+  .event-photo-main-v3{width:100%; aspect-ratio:16/11; overflow:hidden;}
+  .event-photo-main-v3 img{width:100%; height:100%; object-fit:cover; display:block;}
+  .event-photo-accent-v3{
+    position:absolute; width:26%; aspect-ratio:1/1.05; bottom:-8%; right:6%;
+    border-radius:44px 44px 10px 10px; overflow:hidden; border:4px solid var(--card);
+    box-shadow:0 8px 18px rgba(42,31,25,0.16);
+  }
+  .event-photo-accent-v3 img{width:100%; height:100%; object-fit:cover; display:block;}
+  .event-body-v3{padding:28px 24px 22px;}
+  .event-body-v3 .event-tag{margin-bottom:6px; display:inline-block;}
+  .event-body-v3 h3{font-size:19px; margin:4px 0 10px;}
+  .event-toggle-v3{
+    font-size:12.5px; color:var(--bronze); text-decoration:underline; text-underline-offset:3px;
+    background:none; border:none; cursor:pointer; padding:0; font-family:'Inter',sans-serif;
+  }
+  .sorties-desc-toggle-btn{
+    font-size:12.5px; color:var(--bronze); text-decoration:underline; text-underline-offset:3px;
+    background:none; border:none; cursor:pointer; padding:0; font-family:'Inter',sans-serif;
+  }
+  .event-divider-v3{border:none; border-top:1px solid var(--line); margin:16px 0 14px;}
+  .event-meta-v3{display:flex; justify-content:space-between; align-items:center; font-size:13.5px; color:var(--marron-soft);}
+  .event-meta-v3 strong{font-family:'Playfair Display',serif; font-size:18px; color:var(--ink); font-weight:400;}
+  .event-body-v3 .btn-pill{width:100%; text-align:center; border:none; cursor:pointer; margin-top:16px; padding:12px 20px; font-size:13.5px;}
+
+  /* EVENT CARD PREMIUM — une seule photo, sobre, sans effet superposé */
+  .event-card-premium{
+    background:var(--card); border:1px solid var(--line); border-radius:20px;
+    padding-bottom:32px;
+  }
+  .event-photo-wrap{padding:20px 20px 0;}
+  .event-photo-main{width:100%; aspect-ratio:4/3; border-radius:10px; overflow:hidden;}
+  .event-photo-main img{width:100%; height:100%; object-fit:cover; display:block;}
+  .event-body-premium{padding:26px 26px 0;}
+  .event-body-premium h3{font-size:25px; margin:10px 0 14px; letter-spacing:-0.01em;}
+
+  /* EVENT GALLERY — défilé horizontal de petites arches */
+  .event-gallery-wrap{padding:18px 18px 0;}
+  @media(min-width:900px){
+    .event-gallery-wrap{padding:14px 14px 0;}
+    .event-gallery-wrap .gallery-item{aspect-ratio:3/2;}
+  }
+  .event-gallery{
+    display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; touch-action:pan-x;
+  }
+  .event-gallery::-webkit-scrollbar{display:none;}
+  .gallery-item{
+    flex:0 0 calc(50% - 5px); aspect-ratio:4/5; scroll-snap-align:start;
+    border-radius:44% 44% 6% 6%;
+  }
+  .gallery-item::after{font-size:11.5px; padding:10px; line-height:1.35;}
+  .gallery-hint{
+    font-size:11px; color:var(--marron-soft); opacity:0.6;
+    margin:8px 18px 0; letter-spacing:0.03em;
+  }
+
+  /* SORTIES / WAITLIST */
+  .sorties{background:var(--marron); color:var(--travertine);}
+  .sorties .eyebrow{color:var(--taupe);}
+  .sorties-desc-toggle{display:none;}
+  @media(max-width:640px){
+    .sorties-desc{
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+      overflow:hidden; margin-bottom:8px;
+    }
+    .sorties-desc.open{-webkit-line-clamp:unset; overflow:visible;}
+    .sorties-desc-toggle{
+      display:inline-block; color:var(--travertine); text-decoration:underline;
+      text-underline-offset:3px; margin-bottom:16px; opacity:0.85;
+    }
+  }
+  .sorties-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+  @media(max-width:900px){ .sorties-grid{grid-template-columns:1fr;} }
+  .sorties h2{font-size:clamp(30px,4vw,44px); color:var(--travertine);}
+  .sorties p{font-size:15.5px; line-height:1.65; color:rgba(237,230,217,0.75); max-width:440px; margin:20px 0 28px;}
+  .chip-row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px;}
+  .chip{
+    border:1px solid rgba(237,230,217,0.35); border-radius:999px; padding:8px 18px;
+    font-size:13px; background:none; color:var(--travertine); cursor:pointer;
+    font-family:'Inter',sans-serif; transition:background .2s ease, color .2s ease;
+  }
+  .chip.active{background:var(--travertine); color:var(--marron); border-color:var(--travertine);}
+  .chip-disabled{opacity:0.35; cursor:not-allowed; text-decoration:line-through;}
+  .sorties-arch{width:58%; aspect-ratio:4/5; margin:0 auto;}
+  .waitlist-form{display:flex; flex-direction:column; gap:12px;}
+  .waitlist-form input{
+    background:transparent; border:1px solid rgba(237,230,217,0.35);
+    border-radius:999px; padding:15px 22px; color:var(--travertine); font-size:16px; font-family:'Inter',sans-serif;
+  }
+  .waitlist-form input::placeholder{color:rgba(237,230,217,0.55);}
+  .waitlist-form input:focus{outline:2px solid var(--travertine); outline-offset:2px;}
+  .waitlist-form button{
+    background:var(--travertine); color:var(--marron); border:none; cursor:pointer;
+    border-radius:999px; padding:15px 22px; font-size:14px; font-weight:600; letter-spacing:0.02em;
+  }
+  .waitlist-note{font-size:12px; color:rgba(237,230,217,0.55); margin-top:6px;}
+  .form-msg{font-size:13px; color:var(--travertine); display:none;}
+  .form-msg.show{display:block;}
+
+  /* TEAM */
+  .team-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:36px;}
+  @media(max-width:700px){ .team-grid{gap:14px;} }
+  .founders-block{max-width:640px; margin:0 auto;}
+  .founders-arch{width:48%; aspect-ratio:4/3; margin:0 auto;}
+  .founders-text-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:32px;
+    margin-top:32px; text-align:center;
+  }
+  @media(max-width:600px){ .founders-text-grid{grid-template-columns:1fr; gap:24px;} }
+  .team-arch{aspect-ratio:4/5; width:66%; margin:0 auto;}
+  .team-name{font-size:24px; margin-top:22px;}
+  .team-role{font-size:13px; color:var(--bronze); letter-spacing:0.06em; text-transform:uppercase; margin:6px 0 12px;}
+  .team-bio{font-size:14.5px; color:var(--marron-soft); line-height:1.55;}
+  @media(max-width:700px){
+    .team-arch{width:88%;}
+    .team-name{font-size:18px; margin-top:14px;}
+    .team-role{font-size:10.5px; margin:4px 0 8px;}
+    .team-bio{font-size:12.5px; line-height:1.45;}
+  }
+  .team-social{font-size:13px; margin-top:10px; color:var(--marron-soft);}
+
+  /* TESTIMONIALS */
+  .testimonials{background:var(--card);}
+  .testi-marquee{overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
+  .testi-track{display:flex; gap:20px; width:max-content; animation:testiScroll 55s linear infinite;}
+  .testi-marquee:hover .testi-track{animation-play-state:paused;}
+  @keyframes testiScroll{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+  .testi-card{
+    padding:26px 28px; border:1px solid var(--line); border-radius:20px; background:var(--travertine);
+    flex:0 0 auto; width:300px;
+  }
+  .testi-card p{font-family:'Playfair Display',serif; font-style:italic; font-size:15.5px; line-height:1.45; margin:0 0 14px;}
+  .testi-card span{font-size:13px; color:var(--marron-soft);}
+  @media (prefers-reduced-motion: reduce){ .testi-track{animation:none; overflow-x:auto; flex-wrap:nowrap;} }
+
+  /* BOUTIQUE */
+  .boutique{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+  @media(max-width:900px){ .boutique{grid-template-columns:1fr;} }
+  .boutique-arch{aspect-ratio:16/11; border-radius:32px;}
+  .shop-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:32px; margin-top:40px;}
+  @media(max-width:800px){
+    .shop-grid{
+      display:flex; grid-template-columns:none; overflow-x:auto; gap:16px;
+      margin-left:-24px; margin-right:-24px; padding:0 24px 8px; scroll-snap-type:x mandatory;
+      scrollbar-width:none; -ms-overflow-style:none; touch-action:pan-x;
+    }
+    .shop-grid::-webkit-scrollbar{display:none;}
+    .shop-card{flex:0 0 78%; scroll-snap-align:start;}
+  }
+  .shop-card{cursor:pointer;}
+  .shop-card{background:var(--card); border:1px solid var(--line); border-radius:28px; padding:18px; text-align:left;}
+  .shop-arch{aspect-ratio:4/5; border-radius:52px 52px 12px 12px; margin-bottom:18px;}
+  @media(min-width:900px){
+    .shop-card{padding:24px;}
+    .shop-arch{aspect-ratio:4/5;}
+    #boutique .wrap{max-width:1280px;}
+  }
+  .shop-body h3{font-size:19px; margin:8px 0 6px;}
+  .shop-price{font-family:'Playfair Display',serif; font-size:20px; color:var(--ink); margin-bottom:14px;}
+  .shop-body .btn-pill{width:100%; text-align:center; border:none; cursor:pointer;}
+
+  /* FICHE PRODUIT — vraie page e-commerce, photos à gauche / infos à droite */
+  #productModal{padding:0; align-items:flex-start;}
+  #eventPageModal{padding:0; align-items:flex-start;}
+  #collabPageModal{padding:0; align-items:flex-start;}
+  .product-page{
+    background:var(--card); width:100%; height:100vh; max-width:none;
+    margin:0 auto; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  }
+  .product-page-close{
+    position:fixed; top:20px; right:24px; background:var(--card); border-radius:50%;
+    width:40px; height:40px; z-index:5; box-shadow:0 4px 12px rgba(42,31,25,0.15);
+  }
+  .product-page-inner{display:block;}
+  @media(min-width:860px){
+    .product-page-inner{display:flex; align-items:flex-start; max-width:1160px; margin:0 auto; gap:56px; padding-top:70px;}
+  }
+
+  .product-page-gallery{
+    display:flex; gap:0; overflow-x:auto; scroll-snap-type:x mandatory;
+    scrollbar-width:none; -ms-overflow-style:none; touch-action:pan-x; position:relative;
+  }
+  .product-page-gallery::-webkit-scrollbar{display:none;}
+  #eventPageExtraPhotos::-webkit-scrollbar{display:none;}
+  .product-page .product-arch{
+    flex:0 0 100%; scroll-snap-align:center; aspect-ratio:4/5; border-radius:0; cursor:zoom-in;
+  }
+  .product-gallery-wrap{position:relative;}
+  .product-gallery-dots{
+    display:flex; gap:6px; justify-content:center; margin-top:12px;
+  }
+  .product-gallery-dot{
+    width:6px; height:6px; border-radius:50%; background:var(--line); border:none; padding:0; cursor:pointer;
+  }
+  .product-gallery-dot.active{background:var(--bronze); width:16px; border-radius:3px; transition:width .2s ease;}
+  .product-gallery-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+    background:rgba(246,242,234,0.9); border:none; border-radius:50%; width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink);
+    box-shadow:0 2px 8px rgba(42,31,25,0.15);
+  }
+  .product-gallery-arrow-prev{left:12px;}
+  .product-gallery-arrow-next{right:12px;}
+  @media(min-width:860px){
+    .product-gallery-wrap{flex:0 0 52%;}
+    .product-page-gallery{aspect-ratio:4/5; border-radius:6px; overflow:hidden;}
+    .product-page .product-arch{aspect-ratio:auto;}
+  }
+
+  .product-page-body{max-width:640px; margin:0 auto; padding:36px 24px 64px;}
+  @media(min-width:860px){
+    .product-page-body{flex:0 0 40%; max-width:420px; margin:0; padding:0 24px 64px 0;}
+  }
+  .product-page-body h1{font-size:clamp(28px,4vw,40px); margin:10px 0 12px;}
+
+  /* FICHE ÉVÉNEMENT */
+  .event-icon-row{display:flex; flex-wrap:wrap; gap:14px 22px; padding:16px 0; margin-bottom:8px; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .event-icon-row div{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--marron-soft);}
+  .event-page-subhead{font-family:'Playfair Display',serif; font-weight:400; font-size:17px; margin:22px 0 10px; color:var(--ink);}
+  .event-page-testimonial{font-size:13px; font-style:italic; color:var(--marron-soft); line-height:1.5; margin:0 0 10px; padding-left:14px; border-left:2px solid var(--line);}
+  .event-page-testimonial span{display:block; font-style:normal; font-size:11.5px; color:var(--bronze); margin-top:4px;}
+  .event-page-priceRow{display:flex; align-items:baseline; gap:8px;}
+  .event-page-priceRow strong{font-family:'Playfair Display',serif; font-size:26px; color:var(--ink); font-weight:400;}
+
+  /* FIDÉLITÉ — paliers mis en avant, texte explicatif secondaire */
+  .loyalty-tiers{display:flex; gap:16px; justify-content:center; margin:26px 0 18px;}
+  .loyalty-tier{
+    flex:1; max-width:200px; background:var(--travertine); border-radius:18px; padding:22px 16px;
+  }
+  .loyalty-tier strong{display:block; font-family:'Playfair Display',serif; font-size:38px; color:var(--ink); font-weight:400; line-height:1;}
+  .loyalty-tier span{display:block; font-size:12px; color:var(--marron-soft); margin-top:8px; line-height:1.4;}
+  .loyalty-fine-print{font-size:12px; color:var(--taupe); line-height:1.5; max-width:440px; margin:0 auto 24px;}
+  @media(max-width:640px){
+    .loyalty-tier strong{font-size:30px;}
+    .loyalty-tier{padding:18px 12px;}
+  }
+  .event-date-option{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border:1px solid var(--line);
+    border-radius:12px; font-size:13px; cursor:pointer; margin-bottom:8px;
+  }
+  .event-date-option.active{border-color:var(--bronze); background:rgba(140,98,57,0.06);}
+  .event-date-badge{
+    font-size:10px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;
+    color:var(--bronze); border:1px solid var(--bronze); border-radius:999px; padding:2px 8px; flex-shrink:0;
+  }
+  .event-date-badge-full{color:#b3413a; border-color:#b3413a;}
+  .event-date-option-full{opacity:0.5; cursor:not-allowed;}
+  .size-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .size-btn{
+    width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font-size:13px; cursor:pointer; font-family:'Inter',sans-serif;
+  }
+  .size-btn.active{background:var(--ink); color:var(--travertine); border-color:var(--ink);}
+  .size-btn-out{opacity:0.35; text-decoration:line-through; cursor:not-allowed;}
+  #productAddToCartBtn:disabled{opacity:0.5; cursor:not-allowed;}
+  #eventPageReserveBtn:disabled{opacity:0.5; cursor:not-allowed;}
+  .size-guide-table{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:12px; color:var(--marron-soft);}
+  .size-guide-table th, .size-guide-table td{padding:8px 6px; text-align:center; border-bottom:1px solid var(--line);}
+  .size-guide-table th{color:var(--ink); font-weight:500;}
+  .boutique h2{font-size:clamp(30px,4vw,42px);}
+  .boutique p{font-size:15.5px; color:var(--marron-soft); line-height:1.6; margin:20px 0 28px; max-width:420px;}
+
+  /* FOOTER */
+  footer{background:var(--marron); color:var(--travertine); padding:64px 0 32px;}
+  .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; padding-bottom:40px; border-bottom:1px solid rgba(237,230,217,0.15);}
+  @media(max-width:700px){ .footer-grid{grid-template-columns:1fr; gap:32px;} }
+  .footer-grid h4{font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--taupe); margin-bottom:16px;}
+  .footer-grid a, .footer-grid p{font-size:14px; color:rgba(237,230,217,0.8); line-height:2;}
+  .footer-bottom{display:flex; justify-content:space-between; padding-top:24px; font-size:12.5px; color:rgba(237,230,217,0.5); flex-wrap:wrap; gap:12px;}
+
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:none;}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* MODALS */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(42,31,25,0.55);
+    z-index:100; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:var(--card); border-radius:28px; padding:36px 32px; max-width:420px; width:100%;
+    position:relative; max-height:86vh; overflow-y:auto;
+  }
+  @media(max-width:480px){
+    .modal-overlay{padding:12px;}
+    .modal-box{padding:28px 18px;}
+  }
+  .modal-close{
+    position:absolute; top:16px; right:16px; background:none; border:none; cursor:pointer;
+    font-size:22px; color:var(--marron-soft); line-height:1; padding:4px;
+  }
+  .booking-form{display:flex; flex-direction:column; gap:12px;}
+  .booking-form input{
+    background:transparent; border:1px solid var(--line); border-radius:999px;
+    padding:14px 20px; color:var(--ink); font-size:16px; font-family:'Inter',sans-serif;
+  }
+  .booking-form input:focus{outline:2px solid var(--bronze); outline-offset:2px;}
+  #bookingMsg{margin-top:14px; font-size:13.5px;}
+  .consent-label{
+    display:flex; gap:8px; align-items:flex-start; font-size:12px; line-height:1.5;
+    color:var(--marron-soft); margin:2px 0 4px; cursor:pointer;
+  }
+  .consent-label input{margin-top:2px; flex-shrink:0;}
+  .consent-label a{text-decoration:underline; text-underline-offset:2px; color:var(--bronze);}
+  .consent-label-dark{color:rgba(237,230,217,0.75);}
+  .consent-label-dark a{color:var(--travertine);}
+
+  .delivery-option{
+    display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border:1px solid var(--line);
+    border-radius:14px; cursor:pointer; font-size:13px;
+  }
+  .delivery-option.active{border-color:var(--bronze); background:rgba(140,98,57,0.06);}
+  .delivery-option input{margin-top:3px; flex-shrink:0;}
+  .delivery-option-title{font-weight:500; color:var(--ink);}
+  .delivery-option-desc{font-size:12px; color:var(--marron-soft); margin-top:2px;}
+  .delivery-option-fee{font-size:12px; color:var(--bronze); margin-left:auto; white-space:nowrap; padding-left:8px;}
+</style>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<div class="logo-banner"><a href="#" class="logo-big"><img src="images/img-01.png" alt="Reflet Events"></a></div>
+
+<header>
+  <nav class="wrap">
+    <div class="nav-links" id="navLinks">
+      <a href="#evenements" class="btn-pill btn-dark">Réserver</a>
+      <a href="#evenements">Événements</a>
+      <a href="#sorties">Sorties</a>
+      <a href="#fidelite">Fidélité</a>
+      <a href="#boutique">Boutique</a>
+    </div>
+    <button type="button" id="cartOpenBtn" class="cart-btn" aria-label="Panier">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-count" id="cartCount" style="display:none;">0</span>
+    </button>
+  </nav>
+</header>
+
+<nav class="mobile-tabbar" id="mobileTabbar">
+  <a href="#evenements" class="mobile-tab">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span>Réserver</span>
+  </a>
+  <a href="#evenements" class="mobile-tab">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg>
+    <span>Événements</span>
+  </a>
+  <a href="#" class="mobile-tab mobile-tab-center" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">
+    <span class="mobile-tab-r">R</span>
+  </a>
+  <a href="#boutique" class="mobile-tab" id="mobileTabBoutique">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+    <span>Boutique</span>
+    <span class="mobile-tab-badge" id="mobileTabBadge" style="display:none;">0</span>
+  </a>
+  <a href="#fidelite" class="mobile-tab">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <span>Compte</span>
+  </a>
+</nav>
+
+<section class="photo-hero" style="background-image:linear-gradient(90deg, rgba(42,31,25,0.78) 0%, rgba(42,31,25,0.5) 32%, rgba(42,31,25,0.18) 58%, rgba(42,31,25,0) 82%), url('images/img-02.jpg');">
+  <div class="photo-hero-content">
+    <span class="eyebrow photo-hero-eyebrow">Bordeaux · Communauté de femmes</span>
+    <h1 class="photo-hero-title">Reflet, une autre<br>façon de prendre soin de soi.</h1>
+    <div class="hero-actions photo-hero-actions">
+      <a href="#planning" class="btn-pill btn-light">Voir les événements</a>
+      <a href="#equipe" class="btn-pill btn-outline-light">Découvrir Reflet</a>
+    </div>
+  </div>
+</section>
+
+<p class="hero-microline">« Chaque mois, nous imaginons des événements conçus pour cultiver le bien-être, favoriser les rencontres et encourager un mode de vie plus sain. Des expériences pensées avec soin, pour ralentir, se reconnecter à soi et rencontrer celles qui partagent la même envie de vivre pleinement. »</p>
+
+<section class="planning-section">
+  <div class="wrap">
+    <div class="planning-card" id="planning">
+      <div class="planning-head">
+        <span class="eyebrow" style="margin-bottom:2px;">Planning du mois</span>
+        <h3 class="serif planning-month" id="planningMonth">Juillet</h3>
+      </div>
+      <div class="planning-list" id="planningList"></div>
+      <div class="planning-highlight" id="planningHighlight" style="display:none;"></div>
+    </div>
+  </div>
+</section>
+
+<section class="collabs-section">
+  <div class="wrap">
+    <div class="collabs-head reveal">
+      <span class="eyebrow">Ce mois-ci</span>
+      <h3 class="serif">REFLET × Nos collaborations du mois</h3>
+    </div>
+    <div class="collabs-grid">
+      <div class="collab-card reveal js-open-collab" data-collab="define">
+        <div class="arch collab-photo collab-photo-logo"><img src="images/img-03.jpg" alt="REFLET × DEFINE" style="width:100%; height:100%; object-fit:cover;;"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × DEFINE</span>
+          <p>Pilates Reformer</p>
+        </div>
+      </div>
+      <div class="collab-card reveal js-open-collab" data-collab="mome">
+        <div class="arch collab-photo collab-photo-logo"><img src="images/img-04.jpg" alt="REFLET × MOME" style="width:100%; height:100%; object-fit:cover;;"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × MOME</span>
+          <p>Café / pâtisserie</p>
+        </div>
+      </div>
+      <div class="collab-card reveal js-open-collab" data-collab="copains">
+        <div class="arch collab-photo"><img src="images/img-05.jpg" alt="REFLET × COPAINS" style="width:100%; height:100%; object-fit:cover;"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × COPAINS</span>
+          <p>Run / boulangerie</p>
+        </div>
+      </div>
+      <div class="collab-card reveal js-open-collab" data-collab="puppypilates">
+        <div class="arch collab-photo" data-label="Photo à venir"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × PUPPY PILATES</span>
+          <p>Pilates / chiots</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="evenements">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Chaque mois</span>
+        <h2>Les rendez-vous<br>réguliers</h2>
+      </div>
+    </div>
+
+    <div class="events-grid">
+
+      <div class="event-editorial-card reveal js-open-event" data-event="pilates">
+        <div class="event-editorial-photo"><img src="images/img-06.jpg" alt="Pilates'expérience"></div>
+        <div class="event-editorial-body">
+          <span class="event-tag">Pilates</span>
+          <h3>Pilates'expérience</h3>
+          <p class="event-editorial-meta" id="eventMeta-pilates">Voir les prochaines dates</p>
+          <div class="event-editorial-foot">
+            <strong class="event-editorial-price" id="eventPrice-pilates"></strong>
+            <span class="event-editorial-cta">Découvrir →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-editorial-card reveal js-open-event" data-event="danse">
+        <div class="event-editorial-photo"><img src="images/img-07.jpg" alt="Danse by REFLET"></div>
+        <div class="event-editorial-body">
+          <span class="event-tag">Danse</span>
+          <h3>Danse by REFLET</h3>
+          <p class="event-editorial-meta" id="eventMeta-danse">Voir les prochaines dates</p>
+          <div class="event-editorial-foot">
+            <strong class="event-editorial-price" id="eventPrice-danse"></strong>
+            <span class="event-editorial-cta">Découvrir →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-editorial-card reveal js-open-event" data-event="run">
+        <div class="event-editorial-photo"><img src="images/img-08.jpg" alt="Run Reflet"></div>
+        <div class="event-editorial-body">
+          <span class="event-tag">Run</span>
+          <h3>Run Reflet</h3>
+          <p class="event-editorial-meta" id="eventMeta-run">Voir les prochaines dates</p>
+          <div class="event-editorial-foot">
+            <strong class="event-editorial-price" id="eventPrice-run"></strong>
+            <span class="event-editorial-cta">Découvrir →</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="sorties" id="sorties">
+  <div class="wrap sorties-grid">
+    <div class="arch hero-arch sorties-arch has-photo" id="sortiesArch"><img id="sortiesImg" src="images/img-09.jpg" alt="Rooftop Reflet"></div>
+    <div>
+      <h2>Les instants Reflet</h2>
+      <p id="sortiesDesc" class="sorties-desc">Des rendez-vous en petit comité, pensés comme des véritables parenthèses pour se rencontrer autrement. Des lieux choisis avec soins, des tables à partager et le plaisir de prendre le temps d'échanger, de faire connaissance et de créer de nouveaux liens, dans une atmosphère chaleureuse et spontanée.</p>
+      <button type="button" id="sortiesDescToggle" class="sorties-desc-toggle-btn sorties-desc-toggle">Voir plus</button>
+      <div class="chip-row" id="chipRow">
+        <button type="button" class="chip active" data-src="images/img-10.jpg" data-alt="Rooftop Reflet" data-desc="Des rendez-vous en petit comité, pensés comme des véritables parenthèses pour se rencontrer autrement. Des lieux choisis avec soins, des tables à partager et le plaisir de prendre le temps d'échanger, de faire connaissance et de créer de nouveaux liens, dans une atmosphère chaleureuse et spontanée.">Rooftop</button>
+        
+        <button type="button" class="chip chip-disabled" disabled title="Pas de brunch prévu ce mois-ci" data-src="images/img-11.jpg" data-alt="Brunch Reflet" data-desc="Des rendez-vous en petit comité, pensés comme des véritables parenthèses pour se rencontrer autrement. Des lieux choisis avec soins, des tables à partager et le plaisir de prendre le temps d'échanger, de faire connaissance et de créer de nouveaux liens, dans une atmosphère chaleureuse et spontanée.">Brunch</button>
+      
+      </div>
+      <form class="waitlist-form" id="waitlistForm" name="waitlist" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="waitlist">
+        <p style="display:none;"><input name="bot-field"></p>
+        <input type="hidden" name="sortie" id="wlSortie" value="Rooftop">
+        <input type="text" name="prenom" placeholder="Prénom" required id="wlName">
+        <input type="email" name="email" placeholder="Adresse e-mail" required id="wlEmail">
+        <label class="consent-label consent-label-dark">
+          <input type="checkbox" required>
+          <span>J'accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="#" class="js-open-privacy">politique de confidentialité</a>.</span>
+        </label>
+        <button type="submit">Rejoindre la liste d'attente</button>
+        <span class="waitlist-note">On vous recontacte dès qu'une sortie est disponible.</span>
+        <span class="form-msg" id="wlMsg">Merci ! Vous êtes sur la liste — on revient vers vous très vite.</span>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="equipe">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Les fondatrices</span>
+        <h2>À l'origine de Reflet</h2>
+      </div>
+    </div>
+    <div class="founders-block">
+      <div class="arch team-arch has-photo founders-arch"><img src="images/img-12.jpg" alt="Prescyllia et Marie, fondatrices de Reflet"></div>
+      <div class="founders-text-grid" style="grid-template-columns:1fr; max-width:480px; margin:32px auto 0;">
+        <div class="reveal">
+          <div class="team-name serif" style="margin-bottom:8px;">Prescyllia &amp; Marie</div>
+          <div class="team-role">Fondatrices</div>
+          <p class="team-bio">Deux amies qui ont imaginé Reflet avec l'envie de créer un espace où les femmes puissent se retrouver, se rencontrer et prendre soin d'elles. Convaincues que le bien-être ne se résume pas à l'apparence, elles imaginent chaque rendez-vous comme une parenthèse pour bouger, échanger, se reconnecter à soi et, surtout, se sentir bien.</p>
+          <div class="team-social">@prescyllia_ · @marie_ithbd</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head reveal" style="margin-top:72px;">
+      <div>
+        <span class="eyebrow">Sur le terrain</span>
+        <h2>L'équipe qui anime<br>les événements</h2>
+      </div>
+    </div>
+    <div class="team-grid">
+      <div class="reveal">
+        <div class="arch team-arch has-photo"><img src="images/img-13.jpg" alt="Bianca, coach danse"></div>
+        <div class="team-name serif">Bianca</div>
+        <div class="team-role">Coach danse</div>
+        <p class="team-bio">Professeure de danse, elle anime chaque séance Danse by REFLET avec énergie et bienveillance.</p>
+      </div>
+      <div class="reveal">
+        <div class="arch team-arch"><img src="images/img-14.jpg" alt="Si-Ann, coach Pilates"></div>
+        <div class="team-name serif">Si-Ann</div>
+        <div class="team-role">Coach Pilates</div>
+        <p class="team-bio">Professeure de Pilates, elle encadre chaque Pilates'expérience pour reconnecter corps et esprit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Elles en parlent</span>
+        <h2>Ce que vivent<br>nos participantes</h2>
+      </div>
+    </div>
+    <div class="testi-marquee reveal">
+      <div class="testi-track">
+        <div class="testi-card">
+          <p>« Les filles sont adorables, un moment de bonheur partagé entre girls, ça motive ! 💗 »</p>
+          <span>Camille</span>
+        </div>
+        <div class="testi-card">
+          <p>« C'est vraiment sympa de pouvoir se retrouver entre filles sans jugement et s'éclater 💛 »</p>
+          <span>Emma</span>
+        </div>
+        <div class="testi-card">
+          <p>« Un groupe plein de bienveillance et d'encouragement, j'ai terminé mon 1er run grâce à ce groupe ! »</p>
+          <span>Déborah</span>
+        </div>
+        <div class="testi-card">
+          <p>« Les événements sont incroyables, on n'arrête jamais !! »</p>
+          <span>Jade</span>
+        </div>
+        <div class="testi-card">
+          <p>« Les événements sont top et les filles nous mettent vraiment à l'aise, elles sont géniales. 💗💗 »</p>
+          <span>Paula</span>
+        </div>
+        <div class="testi-card">
+          <p>« Rien à dire, c'était parfait, la prof de Pilates était top et les filles super sympas ! »</p>
+          <span>Jasmeen</span>
+        </div>
+        <div class="testi-card">
+          <p>« Une vraie safe place !!! Des événements pour chacune avec des girls topissimes 🌸 »</p>
+          <span>Jeanne</span>
+        </div>
+        <div class="testi-card" aria-hidden="true">
+          <p>« Les filles sont adorables, un moment de bonheur partagé entre girls, ça motive ! 💗 »</p>
+          <span>Camille</span>
+        </div>
+        <div class="testi-card" aria-hidden="true">
+          <p>« C'est vraiment sympa de pouvoir se retrouver entre filles sans jugement et s'éclater 💛 »</p>
+          <span>Emma</span>
+        </div>
+        <div class="testi-card" aria-hidden="true">
+          <p>« Un groupe plein de bienveillance et d'encouragement, j'ai terminé mon 1er run grâce à ce groupe ! »</p>
+          <span>Déborah</span>
+        </div>
+        <div class="testi-card" aria-hidden="true">
+          <p>« Les événements sont incroyables, on n'arrête jamais !! »</p>
+          <span>Jade</span>
+        </div>
+        <div class="testi-card" aria-hidden="true">
+          <p>« Les événements sont top et les filles nous mettent vraiment à l'aise, elles sont géniales. 💗💗 »</p>
+          <span>Paula</span>
+        </div>
+        <div class="testi-card" aria-hidden="true">
+          <p>« Rien à dire, c'était parfait, la prof de Pilates était top et les filles super sympas ! »</p>
+          <span>Jasmeen</span>
+        </div>
+        <div class="testi-card" aria-hidden="true">
+          <p>« Une vraie safe place !!! Des événements pour chacune avec des girls topissimes 🌸 »</p>
+          <span>Jeanne</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="boutique">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">New · Collection Capsule 1</span>
+        <h2>REFLET ça se vit, mais ça se porte aussi...</h2>
+      </div>
+      <p style="max-width:340px; font-size:14.5px; color:var(--marron-soft); margin:0;">Une petite collection pensée pour prolonger l'esprit Reflet au quotidien.</p>
+    </div>
+    <div class="shop-grid">
+      <div class="shop-card reveal js-open-product" data-product="tshirt">
+        <div class="arch shop-arch" data-label="Photo à venir" id="shopArch-tshirt"></div>
+        <div class="shop-body">
+          <span class="event-tag">Boutique</span>
+          <h3>Tee-shirt Reflet</h3>
+          <div class="shop-price">19,90 €</div>
+          <button type="button" class="btn-pill btn-dark js-open-product" data-product="tshirt">Voir le produit</button>
+        </div>
+      </div>
+      <div class="shop-card reveal js-open-product" data-product="totebag">
+        <div class="arch shop-arch" data-label="Photo à venir" id="shopArch-totebag"></div>
+        <div class="shop-body">
+          <span class="event-tag">Boutique</span>
+          <h3>Tote bag Reflet</h3>
+          <div class="shop-price">14,90 €</div>
+          <button type="button" class="btn-pill btn-dark js-open-product" data-product="totebag">Voir le produit</button>
+        </div>
+      </div>
+      <div class="shop-card reveal js-open-product" data-product="bandeau">
+        <div class="arch shop-arch" data-label="Photo à venir" id="shopArch-bandeau"></div>
+        <div class="shop-body">
+          <span class="event-tag">Boutique</span>
+          <h3>Bandeau Reflet</h3>
+          <div class="shop-price">8,90 €</div>
+          <button type="button" class="btn-pill btn-dark js-open-product" data-product="bandeau">Voir le produit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="fidelite" style="background:var(--card);">
+  <div class="wrap" style="max-width:640px; text-align:center;">
+    <span class="eyebrow">Programme fidélité</span>
+    <h2>La fidélité chez Reflet</h2>
+
+    <div class="loyalty-tiers">
+      <div class="loyalty-tier">
+        <strong>5</strong>
+        <span>événements réservés<br>→ un petit cadeau</span>
+      </div>
+      <div class="loyalty-tier">
+        <strong>10</strong>
+        <span>événements réservés<br>→ un événement offert</span>
+      </div>
+    </div>
+
+    <p class="loyalty-fine-print">Seuls les événements payants avec réservation (Pilates, Danse...) comptent pour votre fidélité — les sorties comme le Run, les pique-niques ou les brunchs ne sont pas comptabilisées.</p>
+
+    <a href="#" id="loyaltyOpenBtn" class="btn-pill btn-dark">Se connecter</a>
+
+    <div id="loyaltyDashboard" style="display:none; text-align:left; margin-top:36px; padding-top:28px; border-top:1px solid var(--line);">
+      <p style="font-size:14px; color:var(--marron-soft); margin:0 0 6px;">Connectée en tant que <strong id="loyaltyEmail" style="color:var(--ink);"></strong></p>
+      <p style="font-size:15px; margin:0 0 18px;"><strong id="loyaltyCount" style="font-family:'Playfair Display',serif; font-size:22px; color:var(--ink);"></strong> événement(s) payé(s)</p>
+      <div id="loyaltyEventsList"></div>
+      <button type="button" id="loyaltyLogoutBtn" class="event-toggle" style="margin-top:16px;">Se déconnecter</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">REFLET</div>
+        <p style="max-width:280px;">Une communauté de femmes à Bordeaux, pour bouger, respirer et se retrouver — chaque mois.</p>
+      </div>
+      <div>
+        <h4>Naviguer</h4>
+        <a href="#evenements">Événements</a><br>
+        <a href="#sorties">Sorties</a><br>
+        <a href="#equipe">L'équipe</a><br>
+        <a href="#fidelite">Fidélité</a><br>
+        <a href="#boutique">Boutique</a>
+      </div>
+      <div>
+        <h4>Suivre</h4>
+        <a href="https://instagram.com/reflet.events" target="_blank">@reflet.events</a><br>
+        <a href="https://instagram.com/prescyllia_" target="_blank">@prescyllia_</a><br>
+        <a href="https://instagram.com/marie_ithbd" target="_blank">@marie_ithbd</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Reflet — Bordeaux</span>
+      <span>Fait avec soin, entre femmes.</span>
+      <span>
+        <a href="#" id="legalOpenBtn" style="text-decoration:underline; text-underline-offset:3px;">Mentions légales</a>
+        &nbsp;·&nbsp;
+        <a href="#" id="privacyOpenBtn" style="text-decoration:underline; text-underline-offset:3px;">Politique de confidentialité</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL : infos d'un événement du planning -->
+<div class="modal-overlay" id="planningModal">
+  <div class="modal-box">
+    <button class="modal-close" id="planningModalClose">×</button>
+    <span class="eyebrow" id="planningModalDate"></span>
+    <h3 class="serif" id="planningModalTitle" style="font-size:26px; margin-bottom:10px;"></h3>
+    <p id="planningModalTime" style="font-size:14px; color:var(--marron-soft); margin:0 0 14px;"></p>
+    <p id="planningModalDesc" style="font-size:14.5px; line-height:1.6; color:var(--marron-soft); margin:0;"></p>
+    <a href="#" id="planningModalBillettoLink" class="btn-pill btn-dark" style="display:none; text-align:center; margin-top:20px; border:none; cursor:pointer;">Réserver ma place</a>
+  </div>
+</div>
+
+<!-- MODAL : mentions légales -->
+<div class="modal-overlay" id="legalModal">
+  <div class="modal-box" style="max-width:520px;">
+    <button class="modal-close" id="legalModalClose">×</button>
+    <span class="eyebrow">Informations</span>
+    <h3 class="serif" style="font-size:24px; margin-bottom:16px;">Mentions légales</h3>
+    <div style="font-size:13.5px; line-height:1.7; color:var(--marron-soft); max-height:60vh; overflow-y:auto;">
+      <p><strong style="color:var(--ink);">Éditeur du site</strong><br>
+      REFLET.events — Micro-entreprise (EI)<br>
+      Lahiteau Prescyllia<br>
+      18 Rue Fondaudège, 33000 Bordeaux<br>
+      SIRET : 980 894 596 00017<br>
+      Contact : reflet.events.pm@gmail.com</p>
+      <p><strong style="color:var(--ink);">Directrice de la publication</strong><br>
+      Prescyllia Lahiteau</p>
+      <p><strong style="color:var(--ink);">Hébergement</strong><br>
+      Netlify, Inc. — 44 Montgomery Street, Suite 300, San Francisco, California 94104, États-Unis</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : politique de confidentialité (RGPD) -->
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal-box" style="max-width:520px;">
+    <button class="modal-close" id="privacyModalClose">×</button>
+    <span class="eyebrow">RGPD</span>
+    <h3 class="serif" style="font-size:24px; margin-bottom:16px;">Politique de confidentialité</h3>
+    <div style="font-size:13.5px; line-height:1.7; color:var(--marron-soft); max-height:60vh; overflow-y:auto;">
+      <p><strong style="color:var(--ink);">Données collectées</strong><br>
+      Lors d'une réservation ou d'une inscription, nous collectons : prénom, nom, numéro de téléphone, adresse mail et pseudo Instagram.</p>
+      <p><strong style="color:var(--ink);">Utilisation</strong><br>
+      Ces informations servent uniquement à confirmer votre place à un événement, vous contacter si besoin, et vous tenir informée des prochaines actualités Reflet (boutique, fidélité). Elles ne sont jamais revendues à des tiers.</p>
+      <p><strong style="color:var(--ink);">Conservation</strong><br>
+      Vos données sont conservées le temps nécessaire à la gestion de nos événements, puis supprimées.</p>
+      <p><strong style="color:var(--ink);">Vos droits</strong><br>
+      Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données à tout moment, en nous contactant à reflet.events.pm@gmail.com.</p>
+      <p style="font-style:italic; color:var(--taupe);">Ce texte est un modèle à adapter et faire valider avant la mise en ligne officielle du site.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PANIER -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal-box" style="max-width:440px;">
+    <button class="modal-close" id="cartModalClose">×</button>
+    <span class="eyebrow">Panier</span>
+    <h3 class="serif" style="font-size:24px; margin-bottom:18px;">Ton panier</h3>
+    <div id="cartItems"></div>
+    <p id="cartEmptyMsg" style="font-size:14px; color:var(--marron-soft);">Ton panier est vide pour l'instant.</p>
+    <div id="cartSubtotalRow" style="display:none; justify-content:space-between; align-items:center; padding-top:16px; margin-top:6px; border-top:1px solid var(--line); font-size:15px;">
+      <span>Total</span>
+      <strong id="cartSubtotal">0 €</strong>
+    </div>
+    <button type="button" id="cartCheckoutBtn" class="btn-pill btn-dark" style="width:100%; margin-top:20px; border:none; cursor:pointer; display:none;">Passer au paiement</button>
+  </div>
+</div>
+
+<!-- MODAL : paiement Stripe intégré -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal-box" style="max-width:440px;">
+    <button class="modal-close" id="checkoutModalClose">×</button>
+    <span class="eyebrow">Paiement sécurisé</span>
+    <h3 class="serif" style="font-size:24px; margin-bottom:6px;">Finaliser ma commande</h3>
+    <p style="font-size:14px; color:var(--marron-soft); margin:0 0 18px;">Total à payer : <strong id="checkoutTotal">0 €</strong></p>
+    <form id="checkoutForm" class="booking-form" name="achat" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="achat">
+      <p style="display:none;"><input name="bot-field"></p>
+      <input type="text" name="prenom" placeholder="Prénom" required>
+      <input type="text" name="nom" placeholder="Nom" required>
+      <input type="tel" name="telephone" placeholder="Numéro de téléphone" required>
+      <input type="email" name="email" placeholder="Adresse mail" required>
+      <input type="text" name="insta" placeholder="Instagram (@pseudo) — facultatif">
+      <input type="hidden" name="commande" id="checkoutOrderSummary">
+
+      <div id="deliveryBlock" style="display:none;">
+        <div style="font-size:13px; color:var(--ink); margin:6px 0 10px; font-weight:500;">Mode de livraison</div>
+        <div id="deliveryOptions" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;"></div>
+
+        <div id="deliveryFieldsRelais" style="display:none; flex-direction:column; gap:10px; margin-bottom:14px;">
+          <input type="text" id="relayName" placeholder="Nom du point relais">
+          <input type="text" id="relayAddress" placeholder="Adresse / ville">
+          <input type="text" id="relayPostalCode" placeholder="Code postal (facultatif)">
+        </div>
+
+        <div id="deliveryFieldsDomicile" style="display:none; flex-direction:column; gap:10px; margin-bottom:14px;">
+          <input type="text" id="homeAddress" placeholder="Adresse complète">
+          <input type="text" id="homePostalCode" placeholder="Code postal">
+          <input type="text" id="homeCity" placeholder="Ville">
+        </div>
+      </div>
+
+      <label class="consent-label">
+        <input type="checkbox" id="checkoutAllergyToggle">
+        <span>J'ai une allergie ou une intolérance à signaler</span>
+      </label>
+      <div id="checkoutAllergyFieldWrap" style="display:none;">
+        <input type="text" name="allergenes" id="checkoutAllergyField" placeholder="Laquelle / lesquelles ?">
+      </div>
+
+      <div id="card-element" style="padding:14px 16px; border:1px solid var(--line); border-radius:16px;"></div>
+      <div id="card-errors" role="alert" style="color:#b3413a; font-size:12.5px;"></div>
+      <label class="consent-label">
+        <input type="checkbox" required>
+        <span>J'accepte que mes informations soient utilisées pour ma réservation, conformément à la <a href="#" class="js-open-privacy">politique de confidentialité</a>.</span>
+      </label>
+      <label class="consent-label">
+        <input type="checkbox" required>
+        <span>J'autorise Reflet à utiliser les photos/vidéos prises pendant l'événement (droit à l'image), et je dégage Reflet de toute responsabilité en cas d'incident survenant durant l'événement.</span>
+      </label>
+      <p style="font-size:11.5px; color:var(--marron-soft); text-align:center; line-height:1.5; margin:0;">Les billets ne sont ni échangeables ni remboursables.</p>
+      <button type="submit" id="checkoutSubmitBtn" class="btn-pill btn-dark" style="border:none; cursor:pointer; width:100%;">Payer <span id="checkoutSubmitAmount"></span></button>
+    </form>
+    <p class="form-msg" id="checkoutMsg" style="color:var(--marron-soft);">Merci ! Votre paiement a été confirmé, votre place est réservée. 💛</p>
+    <div id="ticketQrWrap" style="display:none; text-align:center; margin-top:18px; padding-top:18px; border-top:1px solid var(--line);">
+      <p style="font-size:12.5px; color:var(--marron-soft); margin:0 0 12px;">Ton billet — fais une capture d'écran, il te sera demandé à l'entrée</p>
+      <div id="ticketQr" style="display:inline-block; background:#fff; padding:12px; border-radius:12px;"></div>
+      <p id="ticketQrLabel" style="font-size:12px; color:var(--marron-soft); margin-top:10px;"></p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : fiche produit boutique -->
+<div class="modal-overlay" id="productModal">
+  <div class="product-page">
+    <button class="modal-close product-page-close" id="productModalClose">×</button>
+
+    <div class="product-page-inner">
+    <div class="product-gallery-wrap">
+      <button type="button" class="product-gallery-arrow product-gallery-arrow-prev" id="productGalleryPrev" aria-label="Photo précédente">‹</button>
+      <div class="product-page-gallery" id="productGallery"></div>
+      <button type="button" class="product-gallery-arrow product-gallery-arrow-next" id="productGalleryNext" aria-label="Photo suivante">›</button>
+      <div class="product-gallery-dots" id="productGalleryDots"></div>
+    </div>
+
+    <div class="product-page-body">
+      <span class="eyebrow">Boutique · New Capsule 1</span>
+      <h1 class="serif" id="productModalTitle"></h1>
+      <div class="shop-price" id="productModalPrice" style="font-size:22px; margin-bottom:18px;"></div>
+      <p id="productModalDesc" style="font-size:15px; line-height:1.7; color:var(--marron-soft); margin:0 0 12px;"></p>
+      <p id="productModalDescExtra" style="font-size:14px; line-height:1.7; color:var(--marron-soft); margin:0 0 24px;"></p>
+
+      <div id="productSizeBlock" style="display:none; margin-bottom:20px;">
+        <div style="font-size:13px; color:var(--ink); margin-bottom:10px; font-weight:500;">Choisis ta taille</div>
+        <div class="size-row" id="sizeRow">
+          <button type="button" class="size-btn" data-size="XS">XS</button>
+          <button type="button" class="size-btn" data-size="S">S</button>
+          <button type="button" class="size-btn" data-size="M">M</button>
+          <button type="button" class="size-btn" data-size="L">L</button>
+          <button type="button" class="size-btn" data-size="XL">XL</button>
+        </div>
+        <button type="button" id="sizeGuideToggle" class="size-guide-toggle-btn" style="margin-top:12px;">Voir le guide des tailles</button>
+        <div class="event-details" id="sizeGuideDetails">
+          <p style="font-size:11.5px; color:var(--marron-soft); margin:0 0 10px;">Toutes les mesures sont indiquées en centimètres.</p>
+          <table class="size-guide-table">
+            <thead>
+              <tr><th>Taille</th><th>Largeur (cm)</th><th>Longueur (cm)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>XS</td><td>64</td><td>48</td></tr>
+              <tr><td>S</td><td>70</td><td>50</td></tr>
+              <tr><td>M</td><td>72</td><td>53</td></tr>
+              <tr><td>L</td><td>74</td><td>56</td></tr>
+              <tr><td>XL</td><td>76</td><td>59</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:11px; color:var(--taupe); line-height:1.5; margin:10px 0 0;">Largeur : mesurez le tee-shirt à plat, d'une aisselle à l'autre. Longueur : mesurez du haut de l'épaule jusqu'au bas du tee-shirt.<br>Coupe unisexe. En cas d'hésitation, nous vous conseillons de prendre votre taille habituelle.</p>
+        </div>
+        <div id="sizeError" style="display:none; color:#b3413a; font-size:12.5px; margin-top:8px;">Choisis une taille avant d'ajouter au panier.</div>
+      </div>
+
+      <button type="button" id="productAddToCartBtn" class="btn-pill btn-dark" style="width:100%; border:none; cursor:pointer;">Ajouter au panier</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : fiche détaillée d'un événement -->
+<div class="modal-overlay" id="eventPageModal">
+  <div class="product-page">
+    <button class="modal-close product-page-close" id="eventPageClose">×</button>
+
+    <div class="product-page-inner">
+    <div class="product-page-gallery" id="eventPageGallery" style="display:block;">
+      <div class="arch product-arch" id="eventPagePhoto" style="aspect-ratio:4/5; border-radius:0;"></div>
+      <div id="eventPageExtraPhotos" style="display:flex; gap:6px; margin-top:6px; overflow-x:auto; touch-action:pan-x; scrollbar-width:none;"></div>
+    </div>
+
+    <div class="product-page-body">
+      <span class="eyebrow" id="eventPageTag"></span>
+      <h1 class="serif" id="eventPageTitle"></h1>
+      <p id="eventPageTeaser" style="font-size:15px; line-height:1.6; color:var(--marron-soft); margin:8px 0 22px;"></p>
+
+      <div class="event-icon-row" id="eventPageIcons"></div>
+
+      <h4 class="event-page-subhead">L'expérience</h4>
+      <p id="eventPageDesc" style="font-size:14.5px; line-height:1.7; color:var(--marron-soft); margin:0 0 14px;"></p>
+      <p id="eventPageDescExtra" style="font-size:14.5px; line-height:1.7; color:var(--marron-soft); margin:0 0 22px;"></p>
+
+      <h4 class="event-page-subhead">À prévoir / Inclus</h4>
+      <ul class="event-list" id="eventPageInclus" style="margin:0 0 22px;"></ul>
+
+      <h4 class="event-page-subhead">Elles en parlent</h4>
+      <div class="testi-marquee event-testi-marquee" style="margin:0 0 26px;">
+        <div class="testi-track" id="eventPageTestimonials"></div>
+      </div>
+
+      <div class="event-page-priceRow">
+        <strong id="eventPagePrice"></strong>
+        <span style="font-size:12px; color:var(--marron-soft);">par personne</span>
+      </div>
+
+      <div id="eventPageDateBlock" style="margin:16px 0 20px;"></div>
+
+      <button type="button" id="eventPageReserveBtn" class="btn-pill btn-dark" style="width:100%; border:none; cursor:pointer;">Réserver ma place</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : fiche détaillée d'une collaboration -->
+<div class="modal-overlay" id="collabPageModal">
+  <div class="product-page">
+    <button class="modal-close product-page-close" id="collabPageClose">×</button>
+
+    <div class="product-page-inner">
+    <div class="product-page-gallery" id="collabPageGallery" style="display:block;">
+      <div class="arch product-arch" id="collabPagePhoto" style="aspect-ratio:4/5; border-radius:0;"></div>
+    </div>
+
+    <div class="product-page-body">
+      <span class="eyebrow" id="collabPageTag"></span>
+      <h1 class="serif" id="collabPageTitle"></h1>
+      <p id="collabPageTeaser" style="font-size:15px; line-height:1.6; color:var(--marron-soft); margin:8px 0 22px;"></p>
+
+      <div class="event-icon-row" id="collabPageIcons"></div>
+
+      <h4 class="event-page-subhead">Le partenariat</h4>
+      <p id="collabPageDesc" style="font-size:14.5px; line-height:1.7; color:var(--marron-soft); margin:0 0 22px;"></p>
+
+      <h4 class="event-page-subhead">À prévoir / Avantage Reflet</h4>
+      <ul class="event-list" id="collabPageInclus" style="margin:0 0 26px;"></ul>
+
+      <button type="button" id="collabPageReserveBtn" class="btn-pill btn-dark" style="width:100%; border:none; cursor:pointer;">Je suis intéressée</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : agrandir une photo au clic -->
+<div class="modal-overlay" id="lightboxModal" style="background:rgba(20,15,12,0.92);">
+  <div style="position:relative; max-width:90vw; max-height:88vh;">
+    <button class="modal-close" id="lightboxClose" style="position:absolute; top:-14px; right:-14px; background:var(--card); border-radius:50%; width:36px; height:36px;">×</button>
+    <img id="lightboxImg" src="" alt="" style="max-width:90vw; max-height:88vh; border-radius:16px; display:block; object-fit:contain;">
+  </div>
+</div>
+
+<!-- MODAL : formulaire de réservation -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal-box">
+    <button class="modal-close" id="bookingModalClose">×</button>
+    <span class="eyebrow">Réservation</span>
+    <h3 class="serif" id="bookingModalTitle" style="font-size:24px; margin-bottom:16px;"></h3>
+    <form id="bookingForm" class="booking-form" name="reservation" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="reservation">
+      <p style="display:none;"><input name="bot-field"></p>
+      <input type="text" name="prenom" placeholder="Prénom" required>
+      <input type="text" name="nom" placeholder="Nom" required>
+      <input type="tel" name="telephone" placeholder="Numéro de téléphone" required>
+      <input type="email" name="email" placeholder="Adresse mail" required>
+      <input type="text" name="insta" placeholder="Instagram (@pseudo) — facultatif">
+      <label class="consent-label">
+        <input type="checkbox" required>
+        <span>J'accepte que mes informations soient utilisées pour ma réservation, conformément à la <a href="#" class="js-open-privacy">politique de confidentialité</a>.</span>
+      </label>
+      <button type="submit" class="btn-pill btn-dark" style="border:none; cursor:pointer; width:100%;">Confirmer ma place</button>
+    </form>
+    <p class="form-msg" id="bookingMsg" style="color:var(--marron-soft);">Merci ! Votre demande a bien été envoyée, on revient vers vous très vite. 💛</p>
+  </div>
+</div>
+
+<script>
+  // Redirection uniquement pour les invitations admin par email (lien avec un token spécial dans l'URL)
+  // — ne doit JAMAIS s'appliquer aux clientes qui créent un compte fidélité normal
+  if (window.netlifyIdentity) {
+    const hash = document.location.hash || '';
+    const isAdminInviteFlow = hash.includes('invite_token') || hash.includes('recovery_token');
+    if (isAdminInviteFlow) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => { document.location.href = "/admin/index.html"; });
+        }
+      });
+    }
+  }
+</script>
+<script>
+  // ===== PANIER + PAIEMENT STRIPE INTÉGRÉ =====
+  const stripe = Stripe('pk_live_51TyGLS2EAGY2Uw4NHnPhh4wQLH6DhWCTwzaYfV3ZYBaqXdOpP7p6CcRvJP3pacCeTt9EclmHivnHivMiUkfd8UYf00WRKxuZPX');
+  const elements = stripe.elements();
+  const cardElement = elements.create('card', {
+    style: { base: { fontFamily: "'Inter', sans-serif", fontSize: '16px', color: '#2A1F19' } }
+  });
+  let cardMounted = false;
+
+  let cart = [];
+  try { cart = JSON.parse(localStorage.getItem('refletCart') || '[]'); } catch(e){ cart = []; }
+
+  function saveCart(){ localStorage.setItem('refletCart', JSON.stringify(cart)); }
+
+  function addToCart(id, name, price, type){
+    type = type || 'event';
+    const existing = cart.find(i => i.id === id);
+    if(existing){ existing.qty += 1; } else { cart.push({id, name, price, qty:1, type}); }
+    saveCart();
+    renderCart();
+    openCart();
+  }
+
+  function updateQty(id, delta){
+    const item = cart.find(i => i.id === id);
+    if(!item) return;
+    item.qty += delta;
+    if(item.qty <= 0){ cart = cart.filter(i => i.id !== id); }
+    saveCart();
+    renderCart();
+  }
+
+  function removeItem(id){
+    cart = cart.filter(i => i.id !== id);
+    saveCart();
+    renderCart();
+  }
+
+  function cartTotal(){
+    return cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  }
+
+  function renderCart(){
+    const itemsEl = document.getElementById('cartItems');
+    const emptyMsg = document.getElementById('cartEmptyMsg');
+    const subtotalRow = document.getElementById('cartSubtotalRow');
+    const checkoutBtn = document.getElementById('cartCheckoutBtn');
+    const countEl = document.getElementById('cartCount');
+
+    const totalQty = cart.reduce((s,i) => s + i.qty, 0);
+    if(totalQty > 0){
+      countEl.textContent = totalQty;
+      countEl.style.display = 'flex';
+    } else {
+      countEl.style.display = 'none';
+    }
+    const mobileBadge = document.getElementById('mobileTabBadge');
+    if(mobileBadge){
+      if(totalQty > 0){ mobileBadge.textContent = totalQty; mobileBadge.style.display = 'flex'; }
+      else { mobileBadge.style.display = 'none'; }
+    }
+
+    if(cart.length === 0){
+      itemsEl.innerHTML = '';
+      emptyMsg.style.display = 'block';
+      subtotalRow.style.display = 'none';
+      checkoutBtn.style.display = 'none';
+      return;
+    }
+
+    emptyMsg.style.display = 'none';
+    subtotalRow.style.display = 'flex';
+    checkoutBtn.style.display = 'block';
+
+    itemsEl.innerHTML = cart.map(i => `
+      <div class="cart-item">
+        <div>
+          <div class="cart-item-name">${i.name}</div>
+          <div class="cart-item-price">${i.price} € × ${i.qty}</div>
+        </div>
+        <div class="cart-item-qty">
+          <button type="button" class="cart-qty-btn" data-action="dec" data-id="${i.id}">−</button>
+          <span>${i.qty}</span>
+          <button type="button" class="cart-qty-btn" data-action="inc" data-id="${i.id}">+</button>
+          <button type="button" class="cart-item-remove" data-action="remove" data-id="${i.id}">Retirer</button>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('cartSubtotal').textContent = cartTotal() + ' €';
+
+    itemsEl.querySelectorAll('button[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        if(btn.dataset.action === 'inc') updateQty(id, 1);
+        if(btn.dataset.action === 'dec') updateQty(id, -1);
+        if(btn.dataset.action === 'remove') removeItem(id);
+      });
+    });
+  }
+
+  const cartModal = document.getElementById('cartModal');
+  function openCart(){ renderCart(); cartModal.classList.add('show'); }
+
+  const mobileTabBoutique = document.getElementById('mobileTabBoutique');
+  if(mobileTabBoutique){
+    mobileTabBoutique.addEventListener('click', (e) => {
+      if(cart.length > 0){ e.preventDefault(); openCart(); }
+    });
+  }
+  document.getElementById('cartOpenBtn').addEventListener('click', openCart);
+  document.getElementById('cartModalClose').addEventListener('click', () => cartModal.classList.remove('show'));
+  cartModal.addEventListener('click', (e) => { if(e.target === cartModal) cartModal.classList.remove('show'); });
+
+  document.querySelectorAll('.js-add-to-cart').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      addToCart(btn.dataset.id, btn.dataset.name, parseFloat(btn.dataset.price));
+    });
+  });
+
+  // Fiche produit boutique
+  const productData = {
+    tshirt: {
+      name: "Tee-shirt Reflet", price: 19.90, hasSizes: true,
+      desc: "Le tee-shirt Reflet, coupe unisexe, en coton doux. Le vêtement qui prolonge l'esprit de la communauté au quotidien — à porter après (ou avant !) chaque événement.",
+      descExtra: "Coton épais de qualité, coupe légèrement oversize pour un confort maximal. Sérigraphie du logo Reflet sur le devant. Lavable en machine à 30°C. Pièce pensée pour durer, comme la communauté qu'elle représente.",
+      photos: [
+        "images/img-15.jpg",
+        "images/img-16.jpg",
+        "images/img-17.jpg",
+        "images/img-18.jpg",
+        "images/img-19.jpg",
+        "images/img-20.jpg"
+      ]
+    },
+    totebag: {
+      name: "Tote bag Reflet", price: 14.90, hasSizes: false,
+      desc: "Le tote bag Reflet, en toile épaisse et résistante. Taille unique, parfait pour vos affaires de sport ou vos courses du quotidien.",
+      descExtra: "Toile de coton robuste, anses renforcées pour porter confortablement vos affaires. Format généreux : de quoi glisser une tenue de sport, une gourde et vos essentiels. Le compagnon idéal entre deux événements Reflet.",
+      photos: [
+        "images/img-21.jpg",
+        "images/img-22.jpg",
+        "images/img-23.jpg",
+        "images/img-24.jpg",
+        "images/img-25.jpg"
+      ]
+    },
+    bandeau: {
+      name: "Bandeau Reflet", price: 8.90, hasSizes: false,
+      desc: "Le bandeau REFLET allie douceur, confort et élégance. Conçu dans une matière extensible et respirante, il épouse délicatement la tête tout en restant parfaitement en place, aussi bien pendant vos séances de sport qu'au quotidien.",
+      descExtra: "Pensé comme un essentiel à emporter partout, il accompagne chacun de vos moments avec discrétion et raffinement. Un accessoire intemporel, pratique et délicat, imaginé pour se glisser naturellement dans notre sac et vous suivre en toute occasion.",
+      photos: [
+        "images/img-26.jpg",
+        "images/img-27.jpg",
+        "images/img-28.jpg",
+        "images/img-29.jpg"
+      ]
+    }
+  };
+
+  // Affiche la photo de chaque produit sur la carte boutique, avec un cadrage sur-mesure
+  const shopCardPhotoConfig = {
+    tshirt: { index: 0, position: 'center 22%', scale: 1.1 },
+    totebag: { index: 4, position: 'center 10%', scale: 1.25 },
+    bandeau: { index: 2, position: 'center', scale: 1 }
+  };
+  Object.keys(productData).forEach(id => {
+    const p = productData[id];
+    const archEl = document.getElementById('shopArch-' + id);
+    const cfg = shopCardPhotoConfig[id] || { index: 0, position: 'center', scale: 1 };
+    if(archEl && p.photos && p.photos.length){
+      const src = p.photos[cfg.index] || p.photos[0];
+      archEl.innerHTML = `<img src="${src}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover; object-position:${cfg.position}; transform:scale(${cfg.scale});">`;
+    }
+  });
+
+  const productModal = document.getElementById('productModal');
+  const productAddToCartBtn = document.getElementById('productAddToCartBtn');
+  const productSizeBlock = document.getElementById('productSizeBlock');
+  const sizeError = document.getElementById('sizeError');
+  let currentProductId = null;
+  let currentSize = null;
+
+  // Stock — chargé une fois, réutilisé pour afficher "Épuisé" le cas échéant
+  let stockData = null;
+  async function loadStock(){
+    if(stockData) return stockData;
+    try {
+      const res = await fetch('/.netlify/functions/get-stock');
+      const data = await res.json();
+      stockData = data.stock || {};
+    } catch(err) { stockData = {}; }
+    return stockData;
+  }
+  function stockFor(sku){
+    if(!stockData) return 99; // avant chargement, on n'affiche rien de bloquant
+    return stockData[sku] !== undefined ? stockData[sku] : 99;
+  }
+
+  // Témoignages réutilisés pour toutes les fiches événements (carrousel défilant)
+  const allTestimonials = [
+    {name:'Camille', text:"Les filles sont adorables, un moment de bonheur partagé entre girls, ça motive !"},
+    {name:'Emma', text:"C'est vraiment sympa de pouvoir se retrouver entre filles sans jugement et s'éclater"},
+    {name:'Déborah', text:"Un groupe plein de bienveillance et d'encouragement, j'ai terminé mon 1er run grâce à ce groupe !"},
+    {name:'Jade', text:"Les événements sont incroyables, on n'arrête jamais !!"},
+    {name:'Paula', text:"Les événements sont top et les filles nous mettent vraiment à l'aise, elles sont géniales."},
+    {name:'Jasmeen', text:"Rien à dire, c'était parfait, la prof était top et les filles super sympas !"},
+    {name:'Jeanne', text:"Une vraie safe place !!! Des événements pour chacune avec des girls topissimes"}
+  ];
+
+  // Fiche événement éditoriale — contenu + logique de dates dynamiques (depuis data/planning.json)
+  const eventPageData = {
+    pilates: {
+      tag: 'Pilates', title: "Pilates'expérience", price: 20,
+      teaser: "Une parenthèse tout en douceur, entre respiration et mouvement, au cœur de Bordeaux.",
+      coach: 'Si-Ann', level: 'Tous niveaux', city: '7 rue Dufau, Bordeaux',
+      desc: "Une séance de 40 minutes de Pilates sur tapis, pensée pour reconnecter le corps et l'esprit dans un cadre doux et bienveillant. Un moment pour ralentir, respirer et retrouver son équilibre, avant de prolonger l'expérience autour de gaufres et de thé glacé.",
+      inclus: ["Tapis et matériel fournis", "Gaufres et thé glacé offerts après la séance", "En été, l'horaire peut être avancé d'une demi-heure"],
+      testimonials: allTestimonials
+    },
+    danse: {
+      tag: 'Danse', title: 'Danse by REFLET', price: 27,
+      teaser: "Une parenthèse dansée, ouverte à toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit votre niveau.",
+      coach: 'Bianca', level: 'Tous niveaux', city: '6 rue Ramonet, Bordeaux',
+      desc: "Une heure de danse (hip-hop, commercial, afro, pop...) dans une atmosphère libre et bienveillante. La séance se prolonge autour de gaufres et de thé glacé, pour laisser place aux échanges et prolonger cette parenthèse hors du quotidien.",
+      inclus: ["Chaussures de salle propres et différentes de celles avec lesquelles vous arrivez OU chaussettes propres", "Gaufres et thé glacé offerts après la séance"],
+      testimonials: allTestimonials
+    },
+    run: {
+      tag: 'Run', title: 'Run Reflet', price: 0,
+      teaser: "Une parenthèse en mouvement, pensée pour courir ensemble, à son rythme, sans pression ni recherche de performance.",
+      coach: null, level: 'Tous niveaux', city: 'Bordeaux',
+      desc: "Des runs de 3 à 4 km maximum, accessibles à toutes, où chacune avance à son rythme. Ici, pas de chrono ni d'allure imposée : simplement le plaisir de courir ensemble et de partager un moment en plein air.",
+      descExtra: "Selon les rendez-vous, le run peut se prolonger autour d'une collaboration et de quelques douceurs à partager, pour faire durer le moment bien après les dernières foulées. Le lieu de rendez-vous et le départ sont indiqués sur Instagram la semaine avant l'événement, et tout supplément d'infos dans le CANAL en bio du compte.",
+      inclus: ["Musique en groupe", "Chaussures de sport adaptées à la course à pied"],
+      testimonials: allTestimonials
+    }
+  };
+
+  // Places limitées — Pilates 10, Danse 15, DEFINE (Reformer) 11 ; le reste est illimité
+  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 13, copains: 35, puppypilates: 15 };
+  let eventCapacityData = null;
+  async function loadEventCapacity(){
+    if(eventCapacityData) return eventCapacityData;
+    try {
+      const res = await fetch('/.netlify/functions/get-event-capacity');
+      const data = await res.json();
+      eventCapacityData = data.counts || {};
+    } catch(err) { eventCapacityData = {}; }
+    return eventCapacityData;
+  }
+  function remainingFor(group, key){
+    const limit = CAPACITY_LIMITS[group];
+    if(!limit) return null; // pas de limite configurée = illimité
+    const booked = (eventCapacityData && eventCapacityData[key]) || 0;
+    return Math.max(0, limit - booked);
+  }
+
+  let eventPlanningData = null;
+  async function loadEventPlanning(){
+    if(eventPlanningData) return eventPlanningData;
+    try {
+      const res = await fetch('/.netlify/functions/get-planning');
+      eventPlanningData = await res.json();
+    } catch(err) { eventPlanningData = { events: [] }; }
+    return eventPlanningData;
+  }
+
+  function datesForTag(planning, tag){
+    return (planning.events || []).filter(ev => ev.tag === tag);
+  }
+
+  // Remplit les lignes date/heure sous chaque carte événement, dès que le planning est chargé
+  loadEventPlanning().then(planning => {
+    Object.keys(eventPageData).forEach(id => {
+      const dates = datesForTag(planning, eventPageData[id].tag);
+      const metaEl = document.getElementById('eventMeta-' + id);
+      const priceEl = document.getElementById('eventPrice-' + id);
+      if(priceEl) priceEl.textContent = eventPageData[id].price > 0 ? eventPageData[id].price + ' €' : 'Gratuit';
+      if(metaEl){
+        if(dates.length === 1){
+          metaEl.textContent = dates[0].day + ' ' + (dates[0].month_short || '') + ' · ' + dates[0].time;
+        } else if(dates.length > 1){
+          metaEl.textContent = dates.length + ' dates ce mois-ci';
+        } else {
+          metaEl.textContent = 'Voir Instagram @reflet.events';
+        }
+      }
+    });
+  });
+
+  let currentEventId = null;
+  let currentEventDate = null;
+
+  function updateReserveButtonForDate(reserveBtn, eventDate){
+    const isCollab = eventDate && (eventDate.title || '').toLowerCase().includes('copains');
+    const note = document.getElementById('eventDateNote');
+    if(isCollab){
+      const remaining = remainingFor('copains', `copains-${eventDate.day}`);
+      if(remaining !== null && remaining <= 0){
+        reserveBtn.textContent = 'Complet';
+        reserveBtn.disabled = true;
+      } else {
+        reserveBtn.textContent = 'Ajouter au panier — 4 €';
+        reserveBtn.disabled = false;
+      }
+      if(note) note.style.display = 'none';
+    } else {
+      reserveBtn.disabled = false;
+      reserveBtn.textContent = (currentEventId === 'run') ? 'Voir sur Instagram' : 'Réserver ma place';
+      if(note) note.style.display = 'none';
+    }
+  }
+
+  async function openEventPage(id){
+    const data = eventPageData[id];
+    if(!data) return;
+    currentEventId = id;
+    currentEventDate = null;
+
+    document.getElementById('eventPageTag').textContent = data.tag;
+    document.getElementById('eventPageTitle').textContent = data.title;
+    document.getElementById('eventPageTeaser').textContent = data.teaser;
+    document.getElementById('eventPageDesc').textContent = data.desc;
+    document.getElementById('eventPageDescExtra').textContent = data.descExtra || '';
+    document.getElementById('eventPagePrice').textContent = data.price > 0 ? data.price + ' €' : 'Gratuit';
+
+    // Photo — on réutilise celle déjà affichée sur la carte
+    const cardImg = document.querySelector(`.js-open-event[data-event="${id}"] .event-editorial-photo img`);
+    const photoEl = document.getElementById('eventPagePhoto');
+    photoEl.innerHTML = cardImg ? `<img src="${cardImg.src}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">` : '';
+
+    // Mini-galerie de photos supplémentaires (facultative, cliquables pour zoomer)
+    const extraPhotosEl = document.getElementById('eventPageExtraPhotos');
+    if(data.extraPhotos && data.extraPhotos.length){
+      extraPhotosEl.innerHTML = data.extraPhotos.map(src => `<img src="${src}" alt="${data.title}" style="flex:0 0 48%; aspect-ratio:1/1; object-fit:cover; border-radius:6px; cursor:zoom-in;">`).join('');
+      extraPhotosEl.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', () => {
+          const lightboxModal = document.getElementById('lightboxModal');
+          const lightboxImg = document.getElementById('lightboxImg');
+          lightboxImg.src = img.src;
+          lightboxImg.alt = img.alt;
+          lightboxModal.classList.add('show');
+        });
+      });
+    } else {
+      extraPhotosEl.innerHTML = '';
+    }
+
+    document.getElementById('eventPageInclus').innerHTML = data.inclus.map(t => `<li>${t}</li>`).join('');
+    const testiCards = data.testimonials.map(t =>
+      `<div class="testi-card event-testi-card"><p>« ${t.text} »</p><span class="event-testi-name">${t.name}</span></div>`
+    ).join('');
+    // On duplique la liste pour que le défilement boucle sans coupure, comme le carrousel principal
+    document.getElementById('eventPageTestimonials').innerHTML = testiCards + testiCards;
+
+    const planning = await loadEventPlanning();
+    await loadEventCapacity();
+    const dates = datesForTag(planning, data.tag);
+    const iconsEl = document.getElementById('eventPageIcons');
+    const dateBlock = document.getElementById('eventPageDateBlock');
+    const reserveBtn = document.getElementById('eventPageReserveBtn');
+
+    function iconsHtml(dateLabel, timeLabel){
+      return `
+        <div>📅 ${dateLabel}</div>
+        <div>🕐 ${timeLabel}</div>
+        <div>📍 ${data.city}</div>
+        ${data.coach ? `<div>👩 ${data.coach}</div>` : ''}
+        <div>♡ ${data.level}</div>
+      `;
+    }
+
+    if(dates.length === 1){
+      currentEventDate = dates[0];
+      iconsEl.innerHTML = iconsHtml(dates[0].day + ' ' + (dates[0].month_short || ''), dates[0].time);
+      dateBlock.innerHTML = '';
+      const isSingleCollab = (dates[0].title || '').toLowerCase().includes('copains');
+      const singleGroup = isSingleCollab ? 'copains' : id;
+      const singleKey = isSingleCollab ? `copains-${dates[0].day}` : `${id}-${dates[0].day}`;
+      const remaining = remainingFor(singleGroup, singleKey);
+      if(remaining !== null && remaining <= 0){
+        reserveBtn.disabled = true;
+        reserveBtn.textContent = 'Complet';
+      } else {
+        reserveBtn.disabled = false;
+        updateReserveButtonForDate(reserveBtn, currentEventDate);
+      }
+    } else if(dates.length > 1){
+      reserveBtn.disabled = false;
+      iconsEl.innerHTML = iconsHtml('Plusieurs dates', 'Voir ci-dessous');
+      dateBlock.innerHTML = '<div style="font-size:12px; color:var(--bronze); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Choisissez votre date</div>' +
+        dates.map((d, i) => {
+          const isCollab = (d.title || '').toLowerCase().includes('copains');
+          const dateGroup = isCollab ? 'copains' : id;
+          const dateKey = isCollab ? `copains-${d.day}` : `${id}-${d.day}`;
+          const remaining = remainingFor(dateGroup, dateKey);
+          const isFull = remaining !== null && remaining <= 0;
+          return `
+          <label class="event-date-option ${isFull ? 'event-date-option-full' : ''}" data-index="${i}">
+            <span style="display:flex; align-items:center; gap:10px;">
+              <input type="radio" name="eventDate" value="${i}" ${isFull ? 'disabled' : ''}>
+              <span>${d.day} ${d.month_short || ''} · ${data.tag === 'Run' ? (isCollab ? 'Run × Copains' : 'Run classique') : d.time}</span>
+            </span>
+            ${isFull ? '<span class="event-date-badge event-date-badge-full">Complet</span>' : ((data.tag === 'Run' && isCollab) ? '<span class="event-date-badge">Collab</span>' : '')}
+          </label>
+        `;
+        }).join('') +
+        '<div id="eventDateNote" style="display:none; font-size:12.5px; color:var(--marron-soft); line-height:1.6; background:var(--travertine); border-radius:12px; padding:12px 14px; margin-top:10px;"></div>';
+      dateBlock.querySelectorAll('input[name="eventDate"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          currentEventDate = dates[parseInt(radio.value)];
+          dateBlock.querySelectorAll('.event-date-option').forEach(el => el.classList.remove('active'));
+          radio.closest('.event-date-option').classList.add('active');
+          updateReserveButtonForDate(reserveBtn, currentEventDate);
+        });
+      });
+      updateReserveButtonForDate(reserveBtn, null);
+    } else {
+      iconsEl.innerHTML = iconsHtml('Voir Instagram', '@reflet.events');
+      dateBlock.innerHTML = '';
+      reserveBtn.textContent = 'Aucune date programmée';
+      reserveBtn.disabled = true;
+    }
+
+    document.getElementById('eventPageModal').classList.add('show');
+    document.querySelector('#eventPageModal .product-page').scrollTop = 0;
+  }
+
+  document.querySelectorAll('.js-open-event').forEach(card => {
+    card.addEventListener('click', () => openEventPage(card.dataset.event));
+  });
+  document.getElementById('eventPageClose').addEventListener('click', () => document.getElementById('eventPageModal').classList.remove('show'));
+  document.getElementById('eventPageModal').addEventListener('click', (e) => {
+    if(e.target.id === 'eventPageModal') e.target.classList.remove('show');
+  });
+
+  document.getElementById('eventPageReserveBtn').addEventListener('click', () => {
+    const data = eventPageData[currentEventId];
+    if(!data) return;
+
+    const isCollabDate = currentEventDate && (currentEventDate.title || '').toLowerCase().includes('copains');
+    if(isCollabDate){
+      const remaining = remainingFor('copains', `copains-${currentEventDate.day}`);
+      if(remaining !== null && remaining <= 0){
+        alert('Cette date est complète.');
+        return;
+      }
+      addToCart(`copains-${currentEventDate.day}`, `Run × Copains — ${currentEventDate.day} ${currentEventDate.month_short || ''}`, 4, 'event');
+      document.getElementById('eventPageModal').classList.remove('show');
+      return;
+    }
+
+    if(data.price === 0){
+      // Run Reflet classique — redirection vers l'Instagram Reflet (pour liker le message du CANAL)
+      window.open('https://instagram.com/reflet.events', '_blank', 'noopener');
+      return;
+    }
+
+    const dates = eventPlanningData ? datesForTag(eventPlanningData, data.tag) : [];
+    if(dates.length > 1 && !currentEventDate){
+      alert('Merci de choisir une date avant de réserver.');
+      return;
+    }
+
+    const label = currentEventDate ? `${data.title} — ${currentEventDate.day} ${currentEventDate.month_short || ''}` : data.title;
+    addToCart(currentEventId + (currentEventDate ? '-' + currentEventDate.day : ''), label, data.price, 'event');
+    document.getElementById('eventPageModal').classList.remove('show');
+  });
+
+  // Fiche collaboration — même format que la fiche événement, réservation = inscription d'intérêt gratuite
+  const collabPageData = {
+    define: {
+      tag: 'REFLET × DEFINE', title: 'DEFINE — Pilates Reformer', price: 35,
+      teaser: "Un partenariat pour découvrir le Pilates Reformer dans un studio d'exception, à tarif préférentiel Reflet.",
+      city: 'Bordeaux', level: 'Tous niveaux', time: '10h',
+      desc: "Ce mois-ci, Reflet s'associe à DEFINE pour vous faire découvrir le Pilates Reformer, une pratique douce et exigeante à la fois, dans un cadre premium.",
+      inclus: ["Tarif préférentiel réservé aux membres Reflet", "Places limitées", "Paire de chaussettes antidérapantes obligatoire pour la séance", "Une boisson offerte à la fin de la séance"],
+      detailPhoto: "images/img-30.jpg"
+    },
+    mome: {
+      tag: 'REFLET × MOME 🤎', title: 'Le déjeuner de Reflet — chez MOME',
+      teaser: "Pour cette nouvelle collaboration, Reflet vous donne rendez-vous chez MOME, café-pâtisserie au cœur de Bordeaux, pour un déjeuner convivial entre filles.",
+      city: 'Bordeaux', level: '15 places · sur réservation', price: 20, time: '11h',
+      desc: "Nous serons 15 femmes autour d'une même table pour partager un bon moment, échanger et profiter d'un déjeuner dans une ambiance chaleureuse et décontractée.",
+      inclus: ["Réservation directement en ligne", "Places limitées"],
+      detailPhoto: "images/img-31.jpg"
+    },
+    copains: {
+      tag: 'REFLET × COPAINS', title: 'COPAINS — Run / Boulangerie', price: 4,
+      teaser: "Le duo parfait après l'effort : une session Run suivie d'une pause boulangerie chez Copains.",
+      city: 'Bordeaux', level: 'Tous niveaux',
+      desc: "Reflet s'associe à Copains pour clôturer certaines sessions de running par une pause bien méritée, entre bonnes odeurs de pain frais et bonne humeur.",
+      inclus: ["Avantage réservé aux membres Reflet", "Places limitées — 35 personnes maximum par session"],
+      openEvent: 'run'
+    },
+    puppypilates: {
+      tag: 'REFLET × PUPPY PILATES', title: 'Puppy Pilates', price: 35, time: '16h30',
+      teaser: "Une séance de Pilates suivie de rencontres attendrissantes avec des chiots — le bien-être, version câlins.",
+      city: '35 Cours d\'Ornano, Bordeaux', level: 'Tous niveaux',
+      desc: "En octobre, Reflet vous propose une séance de Puppy Pilates : 30 minutes de Pilates sur tapis pour s'étirer et se reconnecter en douceur, prolongées de 30 minutes de rencontres avec des chiots. Câlins, nouvelles rencontres et douceur seront les maîtres-mots de cet instant — dans le respect du bien-être animal et d'un environnement sain et équilibré pour les chiots.",
+      inclus: ["Tapis fourni", "Places limitées — 15 personnes maximum"]
+    }
+  };
+
+  let currentCollabId = null;
+  let currentCollabCapacityKey = null;
+
+  async function openCollabPage(id){
+    const data = collabPageData[id];
+    if(!data) return;
+    currentCollabId = id;
+    currentCollabCapacityKey = null;
+
+    document.getElementById('collabPageTag').textContent = data.tag;
+    document.getElementById('collabPageTitle').textContent = data.title;
+    document.getElementById('collabPageTeaser').textContent = data.teaser;
+    document.getElementById('collabPageDesc').textContent = data.desc;
+    document.getElementById('collabPageInclus').innerHTML = data.inclus.map(t => `<li>${t}</li>`).join('');
+
+    const photoEl = document.getElementById('collabPagePhoto');
+    const cardImg = document.querySelector(`.js-open-collab[data-collab="${id}"] .collab-photo img`);
+    if(data.detailPhoto){
+      photoEl.innerHTML = `<img src="${data.detailPhoto}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">`;
+      photoEl.removeAttribute('data-label');
+    } else if(cardImg){
+      photoEl.innerHTML = `<img src="${cardImg.src}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">`;
+      photoEl.removeAttribute('data-label');
+    } else {
+      photoEl.innerHTML = '';
+      photoEl.setAttribute('data-label', 'Photo à venir');
+    }
+
+    document.getElementById('collabPageIcons').innerHTML = `
+      ${data.time ? `<div>🕐 ${data.time}</div>` : ''}
+      <div>📍 ${data.city}</div>
+      <div>♡ ${data.level}</div>
+    `;
+
+    const reserveBtn = document.getElementById('collabPageReserveBtn');
+    reserveBtn.textContent = data.openEvent ? 'Choisir ma date — 4 €' : (data.marieLink ? 'Envoyer "RUN" à Marie' : (data.price ? 'Ajouter au panier' : (data.instagramLink ? 'Voir sur Instagram' : 'Je suis intéressée')));
+    reserveBtn.disabled = false;
+
+    // Places limitées pour DEFINE, MOME et Puppy Pilates — recherche de leur date dans le planning
+    const capacityConfig = { define: { search: 'define', group: 'define' }, mome: { search: 'mome', group: 'mome' }, puppypilates: { search: 'puppy', group: 'puppypilates' } }[id];
+    if(capacityConfig){
+      const planning = await loadEventPlanning();
+      await loadEventCapacity();
+      const matchedDate = (planning.events || []).find(ev => (ev.title || '').toLowerCase().includes(capacityConfig.search));
+      if(matchedDate){
+        currentCollabCapacityKey = `${capacityConfig.group}-${matchedDate.day}`;
+        const remaining = remainingFor(capacityConfig.group, currentCollabCapacityKey);
+        if(remaining !== null && remaining <= 0){
+          reserveBtn.disabled = true;
+          reserveBtn.textContent = 'Complet';
+        }
+      }
+    }
+
+    document.getElementById('collabPageModal').classList.add('show');
+    document.querySelector('#collabPageModal .product-page').scrollTop = 0;
+  }
+
+  document.querySelectorAll('.js-open-collab').forEach(card => {
+    card.addEventListener('click', () => openCollabPage(card.dataset.collab));
+  });
+  document.getElementById('collabPageClose').addEventListener('click', () => document.getElementById('collabPageModal').classList.remove('show'));
+  document.getElementById('collabPageModal').addEventListener('click', (e) => {
+    if(e.target.id === 'collabPageModal') e.target.classList.remove('show');
+  });
+  document.getElementById('collabPageReserveBtn').addEventListener('click', () => {
+    const data = collabPageData[currentCollabId];
+    if(!data) return;
+    if(data.openEvent){
+      document.getElementById('collabPageModal').classList.remove('show');
+      openEventPage(data.openEvent);
+      return;
+    }
+    if(data.marieLink){
+      window.open('https://instagram.com/marie_ithbd', '_blank', 'noopener');
+      return;
+    }
+    if(data.price){
+      const cartId = currentCollabCapacityKey || currentCollabId;
+      addToCart(cartId, data.title, data.price, 'event');
+      document.getElementById('collabPageModal').classList.remove('show');
+      return;
+    }
+    if(data.instagramLink){
+      window.open('https://www.instagram.com/reflet.events/', '_blank', 'noopener');
+      return;
+    }
+    document.getElementById('collabPageModal').classList.remove('show');
+    openBookingModal(data.title, null, currentCollabCapacityKey);
+  });
+
+  async function openProduct(id){
+    const p = productData[id];
+    if(!p) return;
+    currentProductId = id;
+    currentSize = null;
+    document.getElementById('productModalTitle').textContent = p.name;
+    document.getElementById('productModalPrice').textContent = p.price.toFixed(2).replace('.', ',') + ' €';
+    document.getElementById('productModalDesc').textContent = p.desc;
+    document.getElementById('productModalDescExtra').textContent = p.descExtra || '';
+
+    const galleryEl = document.getElementById('productGallery');
+    const dotsEl = document.getElementById('productGalleryDots');
+    if(p.photos && p.photos.length){
+      galleryEl.innerHTML = p.photos.map(src => `<div class="arch product-arch"><img src="${src}" alt="${p.name}"></div>`).join('');
+      dotsEl.innerHTML = p.photos.map((_, i) => `<button type="button" class="product-gallery-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`).join('');
+      dotsEl.style.display = p.photos.length > 1 ? 'flex' : 'none';
+
+      // Clic sur une photo → zoom (réutilise la fenêtre loupe déjà en place)
+      galleryEl.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', () => {
+          const lightboxModal = document.getElementById('lightboxModal');
+          const lightboxImg = document.getElementById('lightboxImg');
+          lightboxImg.src = img.src;
+          lightboxImg.alt = img.alt;
+          lightboxModal.classList.add('show');
+        });
+      });
+
+      // Points de navigation synchronisés avec le défilement
+      const updateActiveDot = () => {
+        const index = Math.round(galleryEl.scrollLeft / galleryEl.clientWidth);
+        dotsEl.querySelectorAll('.product-gallery-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+      };
+      galleryEl.addEventListener('scroll', updateActiveDot);
+      dotsEl.querySelectorAll('.product-gallery-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+          galleryEl.scrollTo({ left: parseInt(dot.dataset.index) * galleryEl.clientWidth, behavior: 'smooth' });
+        });
+      });
+
+      // Flèches précédent/suivant
+      document.getElementById('productGalleryPrev').onclick = () => {
+        galleryEl.scrollBy({ left: -galleryEl.clientWidth, behavior: 'smooth' });
+      };
+      document.getElementById('productGalleryNext').onclick = () => {
+        galleryEl.scrollBy({ left: galleryEl.clientWidth, behavior: 'smooth' });
+      };
+    } else {
+      galleryEl.innerHTML = '<div class="arch product-arch" data-label="Photo à venir"></div>';
+      dotsEl.innerHTML = '';
+      dotsEl.style.display = 'none';
+    }
+    productSizeBlock.style.display = p.hasSizes ? 'block' : 'none';
+    sizeError.style.display = 'none';
+    document.getElementById('sizeGuideDetails').classList.remove('open');
+    document.getElementById('sizeGuideToggle').textContent = 'Voir le guide des tailles';
+    document.querySelectorAll('.size-btn').forEach(b => { b.classList.remove('active'); b.disabled = false; b.classList.remove('size-btn-out'); });
+    productAddToCartBtn.disabled = false;
+    productAddToCartBtn.textContent = 'Ajouter au panier';
+    productModal.classList.add('show');
+    document.querySelector('.product-page').scrollTop = 0;
+
+    await loadStock();
+
+    if(p.hasSizes){
+      let anyAvailable = false;
+      document.querySelectorAll('.size-btn').forEach(btn => {
+        const sku = 'tshirt-' + btn.dataset.size;
+        if(stockFor(sku) <= 0){
+          btn.disabled = true;
+          btn.classList.add('size-btn-out');
+        } else {
+          anyAvailable = true;
+        }
+      });
+      if(!anyAvailable){
+        productAddToCartBtn.disabled = true;
+        productAddToCartBtn.textContent = 'Épuisé';
+      }
+    } else {
+      if(stockFor(id) <= 0){
+        productAddToCartBtn.disabled = true;
+        productAddToCartBtn.textContent = 'Épuisé';
+      }
+    }
+  }
+
+  document.querySelectorAll('.js-open-product').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      openProduct(el.dataset.product);
+    });
+  });
+  document.getElementById('productModalClose').addEventListener('click', () => productModal.classList.remove('show'));
+  productModal.addEventListener('click', (e) => { if(e.target === productModal) productModal.classList.remove('show'); });
+
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentSize = btn.dataset.size;
+      sizeError.style.display = 'none';
+    });
+  });
+
+  document.getElementById('sizeGuideToggle').addEventListener('click', () => {
+    const details = document.getElementById('sizeGuideDetails');
+    const isOpen = details.classList.toggle('open');
+    document.getElementById('sizeGuideToggle').textContent = isOpen ? 'Masquer le guide des tailles' : 'Voir le guide des tailles';
+  });
+
+  productAddToCartBtn.addEventListener('click', () => {
+    const p = productData[currentProductId];
+    if(!p) return;
+    if(p.hasSizes && !currentSize){
+      sizeError.style.display = 'block';
+      return;
+    }
+    const id = p.hasSizes ? currentProductId + '-' + currentSize : currentProductId;
+    const name = p.hasSizes ? p.name + ' (taille ' + currentSize + ')' : p.name;
+    addToCart(id, name, p.price, 'product');
+    productModal.classList.remove('show');
+  });
+
+  document.getElementById('checkoutAllergyToggle').addEventListener('change', (e) => {
+    document.getElementById('checkoutAllergyFieldWrap').style.display = e.target.checked ? 'block' : 'none';
+  });
+
+  // Checkout modal
+  const checkoutModal = document.getElementById('checkoutModal');
+  const checkoutForm = document.getElementById('checkoutForm');
+  const checkoutMsg = document.getElementById('checkoutMsg');
+  const checkoutSubmitBtn = document.getElementById('checkoutSubmitBtn');
+
+  // Livraison — config chargée depuis data/shipping-config.json (modifiable sans toucher au code)
+  let shippingConfig = null;
+  let selectedDeliveryMode = null;
+
+  async function loadShippingConfig(){
+    if(shippingConfig) return shippingConfig;
+    try {
+      const res = await fetch('/data/shipping-config.json');
+      shippingConfig = await res.json();
+    } catch(err) {
+      shippingConfig = {
+        retrait:{label:"Retrait lors d'un événement Reflet", description:"Gratuit", fee:0},
+        relais:{label:"Livraison en point relais", description:"Colis expédiés tous les lundis.", fee:4.5},
+        domicile:{label:"Livraison à domicile", description:"Colis expédiés tous les lundis.", fee:6.9}
+      };
+    }
+    return shippingConfig;
+  }
+
+  function currentDeliveryFee(){
+    if(!selectedDeliveryMode || !shippingConfig) return 0;
+    return shippingConfig[selectedDeliveryMode].fee || 0;
+  }
+
+  function updateCheckoutTotalDisplay(){
+    const total = cartTotal() + currentDeliveryFee();
+    document.getElementById('checkoutTotal').textContent = total.toFixed(2).replace(/\.00$/,'') + ' €';
+    document.getElementById('checkoutSubmitAmount').textContent = total.toFixed(2).replace(/\.00$/,'') + ' €';
+  }
+
+  async function renderDeliveryOptions(){
+    const config = await loadShippingConfig();
+    const wrap = document.getElementById('deliveryOptions');
+    wrap.innerHTML = Object.keys(config).map(key => {
+      const opt = config[key];
+      const feeLabel = opt.fee > 0 ? opt.fee.toFixed(2).replace(/\.00$/,'') + ' €' : 'Gratuit';
+      return `
+        <label class="delivery-option" data-mode="${key}">
+          <input type="radio" name="deliveryMode" value="${key}">
+          <div style="flex:1;">
+            <div class="delivery-option-title">${opt.label}</div>
+            <div class="delivery-option-desc">${opt.description}</div>
+          </div>
+          <span class="delivery-option-fee">${feeLabel}</span>
+        </label>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('input[name="deliveryMode"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        selectedDeliveryMode = radio.value;
+        wrap.querySelectorAll('.delivery-option').forEach(el => el.classList.remove('active'));
+        radio.closest('.delivery-option').classList.add('active');
+        document.getElementById('deliveryFieldsRelais').style.display = radio.value === 'relais' ? 'flex' : 'none';
+        document.getElementById('deliveryFieldsDomicile').style.display = radio.value === 'domicile' ? 'flex' : 'none';
+        updateCheckoutTotalDisplay();
+      });
+    });
+  }
+
+  document.getElementById('cartCheckoutBtn').addEventListener('click', async () => {
+    cartModal.classList.remove('show');
+    selectedDeliveryMode = null;
+
+    const hasProducts = cart.some(i => i.type !== 'event');
+    const deliveryBlock = document.getElementById('deliveryBlock');
+    if(hasProducts){
+      deliveryBlock.style.display = 'block';
+      await renderDeliveryOptions();
+      document.getElementById('deliveryFieldsRelais').style.display = 'none';
+      document.getElementById('deliveryFieldsDomicile').style.display = 'none';
+    } else {
+      deliveryBlock.style.display = 'none';
+    }
+
+    updateCheckoutTotalDisplay();
+    checkoutMsg.classList.remove('show');
+    document.getElementById('ticketQrWrap').style.display = 'none';
+    checkoutForm.style.display = 'flex';
+    checkoutSubmitBtn.style.display = 'block';
+    checkoutModal.classList.add('show');
+    if(!cardMounted){ cardElement.mount('#card-element'); cardMounted = true; }
+  });
+  document.getElementById('checkoutModalClose').addEventListener('click', () => checkoutModal.classList.remove('show'));
+  checkoutModal.addEventListener('click', (e) => { if(e.target === checkoutModal) checkoutModal.classList.remove('show'); });
+
+  cardElement.on('change', (event) => {
+    document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
+  });
+
+  checkoutForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Validation de la livraison si le panier contient des produits
+    const hasProducts = cart.some(i => i.type !== 'event');
+    let deliveryInfo = {};
+    if(hasProducts){
+      if(!selectedDeliveryMode){
+        document.getElementById('card-errors').textContent = 'Choisissez un mode de livraison avant de payer.';
+        return;
+      }
+      if(selectedDeliveryMode === 'relais'){
+        deliveryInfo = {
+          relayName: document.getElementById('relayName').value,
+          relayAddress: document.getElementById('relayAddress').value,
+          relayPostalCode: document.getElementById('relayPostalCode').value,
+        };
+        if(!deliveryInfo.relayName || !deliveryInfo.relayAddress){
+          document.getElementById('card-errors').textContent = 'Merci d\'indiquer le nom et l\'adresse du point relais souhaité.';
+          return;
+        }
+      } else if(selectedDeliveryMode === 'domicile'){
+        deliveryInfo = {
+          address: document.getElementById('homeAddress').value,
+          postalCode: document.getElementById('homePostalCode').value,
+          city: document.getElementById('homeCity').value,
+        };
+        if(!deliveryInfo.address || !deliveryInfo.postalCode || !deliveryInfo.city){
+          document.getElementById('card-errors').textContent = 'Merci de compléter votre adresse de livraison.';
+          return;
+        }
+      }
+    }
+
+    checkoutSubmitBtn.disabled = true;
+    checkoutSubmitBtn.textContent = 'Paiement en cours...';
+    const formData = new FormData(checkoutForm);
+    const deliveryFee = currentDeliveryFee();
+    const totalAmount = cartTotal() + deliveryFee;
+    let paymentResult = null;
+
+    // ÉTAPE 1 — Paiement Stripe uniquement. C'est la SEULE étape où on peut légitimement
+    // dire à la cliente de réessayer, car ici on est certain qu'elle n'a pas encore été débitée.
+    try {
+      const res = await fetch('/.netlify/functions/create-payment-intent', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ amount: Math.round(totalAmount * 100), items: cart })
+      });
+      const data = await res.json();
+
+      if(!res.ok){
+        document.getElementById('card-errors').textContent = data.error || "Une erreur est survenue, réessayez.";
+        checkoutSubmitBtn.disabled = false;
+        checkoutSubmitBtn.textContent = 'Payer ' + (cartTotal() + deliveryFee) + ' €';
+        return;
+      }
+
+      const clientSecret = data.clientSecret;
+
+      paymentResult = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: { name: formData.get('prenom') + ' ' + formData.get('nom'), email: formData.get('email') }
+        }
+      });
+
+      if(paymentResult.error){
+        document.getElementById('card-errors').textContent = paymentResult.error.message;
+        checkoutSubmitBtn.disabled = false;
+        checkoutSubmitBtn.textContent = 'Payer ' + (cartTotal() + deliveryFee) + ' €';
+        return;
+      }
+    } catch(err){
+      document.getElementById('card-errors').textContent = "Une erreur est survenue, réessayez.";
+      checkoutSubmitBtn.disabled = false;
+      checkoutSubmitBtn.textContent = 'Payer ' + cartTotal() + ' €';
+      return;
+    }
+
+    // ÉTAPE 2 — Le paiement a réussi, la cliente a été débitée par Stripe.
+    // À partir d'ici, JAMAIS de message "réessayez" ni de bouton de paiement réactivé,
+    // même si une étape secondaire (email, QR code...) rencontre un problème d'affichage.
+    const result = paymentResult;
+    try {
+      const orderSummary = cart.map(i => i.name + ' x' + i.qty).join(', ') + ' — Total: ' + totalAmount + ' € — Réf Stripe: ' + result.paymentIntent.id;
+      document.getElementById('checkoutOrderSummary').value = orderSummary;
+      submitToNetlify(checkoutForm);
+
+      // Création de la commande — la fonction serveur revérifie elle-même auprès de Stripe
+      // que le paiement a bien réussi avant d'enregistrer quoi que ce soit.
+      fetch('/.netlify/functions/create-order', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          paymentIntentId: result.paymentIntent.id,
+          email: formData.get('email'),
+          prenom: formData.get('prenom'),
+          nom: formData.get('nom'),
+          telephone: formData.get('telephone'),
+          insta: formData.get('insta'),
+          items: cart,
+          deliveryMode: selectedDeliveryMode,
+          deliveryInfo: deliveryInfo,
+          deliveryFee: deliveryFee
+        })
+      }).catch(() => {});
+
+      // E-mail de confirmation avec le billet (QR code) envoyé directement à la cliente
+      fetch('/.netlify/functions/send-ticket-email', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          paymentIntentId: result.paymentIntent.id,
+          email: formData.get('email'),
+          prenom: formData.get('prenom'),
+          items: cart
+        })
+      }).catch(() => {});
+
+      // Fidélité : on enregistre uniquement les billets d'événements (pas les produits boutique)
+      cart.filter(i => i.type !== 'product').forEach(i => {
+        for(let n = 0; n < i.qty; n++){
+          fetch('/.netlify/functions/record-loyalty', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              email: formData.get('email'),
+              prenom: formData.get('prenom'),
+              nom: formData.get('nom'),
+              eventName: i.name,
+              paymentIntentId: result.paymentIntent.id
+            })
+          }).catch(() => {});
+        }
+      });
+
+      const ticketPayload = 'REFLET-BILLET | ' + formData.get('prenom') + ' ' + formData.get('nom') + ' | ' + cart.map(i => i.name).join(', ') + ' | Réf: ' + result.paymentIntent.id;
+      document.getElementById('ticketQr').innerHTML = '';
+      new QRCode(document.getElementById('ticketQr'), {
+        text: ticketPayload, width: 160, height: 160,
+        colorDark: '#2A1F19', colorLight: '#ffffff'
+      });
+      document.getElementById('ticketQrLabel').textContent = cart.map(i => i.name).join(', ') + ' — Réf. ' + result.paymentIntent.id.slice(-8);
+      document.getElementById('ticketQrWrap').style.display = 'block';
+    } catch(err){
+      // Une étape secondaire a échoué (affichage du QR code, etc.) mais le paiement,
+      // lui, a bel et bien réussi — on ne doit surtout pas laisser croire le contraire.
+      console.error('Erreur post-paiement (paiement déjà confirmé) :', err);
+    }
+
+    cart = [];
+    saveCart();
+    renderCart();
+    checkoutForm.reset();
+    checkoutForm.style.display = 'none';
+    checkoutSubmitBtn.style.display = 'none';
+    checkoutMsg.classList.add('show');
+  });
+
+  renderCart();
+  // ===== FIN PANIER =====
+</script>
+<script>
+  // Photos d'événements cliquables — ouverture en grand
+  const lightboxModal = document.getElementById('lightboxModal');
+  const lightboxImg = document.getElementById('lightboxImg');
+  document.querySelectorAll('.event-photo-main-v3 img, .event-photo-accent-v3 img').forEach(img => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightboxModal.classList.add('show');
+    });
+  });
+  document.getElementById('lightboxClose').addEventListener('click', () => lightboxModal.classList.remove('show'));
+  lightboxModal.addEventListener('click', (e) => { if(e.target === lightboxModal) lightboxModal.classList.remove('show'); });
+
+  // Cartes événements — bouton "Voir plus / Voir moins"
+  document.querySelectorAll('.event-toggle, .event-toggle-v2, .event-toggle-v3').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const details = btn.nextElementSibling && btn.nextElementSibling.classList.contains('event-details') ? btn.nextElementSibling : btn.previousElementSibling;
+      const isOpen = details.classList.toggle('open');
+      const arrow = btn.querySelector('span[aria-hidden]');
+      if(arrow){
+        btn.firstChild.textContent = isOpen ? 'Voir moins ' : 'Voir plus ';
+      } else {
+        btn.textContent = isOpen ? 'Voir moins' : 'Voir plus';
+      }
+    });
+  });
+
+  // Sorties — changer de photo au clic sur Rooftop / Picnic / Brunch
+  const sortiesDescToggle = document.getElementById('sortiesDescToggle');
+  sortiesDescToggle.addEventListener('click', () => {
+    const desc = document.getElementById('sortiesDesc');
+    const isOpen = desc.classList.toggle('open');
+    sortiesDescToggle.textContent = isOpen ? 'Voir moins' : 'Voir plus';
+  });
+
+  const chipRow = document.getElementById('chipRow');
+  const sortiesImg = document.getElementById('sortiesImg');
+  const sortiesDesc = document.getElementById('sortiesDesc');
+  const wlSortie = document.getElementById('wlSortie');
+  chipRow.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chipRow.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      sortiesImg.src = chip.dataset.src;
+      sortiesImg.alt = chip.dataset.alt;
+      if(chip.dataset.desc){ sortiesDesc.textContent = chip.dataset.desc; }
+      sortiesDesc.classList.remove('open');
+      sortiesDescToggle.textContent = 'Voir plus';
+      if(wlSortie){ wlSortie.value = chip.textContent.trim(); }
+    });
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  }, {threshold:0.15});
+  revealEls.forEach(el => io.observe(el));
+
+  // Modal : mentions légales
+  const legalModal = document.getElementById('legalModal');
+  document.getElementById('legalOpenBtn').addEventListener('click', (e) => { e.preventDefault(); legalModal.classList.add('show'); });
+  document.getElementById('legalModalClose').addEventListener('click', () => legalModal.classList.remove('show'));
+  legalModal.addEventListener('click', (e) => { if(e.target === legalModal) legalModal.classList.remove('show'); });
+
+  // Modal : politique de confidentialité (RGPD)
+  const privacyModal = document.getElementById('privacyModal');
+  document.getElementById('privacyOpenBtn').addEventListener('click', (e) => { e.preventDefault(); privacyModal.classList.add('show'); });
+  document.querySelectorAll('.js-open-privacy').forEach(link => {
+    link.addEventListener('click', (e) => { e.preventDefault(); privacyModal.classList.add('show'); });
+  });
+  document.getElementById('privacyModalClose').addEventListener('click', () => privacyModal.classList.remove('show'));
+  privacyModal.addEventListener('click', (e) => { if(e.target === privacyModal) privacyModal.classList.remove('show'); });
+
+  // Envoi réel des formulaires vers Netlify Forms (fonctionne une fois le site déployé sur Netlify ;
+  // sans effet ailleurs, la confirmation visuelle s'affiche quand même grâce au .catch)
+  function submitToNetlify(form){
+    const data = new URLSearchParams(new FormData(form)).toString();
+    return fetch('/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: data
+    }).catch(() => {});
+  }
+
+  // Espace fidélité — vraie connexion Netlify Identity + historique des événements payés
+  const loyaltyDashboard = document.getElementById('loyaltyDashboard');
+  const loyaltyOpenBtn = document.getElementById('loyaltyOpenBtn');
+
+  function renderLoyaltyLoggedOut(){
+    loyaltyOpenBtn.style.display = 'inline-block';
+    loyaltyDashboard.style.display = 'none';
+  }
+
+  async function renderLoyaltyLoggedIn(user){
+    loyaltyOpenBtn.style.display = 'none';
+    loyaltyDashboard.style.display = 'block';
+    document.getElementById('loyaltyEmail').textContent = user.email;
+    document.getElementById('loyaltyEventsList').innerHTML = '<p style="font-size:13px; color:var(--marron-soft);">Chargement...</p>';
+
+    try {
+      const token = await user.jwt();
+      const res = await fetch('/.netlify/functions/get-loyalty', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const data = await res.json();
+      const events = data.events || [];
+      document.getElementById('loyaltyCount').textContent = data.count !== undefined ? data.count : events.length;
+
+      if(events.length === 0){
+        document.getElementById('loyaltyEventsList').innerHTML = '<p style="font-size:13px; color:var(--marron-soft);">Aucun événement payé enregistré pour l\'instant.</p>';
+      } else {
+        document.getElementById('loyaltyEventsList').innerHTML = '<ul style="list-style:none; padding:0; margin:0; font-size:13.5px; color:var(--marron-soft);">' +
+          events.map(ev => `<li style="padding:8px 0; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:10px;"><span>${ev.eventName} — ${new Date(ev.date).toLocaleDateString('fr-FR')}</span>${ev.refunded ? '<span style="font-size:11px; color:#b3413a; white-space:nowrap;">Remboursé</span>' : ''}</li>`).join('') +
+          '</ul>';
+      }
+    } catch(err) {
+      document.getElementById('loyaltyEventsList').innerHTML = '<p style="font-size:13px; color:var(--marron-soft);">Impossible de charger l\'historique pour le moment.</p>';
+    }
+  }
+
+  loyaltyOpenBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if(window.netlifyIdentity) window.netlifyIdentity.open();
+  });
+
+  document.getElementById('loyaltyLogoutBtn').addEventListener('click', () => {
+    if(window.netlifyIdentity) window.netlifyIdentity.logout();
+  });
+
+  if(window.netlifyIdentity){
+    window.netlifyIdentity.on('init', user => { user ? renderLoyaltyLoggedIn(user) : renderLoyaltyLoggedOut(); });
+    window.netlifyIdentity.on('login', user => { renderLoyaltyLoggedIn(user); window.netlifyIdentity.close(); });
+    window.netlifyIdentity.on('logout', () => renderLoyaltyLoggedOut());
+  }
+
+  // Planning du mois — chargé dynamiquement, éditable directement depuis l'admin
+  const planningModal = document.getElementById('planningModal');
+  const planningModalBillettoLink = document.getElementById('planningModalBillettoLink');
+  const planningListEl = document.getElementById('planningList');
+
+  fetch('/.netlify/functions/get-planning')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('planningMonth').textContent = data.month || '';
+
+      planningListEl.innerHTML = data.events.map(ev => {
+        const titleLower = (ev.title || '').toLowerCase();
+        let autoCapacityKey = '';
+        if(titleLower.includes('puppy')){
+          autoCapacityKey = `puppypilates-${ev.day}`;
+        } else if(['Pilates','Danse'].includes(ev.tag)){
+          autoCapacityKey = `${ev.tag.toLowerCase()}-${ev.day}`;
+        } else if(titleLower.includes('copains')){
+          autoCapacityKey = `copains-${ev.day}`;
+        } else if(titleLower.includes('mome')){
+          autoCapacityKey = `mome-${ev.day}`;
+        } else if(titleLower.includes('define')){
+          autoCapacityKey = `define-${ev.day}`;
+        }
+        const capacityKey = ev.capacity_key || autoCapacityKey;
+        return `
+        <div class="planning-item${ev.special ? ' planning-item-special' : ''}"
+             data-title="${ev.title}" data-date="${ev.day} ${(data.month||'').toLowerCase()}"
+             data-time="${ev.time}" data-desc="${(ev.description||'').replace(/"/g,'&quot;')}"
+             data-price="${ev.price || ''}" data-capacity-key="${capacityKey}"
+             ${ev.billetto ? `data-billetto="${ev.billetto}"` : ''}>
+          <div class="planning-date">${ev.day}<br>${ev.month_short}</div>
+          <div class="planning-info">
+            <strong>${ev.title}</strong>
+            <span>${ev.summary}</span>
+          </div>
+          <span class="event-tag">${ev.display_tag || ev.tag}</span>
+        </div>
+      `;
+      }).join('');
+
+    })
+    .catch((err) => {
+      console.error('Erreur de chargement du planning:', err);
+      planningListEl.innerHTML = "<p style=\"font-size:13px; color:var(--marron-soft); padding:20px 0;\">Le planning n'a pas pu être chargé. Réessayez de recharger la page.</p>";
+    });
+
+  // Délégation : fonctionne même pour les items ajoutés dynamiquement après le fetch
+  planningListEl.addEventListener('click', (e) => {
+    const item = e.target.closest('.planning-item');
+    if(!item) return;
+    document.getElementById('planningModalTitle').textContent = item.dataset.title;
+    document.getElementById('planningModalDate').textContent = item.dataset.date;
+    document.getElementById('planningModalTime').textContent = item.dataset.time;
+    document.getElementById('planningModalDesc').textContent = item.dataset.desc;
+    if(item.dataset.price){
+      planningModalBillettoLink.style.display = 'block';
+      planningModalBillettoLink.textContent = 'Ajouter au panier — ' + item.dataset.price + ' €';
+      planningModalBillettoLink.dataset.mode = 'cart';
+      planningModalBillettoLink.dataset.event = item.dataset.date ? `${item.dataset.title} — ${item.dataset.date}` : item.dataset.title;
+      planningModalBillettoLink.dataset.price = item.dataset.price;
+      planningModalBillettoLink.dataset.capacityKey = item.dataset.capacityKey || '';
+    } else if(item.dataset.billetto){
+      planningModalBillettoLink.style.display = 'block';
+      planningModalBillettoLink.textContent = 'Réserver ma place';
+      planningModalBillettoLink.dataset.mode = 'billetto';
+      planningModalBillettoLink.dataset.event = item.dataset.title;
+      planningModalBillettoLink.dataset.billetto = item.dataset.billetto;
+    } else {
+      planningModalBillettoLink.style.display = 'none';
+    }
+    planningModal.classList.add('show');
+  });
+  document.getElementById('planningModalClose').addEventListener('click', () => planningModal.classList.remove('show'));
+  planningModal.addEventListener('click', (e) => { if(e.target === planningModal) planningModal.classList.remove('show'); });
+
+  // Modal : formulaire de réservation — toujours rempli AVANT tout lien de paiement Billetto
+  const bookingModal = document.getElementById('bookingModal');
+  const bookingForm = document.getElementById('bookingForm');
+  const bookingMsg = document.getElementById('bookingMsg');
+  let pendingBillettoLink = null;
+  let pendingCapacityKey = null;
+
+  function openBookingModal(eventName, billettoLink, capacityKey){
+    document.getElementById('bookingModalTitle').textContent = 'Réserver : ' + eventName;
+    pendingBillettoLink = billettoLink || null;
+    pendingCapacityKey = capacityKey || null;
+    bookingMsg.classList.remove('show');
+    bookingForm.reset();
+    bookingForm.style.display = 'flex';
+    bookingModal.classList.add('show');
+  }
+
+  // Déclencheurs directs (cartes événements)
+  document.querySelectorAll('.js-open-booking').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openBookingModal(btn.dataset.event, btn.dataset.billetto);
+    });
+  });
+
+  // Déclencheur depuis la modale planning (panier si un prix est renseigné, sinon Billetto en secours)
+  planningModalBillettoLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    planningModal.classList.remove('show');
+    if(planningModalBillettoLink.dataset.mode === 'cart'){
+      const cartId = planningModalBillettoLink.dataset.capacityKey || planningModalBillettoLink.dataset.event;
+      addToCart(cartId, planningModalBillettoLink.dataset.event, parseFloat(planningModalBillettoLink.dataset.price));
+    } else {
+      openBookingModal(planningModalBillettoLink.dataset.event, planningModalBillettoLink.dataset.billetto);
+    }
+  });
+
+  document.getElementById('bookingModalClose').addEventListener('click', () => bookingModal.classList.remove('show'));
+  bookingModal.addEventListener('click', (e) => { if(e.target === bookingModal) bookingModal.classList.remove('show'); });
+
+  bookingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitToNetlify(bookingForm);
+    if(pendingCapacityKey){
+      fetch('/.netlify/functions/record-collab-capacity', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ capacityKey: pendingCapacityKey })
+      }).catch(() => {});
+    }
+    bookingForm.reset();
+    bookingForm.style.display = 'none';
+    if(pendingBillettoLink){
+      bookingMsg.textContent = 'Merci ! Votre place est confirmée, vous allez être redirigée pour finaliser le paiement...';
+    } else {
+      bookingMsg.textContent = 'Merci ! Votre demande a bien été envoyée, on revient vers vous très vite. 💛';
+    }
+    bookingMsg.classList.add('show');
+    // Une fois le formulaire rempli, on envoie vers le paiement Billetto s'il y en a un
+    if(pendingBillettoLink){
+      window.open(pendingBillettoLink, '_blank', 'noopener');
+      pendingBillettoLink = null;
+    }
+  });
+
+  // Waitlist form (front-end only placeholder — à connecter à un vrai stockage/CRM ensuite)
+  const form = document.getElementById('waitlistForm');
+  const msg = document.getElementById('wlMsg');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitToNetlify(form);
+    fetch('/.netlify/functions/notify-waitlist', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ prenom: document.getElementById('wlName').value, email: document.getElementById('wlEmail').value, sortie: document.getElementById('wlSortie').value })
+    }).catch(() => {});
+    form.querySelectorAll('input').forEach(i => { if(i.type !== 'checkbox' && i.type !== 'hidden') i.value = ''; });
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 4000);
+  });
+</script>
+
+</body>
+</html>
