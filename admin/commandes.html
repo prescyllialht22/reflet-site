@@ -285,14 +285,16 @@
   // (ex: "pilates-13"), fiable pour toute réservation faite depuis la correction de ce
   // système. Sert uniquement à retrouver le nom lisible et la limite de places.
   const FAMILY_LABELS = {
+    puppypilates: { label: 'Puppy Pilates', max: 15 },
     pilates: { label: "Pilates'expérience", max: 10 },
     danse: { label: 'Danse by REFLET', max: 15 },
     copains: { label: 'Run × Copains', max: 35 },
     define: { label: 'Pilates Reformer × DEFINE', max: 11 },
-    mome: { label: 'Déjeuner REFLET × MOME', max: 15 },
+    mome: { label: 'Déjeuner REFLET × MOME', max: 13 },
   };
 
   const LEGACY_FAMILY_MATCH = [
+    { key: 'puppypilates', match: /puppy/i },
     { key: 'pilates', match: /pilates.?exp[ée]rience/i },
     { key: 'danse', match: /danse/i },
     { key: 'copains', match: /run.*copains/i },
