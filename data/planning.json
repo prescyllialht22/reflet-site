@@ -55,7 +55,8 @@
       "description": "En Octobre, on vous propose une séance de Puppy Pilates. \n30 minutes de Pilates sur tapis, pour s'étirer et se reconnecter en douceur, prolongé de 30 minutes de rencontres avec des chiots.\nCâlins, nouvelles rencontres et douceur seront les maitres-mots de cet instant. \nReflet x Puppy Pilates c'est avant tout le bien-être animal qui sera au coeur de l'événement en préservant un environnement sain et équilibré pour les chiots. ♡",
       "special": true,
       "price": "35",
-      "display_tag": "Pilates"
+      "display_tag": "Pilates",
+      "capacity_key": "puppypilates-17"
     },
     {
       "day": "18",
