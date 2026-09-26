@@ -1640,7 +1640,7 @@
   };
 
   // Places limitées — Pilates 10, Danse 15, DEFINE (Reformer) 11 ; le reste est illimité
-  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 15, copains: 35 };
+  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 13, copains: 35, puppypilates: 15 };
   let eventCapacityData = null;
   async function loadEventCapacity(){
     if(eventCapacityData) return eventCapacityData;
@@ -2527,7 +2527,9 @@
       planningListEl.innerHTML = data.events.map(ev => {
         const titleLower = (ev.title || '').toLowerCase();
         let autoCapacityKey = '';
-        if(['Pilates','Danse'].includes(ev.tag)){
+        if(titleLower.includes('puppy')){
+          autoCapacityKey = `puppypilates-${ev.day}`;
+        } else if(['Pilates','Danse'].includes(ev.tag)){
           autoCapacityKey = `${ev.tag.toLowerCase()}-${ev.day}`;
         } else if(titleLower.includes('copains')){
           autoCapacityKey = `copains-${ev.day}`;
