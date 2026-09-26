@@ -308,9 +308,11 @@
   }
 
   async function renderByEventView(){
-    // Récupère le planning actuel, pour retrouver la bonne date des familles qui n'ont
-    // qu'un seul rendez-vous ce mois-ci et dont le texte ne précise jamais le jour.
+    // Récupère le planning actuel, pour ne garder que les dates du mois en cours (les
+    // anciens mois restent dans l'historique des commandes, mais n'encombrent plus cette vue),
+    // et pour connaître le vrai nom du mois à afficher (plus jamais codé en dur).
     let planningDayByFamily = {};
+    let monthShortByFamilyDay = {};
     try {
       const res = await fetch('/data/planning.json');
       const planning = await res.json();
@@ -319,6 +321,7 @@
         if(fam){
           planningDayByFamily[fam.key] = planningDayByFamily[fam.key] || [];
           if(!planningDayByFamily[fam.key].includes(ev.day)) planningDayByFamily[fam.key].push(ev.day);
+          monthShortByFamilyDay[`${fam.key}-${ev.day}`] = (ev.month_short || planning.month || '').toLowerCase();
         }
       });
     } catch(e){ planningDayByFamily = {}; }
@@ -343,6 +346,12 @@
           family = legacy.key;
           day = extractDay(item.name);
         }
+
+        // On ne garde que ce qui existe dans le planning ACTUEL (mois en cours) — un type
+        // d'événement absent ce mois-ci, ou une date qui n'y figure plus, reste dans
+        // l'historique des commandes mais ne s'affiche plus ici pour ne pas encombrer la vue.
+        if(!planningDayByFamily[family]) return;
+        if(day && !planningDayByFamily[family].includes(day)) return;
 
         if(!byFamily[family]) byFamily[family] = { dated: {}, dateless: [] };
         const entry = {
@@ -383,9 +392,10 @@
       Object.keys(fam.dated).forEach(day => {
         const participants = fam.dated[day];
         const count = participants.reduce((sum, p) => sum + p.qty, 0);
+        const monthLabel = monthShortByFamilyDay[`${family}-${day}`] || '';
         const label = day === '?'
           ? `${FAMILY_LABELS[family].label} — date à préciser`
-          : `${FAMILY_LABELS[family].label} — ${day} sept`;
+          : `${FAMILY_LABELS[family].label} — ${day} ${monthLabel}`.trim();
         groups.push({ label, count, participants, max: FAMILY_LABELS[family].max });
       });
     });
