@@ -785,6 +785,13 @@
           <p>Run / boulangerie</p>
         </div>
       </div>
+      <div class="collab-card reveal js-open-collab" data-collab="puppypilates">
+        <div class="arch collab-photo" data-label="Photo à venir"></div>
+        <div class="collab-body">
+          <span class="collab-x">REFLET × PUPPY PILATES</span>
+          <p>Pilates / chiots</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1895,6 +1902,13 @@
       desc: "Reflet s'associe à Copains pour clôturer certaines sessions de running par une pause bien méritée, entre bonnes odeurs de pain frais et bonne humeur.",
       inclus: ["Avantage réservé aux membres Reflet", "Places limitées — 35 personnes maximum par session"],
       openEvent: 'run'
+    },
+    puppypilates: {
+      tag: 'REFLET × PUPPY PILATES', title: 'Puppy Pilates', price: 35, time: '16h30',
+      teaser: "Une séance de Pilates suivie de rencontres attendrissantes avec des chiots — le bien-être, version câlins.",
+      city: '35 Cours d\'Ornano, Bordeaux', level: 'Tous niveaux',
+      desc: "En octobre, Reflet vous propose une séance de Puppy Pilates : 30 minutes de Pilates sur tapis pour s'étirer et se reconnecter en douceur, prolongées de 30 minutes de rencontres avec des chiots. Câlins, nouvelles rencontres et douceur seront les maîtres-mots de cet instant — dans le respect du bien-être animal et d'un environnement sain et équilibré pour les chiots.",
+      inclus: ["Tapis fourni", "Places limitées — 15 personnes maximum"]
     }
   };
 
@@ -1936,15 +1950,15 @@
     reserveBtn.textContent = data.openEvent ? 'Choisir ma date — 4 €' : (data.marieLink ? 'Envoyer "RUN" à Marie' : (data.price ? 'Ajouter au panier' : (data.instagramLink ? 'Voir sur Instagram' : 'Je suis intéressée')));
     reserveBtn.disabled = false;
 
-    // Places limitées pour DEFINE (Pilates Reformer) et MOME (déjeuner) — recherche de leur date dans le planning
-    const capacityMatch = { define: 'define', mome: 'mome' }[id];
-    if(capacityMatch){
+    // Places limitées pour DEFINE, MOME et Puppy Pilates — recherche de leur date dans le planning
+    const capacityConfig = { define: { search: 'define', group: 'define' }, mome: { search: 'mome', group: 'mome' }, puppypilates: { search: 'puppy', group: 'puppypilates' } }[id];
+    if(capacityConfig){
       const planning = await loadEventPlanning();
       await loadEventCapacity();
-      const matchedDate = (planning.events || []).find(ev => (ev.title || '').toLowerCase().includes(capacityMatch));
+      const matchedDate = (planning.events || []).find(ev => (ev.title || '').toLowerCase().includes(capacityConfig.search));
       if(matchedDate){
-        currentCollabCapacityKey = `${capacityMatch}-${matchedDate.day}`;
-        const remaining = remainingFor(capacityMatch, currentCollabCapacityKey);
+        currentCollabCapacityKey = `${capacityConfig.group}-${matchedDate.day}`;
+        const remaining = remainingFor(capacityConfig.group, currentCollabCapacityKey);
         if(remaining !== null && remaining <= 0){
           reserveBtn.disabled = true;
           reserveBtn.textContent = 'Complet';
