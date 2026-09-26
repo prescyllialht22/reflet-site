@@ -9,6 +9,7 @@
 const { getStore } = require('@netlify/blobs');
 
 const LEGACY_FAMILY_MATCH = [
+  { key: 'puppypilates', match: /puppy/i },
   { key: 'pilates', match: /pilates.?exp[ée]rience/i },
   { key: 'danse', match: /danse/i },
   { key: 'copains', match: /run.*copains/i },
