@@ -5,11 +5,12 @@ const { getStore } = require('@netlify/blobs');
 
 // Limites de places par type d'événement — la vraie limite, vérifiée ici, pas seulement
 // affichée sur le site (qui ne fait qu'un contrôle visuel, pas un verrou).
-const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 15, copains: 35 };
+const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 13, copains: 35, puppypilates: 15 };
 
 // Pour reconnaître aussi les anciennes commandes dont l'identifiant ne suit pas le format
 // propre "famille-jour" (texte libre utilisé avant la correction de ce système).
 const LEGACY_FAMILY_MATCH = [
+  { key: 'puppypilates', match: /puppy/i },
   { key: 'pilates', match: /pilates.?exp[ée]rience/i },
   { key: 'danse', match: /danse/i },
   { key: 'copains', match: /run.*copains/i },
