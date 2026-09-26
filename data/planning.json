@@ -1,15 +1,117 @@
 {
   "month": "Octobre",
   "events": [
-    {"day":"04","month_short":"Octo.","title":"Run × Copains","tag":"Run","summary":"9H00 - Cité du vin","time":"9H00 - Dimanche","description":"Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris ou nous attend gourmandise et rafraichissement pour un moment de rencontres unique ♡","special":false,"price":"4"},
-    {"day":"08","month_short":"Octo.","title":"Run","tag":"Run","summary":"19H15 - Hôtel de Ville","time":"19H15 - Jeudi","description":"Une session de RUN, 3-4 km sans allure imposé, seulement un sourire ! Musique et bonne ambiance garantie ♡","special":false,"price":""},
-    {"day":"11","month_short":"Octo.","title":"Pilates'expérience","tag":"Pilates","summary":"9H - 7 Rue Dufau - place limitée","time":"9H - Dimanche","description":"40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡","special":false,"price":"20","display_tag":"Sortie"},
-    {"day":"14","month_short":"Octo.","title":"Run X Copains","tag":"Run","summary":"19H - Cité du vin","time":"19H - Mercredi","description":"Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris ou nous attend gourmandise et rafraichissement pour un moment de rencontres unique ♡","special":false,"price":"4"},
-    {"day":"17","month_short":"Octo.","title":"Puppy Pilates","tag":"Pilates","summary":"16H30 - 35 Cours d'Ornano","time":"16H30 - Samedi","description":"En Octobre, on vous propose une séance de Puppy Pilates. \n30 minutes de Pilates sur tapis, pour s'étirer et se reconnecter en douceur, prolongé de 30 minutes de rencontres avec des chiots.\nCâlins, nouvelles rencontres et douceur seront les maitres-mots de cet instant. \nReflet x Puppy Pilates c'est avant tout le bien-être animal qui sera au coeur de l'événement en préservant un environnement sain et équilibré pour les chiots. ♡","special":true,"price":"35"},
-    {"day":"18","month_short":"Octo.","title":"Pilates Reformer × DEFINE","tag":"Collab","summary":"13H - Studio DEFINE","time":"13h - Dimanche","description":"Une séance de Pilates Reformer au studio DEFINE, à tarif préférentiel réservé aux membres Reflet. Places limitées. \nOn se retrouve entre nous après la séance avec une boisson de votre choix.♡","special":false,"price":"35","display_tag":"Pilates"},
-    {"day":"20","month_short":"Octo.","title":"Run","tag":"Run","summary":"7H - Hôtel de Ville","time":"7H - Mardi","description":"Une session de RUN, 3-4 km sans allure imposé, seulement un sourire ! Musique et bonne ambiance garantie ♡","special":false,"price":""},
-    {"day":"24","month_short":"Octo.","title":"Brunch chez Mome","tag":"Collab","summary":"11H - 15 Rue Teulère","time":"11H - Samedi","description":"Pour le mois d'Octobre on retourne chez Mome, on se souvient encore du fondant au chocolat... \nDeuxième éditions, pour se retrouver entre femmes. \nAu programme : Rencontres, sourires, et beaucoup de gourmandise ! \nUne table au coeur de Bordeaux pour partager un bon moment dans une ambiance chaleureuse et décontractée. ♡","special":false,"price":"20"},
-    {"day":"25","month_short":"Octo.","title":"Pilates'expérience","tag":"Pilates","summary":"9H - 7 Rue Dufau - Place limitée","time":"9H - Dimanche","description":"40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡","special":false,"price":"20"},
-    {"day":"31","month_short":"Octo.","title":"Danse","tag":"Danse","summary":"18H30 - 6 Rue Ramonet","time":"18H30 - Vendredi","description":"Une parenthèse dansée, ouverte a toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡","special":false,"price":"27"}
+    {
+      "day": "04",
+      "month_short": "Octo.",
+      "title": "Run × Copains",
+      "tag": "Run",
+      "summary": "9H00 - Cité du vin",
+      "time": "9H00 - Dimanche",
+      "description": "Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris ou nous attend gourmandise et rafraichissement pour un moment de rencontres unique ♡",
+      "special": false,
+      "price": "4"
+    },
+    {
+      "day": "08",
+      "month_short": "Octo.",
+      "title": "Run",
+      "tag": "Run",
+      "summary": "19H15 - Hôtel de Ville",
+      "time": "19H15 - Jeudi",
+      "description": "Une session de RUN, 3-4 km sans allure imposé, seulement un sourire ! Musique et bonne ambiance garantie ♡",
+      "special": false,
+      "price": ""
+    },
+    {
+      "day": "11",
+      "month_short": "Octo.",
+      "title": "Pilates'expérience",
+      "tag": "Pilates",
+      "summary": "9H - 7 Rue Dufau - place limitée",
+      "time": "9H - Dimanche",
+      "description": "40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "20"
+    },
+    {
+      "day": "14",
+      "month_short": "Octo.",
+      "title": "Run X Copains",
+      "tag": "Run",
+      "summary": "19H - Cité du vin",
+      "time": "19H - Mercredi",
+      "description": "Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris ou nous attend gourmandise et rafraichissement pour un moment de rencontres unique ♡",
+      "special": false,
+      "price": "4"
+    },
+    {
+      "day": "17",
+      "month_short": "Octo.",
+      "title": "Puppy Pilates",
+      "tag": "Collab",
+      "summary": "16H30 - 35 Cours d'Ornano",
+      "time": "16H30 - Samedi",
+      "description": "En Octobre, on vous propose une séance de Puppy Pilates. \n30 minutes de Pilates sur tapis, pour s'étirer et se reconnecter en douceur, prolongé de 30 minutes de rencontres avec des chiots.\nCâlins, nouvelles rencontres et douceur seront les maitres-mots de cet instant. \nReflet x Puppy Pilates c'est avant tout le bien-être animal qui sera au coeur de l'événement en préservant un environnement sain et équilibré pour les chiots. ♡",
+      "special": true,
+      "price": "35",
+      "display_tag": "Pilates"
+    },
+    {
+      "day": "18",
+      "month_short": "Octo.",
+      "title": "Pilates Reformer × DEFINE",
+      "tag": "Collab",
+      "summary": "13H - Studio DEFINE",
+      "time": "13h - Dimanche",
+      "description": "Une séance de Pilates Reformer au studio DEFINE, à tarif préférentiel réservé aux membres Reflet. Places limitées. \nOn se retrouve entre nous après la séance avec une boisson de votre choix.♡",
+      "special": false,
+      "price": "35",
+      "display_tag": "Pilates"
+    },
+    {
+      "day": "20",
+      "month_short": "Octo.",
+      "title": "Run",
+      "tag": "Run",
+      "summary": "7H - Hôtel de Ville",
+      "time": "7H - Mardi",
+      "description": "Une session de RUN, 3-4 km sans allure imposé, seulement un sourire ! Musique et bonne ambiance garantie ♡",
+      "special": false,
+      "price": ""
+    },
+    {
+      "day": "24",
+      "month_short": "Octo.",
+      "title": "Brunch chez Mome",
+      "tag": "Collab",
+      "summary": "11H - 15 Rue Teulère",
+      "time": "11H - Samedi",
+      "description": "Pour le mois d'Octobre on retourne chez Mome, on se souvient encore du fondant au chocolat... \nDeuxième éditions, pour se retrouver entre femmes. \nAu programme : Rencontres, sourires, et beaucoup de gourmandise ! \nUne table au coeur de Bordeaux pour partager un bon moment dans une ambiance chaleureuse et décontractée. ♡",
+      "special": false,
+      "price": "20"
+    },
+    {
+      "day": "25",
+      "month_short": "Octo.",
+      "title": "Pilates'expérience",
+      "tag": "Pilates",
+      "summary": "9H - 7 Rue Dufau - Place limitée",
+      "time": "9H - Dimanche",
+      "description": "40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "20"
+    },
+    {
+      "day": "31",
+      "month_short": "Octo.",
+      "title": "Danse",
+      "tag": "Danse",
+      "summary": "18H30 - 6 Rue Ramonet",
+      "time": "18H30 - Vendredi",
+      "description": "Une parenthèse dansée, ouverte a toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "27"
+    }
   ]
 }
