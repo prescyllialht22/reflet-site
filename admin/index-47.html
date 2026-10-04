@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REFLET — Bordeaux</title>
+<link rel="preload" href="/data/planning.json" as="fetch" crossorigin="anonymous">
+<link rel="preload" href="images/img-02.jpg" as="image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400&family=Italianno&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --travertine:#EDE6D9;
@@ -217,34 +219,42 @@
   /* PLANNING CARD (remplace la photo hero) */
   .planning-card{scroll-margin-top:90px;
     background:var(--card); border:1px solid var(--line);
-    border-radius:48px 48px 20px 20px; padding:36px 30px;
-    max-width:640px; margin:0 auto;
+    border-radius:48px 48px 20px 20px; padding:52px 48px 44px;
+    max-width:860px; margin:0 auto;
   }
-  .planning-month{font-size:32px; margin-top:2px;}
-  .planning-list{margin-top:26px; display:flex; flex-direction:column;}
+  .planning-head{text-align:center;}
+  .planning-card .planning-month{font-family:'Italianno',cursive; font-weight:400; font-size:88px; line-height:1; margin-top:2px; color:var(--bronze);}
+  .planning-list{margin-top:38px; display:grid; grid-template-columns:1fr 1fr; column-gap:68px;}
+  .planning-col{display:flex; flex-direction:column;}
+  .planning-loading{grid-column:1 / -1; text-align:center; font-size:13px; color:var(--marron-soft); padding:30px 0; min-height:340px; margin:0;}
   .planning-item{
-    display:grid; grid-template-columns:48px 1fr auto; align-items:center; gap:16px;
-    padding:16px 0; border-top:1px solid var(--line);
+    display:grid; grid-template-columns:54px 1fr auto; align-items:center; gap:18px;
+    padding:24px 0; border-top:1px solid var(--line);
   }
   .planning-item:first-child{border-top:none; padding-top:0;}
   .planning-date{
-    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; line-height:1.25; color:var(--bronze);
-    text-align:center; font-style:normal;
+    font-family:'Playfair Display',serif; font-size:38px; font-weight:500; line-height:1; color:var(--bronze);
+    text-align:left; font-style:normal;
   }
-  .planning-info{display:flex; flex-direction:column; gap:3px;}
-  .planning-info strong{font-family:'Playfair Display',serif; font-size:17px; font-weight:400; color:var(--ink);}
-  .planning-info span{font-size:12.5px; color:var(--marron-soft);}
+  .planning-info{display:flex; flex-direction:column; gap:5px;}
+  .planning-info strong{font-family:'Playfair Display',serif; font-size:17px; font-weight:400; color:var(--ink); line-height:1.25;}
+  .planning-info span{font-size:12.5px; color:var(--marron-soft); line-height:1.5;}
   .planning-item-muted .planning-date{font-size:20px; color:var(--taupe);}
   .planning-item-muted .planning-info strong{color:var(--marron-soft);}
   .planning-item{cursor:pointer; transition:background .2s ease;}
   .planning-item:hover{background:rgba(140,98,57,0.06);}
   .planning-item-special{position:relative;}
+  /* Téléphone : on garde les deux colonnes côte à côte, chaque événement s'empile (date, titre, détails, catégorie) */
   @media(max-width:640px){
-    .planning-card{padding:26px 20px; border-radius:32px 32px 16px 16px;}
-    .planning-item{padding:18px 0; gap:12px; grid-template-columns:42px 1fr auto;}
-    .planning-info strong{font-size:15.5px;}
-    .planning-info span{font-size:12px;}
-    .planning-date{font-size:12px;}
+    .planning-card{padding:34px 18px 26px; border-radius:32px 32px 16px 16px;}
+    .planning-card .planning-month{font-size:68px;}
+    .planning-list{margin-top:26px; column-gap:22px;}
+    .planning-item{display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:22px 0;}
+    .planning-date{font-size:34px;}
+    .planning-info{gap:5px;}
+    .planning-info strong{font-size:15px;}
+    .planning-info span{font-size:11.5px; line-height:1.45;}
+    .planning-item .event-tag{font-size:9.5px; letter-spacing:0.1em; margin-top:2px;}
   }
   .planning-highlight{
     margin-top:18px; padding:14px 16px; background:rgba(140,98,57,0.1);
@@ -749,9 +759,9 @@
     <div class="planning-card" id="planning">
       <div class="planning-head">
         <span class="eyebrow" style="margin-bottom:2px;">Planning du mois</span>
-        <h3 class="serif planning-month" id="planningMonth">Juillet</h3>
+        <h3 class="serif planning-month" id="planningMonth">&nbsp;</h3>
       </div>
-      <div class="planning-list" id="planningList"></div>
+      <div class="planning-list" id="planningList"><p class="planning-loading">Chargement du planning…</p></div>
       <div class="planning-highlight" id="planningHighlight" style="display:none;"></div>
     </div>
   </div>
@@ -765,21 +775,21 @@
     </div>
     <div class="collabs-grid">
       <div class="collab-card reveal js-open-collab" data-collab="define">
-        <div class="arch collab-photo collab-photo-logo"><img src="images/img-03.jpg" alt="REFLET × DEFINE" style="width:100%; height:100%; object-fit:cover;;"></div>
+        <div class="arch collab-photo collab-photo-logo"><img src="images/img-03.jpg" alt="REFLET × DEFINE" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;;"></div>
         <div class="collab-body">
           <span class="collab-x">REFLET × DEFINE</span>
           <p>Pilates Reformer</p>
         </div>
       </div>
       <div class="collab-card reveal js-open-collab" data-collab="mome">
-        <div class="arch collab-photo collab-photo-logo"><img src="images/img-04.jpg" alt="REFLET × MOME" style="width:100%; height:100%; object-fit:cover;;"></div>
+        <div class="arch collab-photo collab-photo-logo"><img src="images/img-04.jpg" alt="REFLET × MOME" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;;"></div>
         <div class="collab-body">
           <span class="collab-x">REFLET × MOME</span>
           <p>Café / pâtisserie</p>
         </div>
       </div>
       <div class="collab-card reveal js-open-collab" data-collab="copains">
-        <div class="arch collab-photo"><img src="images/img-05.jpg" alt="REFLET × COPAINS" style="width:100%; height:100%; object-fit:cover;"></div>
+        <div class="arch collab-photo"><img src="images/img-05.jpg" alt="REFLET × COPAINS" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;"></div>
         <div class="collab-body">
           <span class="collab-x">REFLET × COPAINS</span>
           <p>Run / boulangerie</p>
@@ -808,7 +818,7 @@
     <div class="events-grid">
 
       <div class="event-editorial-card reveal js-open-event" data-event="pilates">
-        <div class="event-editorial-photo"><img src="images/img-06.jpg" alt="Pilates'expérience"></div>
+        <div class="event-editorial-photo"><img src="images/img-06.jpg" alt="Pilates'expérience" loading="lazy" decoding="async"></div>
         <div class="event-editorial-body">
           <span class="event-tag">Pilates</span>
           <h3>Pilates'expérience</h3>
@@ -821,7 +831,7 @@
       </div>
 
       <div class="event-editorial-card reveal js-open-event" data-event="danse">
-        <div class="event-editorial-photo"><img src="images/img-07.jpg" alt="Danse by REFLET"></div>
+        <div class="event-editorial-photo"><img src="images/img-07.jpg" alt="Danse by REFLET" loading="lazy" decoding="async"></div>
         <div class="event-editorial-body">
           <span class="event-tag">Danse</span>
           <h3>Danse by REFLET</h3>
@@ -834,7 +844,7 @@
       </div>
 
       <div class="event-editorial-card reveal js-open-event" data-event="run">
-        <div class="event-editorial-photo"><img src="images/img-08.jpg" alt="Run Reflet"></div>
+        <div class="event-editorial-photo"><img src="images/img-08.jpg" alt="Run Reflet" loading="lazy" decoding="async"></div>
         <div class="event-editorial-body">
           <span class="event-tag">Run</span>
           <h3>Run Reflet</h3>
@@ -852,7 +862,7 @@
 
 <section class="sorties" id="sorties">
   <div class="wrap sorties-grid">
-    <div class="arch hero-arch sorties-arch has-photo" id="sortiesArch"><img id="sortiesImg" src="images/img-09.jpg" alt="Rooftop Reflet"></div>
+    <div class="arch hero-arch sorties-arch has-photo" id="sortiesArch"><img id="sortiesImg" src="images/img-09.jpg" alt="Rooftop Reflet" loading="lazy" decoding="async"></div>
     <div>
       <h2>Les instants Reflet</h2>
       <p id="sortiesDesc" class="sorties-desc">Des rendez-vous en petit comité, pensés comme des véritables parenthèses pour se rencontrer autrement. Des lieux choisis avec soins, des tables à partager et le plaisir de prendre le temps d'échanger, de faire connaissance et de créer de nouveaux liens, dans une atmosphère chaleureuse et spontanée.</p>
@@ -890,7 +900,7 @@
       </div>
     </div>
     <div class="founders-block">
-      <div class="arch team-arch has-photo founders-arch"><img src="images/img-12.jpg" alt="Prescyllia et Marie, fondatrices de Reflet"></div>
+      <div class="arch team-arch has-photo founders-arch"><img src="images/img-12.jpg" alt="Prescyllia et Marie, fondatrices de Reflet" loading="lazy" decoding="async"></div>
       <div class="founders-text-grid" style="grid-template-columns:1fr; max-width:480px; margin:32px auto 0;">
         <div class="reveal">
           <div class="team-name serif" style="margin-bottom:8px;">Prescyllia &amp; Marie</div>
@@ -909,13 +919,13 @@
     </div>
     <div class="team-grid">
       <div class="reveal">
-        <div class="arch team-arch has-photo"><img src="images/img-13.jpg" alt="Bianca, coach danse"></div>
+        <div class="arch team-arch has-photo"><img src="images/img-13.jpg" alt="Bianca, coach danse" loading="lazy" decoding="async"></div>
         <div class="team-name serif">Bianca</div>
         <div class="team-role">Coach danse</div>
         <p class="team-bio">Professeure de danse, elle anime chaque séance Danse by REFLET avec énergie et bienveillance.</p>
       </div>
       <div class="reveal">
-        <div class="arch team-arch"><img src="images/img-14.jpg" alt="Si-Ann, coach Pilates"></div>
+        <div class="arch team-arch"><img src="images/img-14.jpg" alt="Si-Ann, coach Pilates" loading="lazy" decoding="async"></div>
         <div class="team-name serif">Si-Ann</div>
         <div class="team-role">Coach Pilates</div>
         <p class="team-bio">Professeure de Pilates, elle encadre chaque Pilates'expérience pour reconnecter corps et esprit.</p>
@@ -1669,7 +1679,7 @@
   async function loadEventPlanning(){
     if(eventPlanningData) return eventPlanningData;
     try {
-      const res = await fetch('/.netlify/functions/get-planning');
+      const res = await fetch('/data/planning.json');
       eventPlanningData = await res.json();
     } catch(err) { eventPlanningData = { events: [] }; }
     return eventPlanningData;
@@ -2533,12 +2543,12 @@
   const planningModalBillettoLink = document.getElementById('planningModalBillettoLink');
   const planningListEl = document.getElementById('planningList');
 
-  fetch('/.netlify/functions/get-planning')
+  fetch('/data/planning.json')
     .then(r => r.json())
     .then(data => {
       document.getElementById('planningMonth').textContent = data.month || '';
 
-      planningListEl.innerHTML = data.events.map(ev => {
+      const planningItems = data.events.map(ev => {
         const titleLower = (ev.title || '').toLowerCase();
         let autoCapacityKey = '';
         if(titleLower.includes('puppy')){
@@ -2559,7 +2569,7 @@
              data-time="${ev.time}" data-desc="${(ev.description||'').replace(/"/g,'&quot;')}"
              data-price="${ev.price || ''}" data-capacity-key="${capacityKey}"
              ${ev.billetto ? `data-billetto="${ev.billetto}"` : ''}>
-          <div class="planning-date">${ev.day}<br>${ev.month_short}</div>
+          <div class="planning-date">${ev.day}</div>
           <div class="planning-info">
             <strong>${ev.title}</strong>
             <span>${ev.summary}</span>
@@ -2567,7 +2577,11 @@
           <span class="event-tag">${ev.display_tag || ev.tag}</span>
         </div>
       `;
-      }).join('');
+      });
+      const half = Math.ceil(planningItems.length / 2);
+      planningListEl.innerHTML =
+        '<div class="planning-col">' + planningItems.slice(0, half).join('') + '</div>' +
+        '<div class="planning-col">' + planningItems.slice(half).join('') + '</div>';
 
     })
     .catch((err) => {
