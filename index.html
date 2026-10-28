@@ -206,6 +206,16 @@
   }
   .btn-light{background:var(--travertine); color:var(--ink); border:1px solid var(--travertine);}
   .btn-outline-light{background:transparent; color:var(--travertine); border:1px solid rgba(237,230,217,0.6);}
+
+  /* HERO : défilé de photos en fondu */
+  .photo-hero{position:relative; overflow:hidden;}
+  .hero-slides{position:absolute; inset:0; z-index:0;}
+  .hero-slide{position:absolute; inset:0; background-size:cover; background-repeat:no-repeat; opacity:0; animation:heroFade 27s linear infinite;}
+  @keyframes heroFade{0%{opacity:0;} 6%{opacity:1;} 16.67%{opacity:1;} 22.67%{opacity:0;} 100%{opacity:0;}}
+  @media(prefers-reduced-motion:reduce){ .hero-slide{animation:none;} .hero-slide:first-child{opacity:1;} }
+  .hero-shade{position:absolute; inset:0; background:linear-gradient(90deg, rgba(42,31,25,0.78) 0%, rgba(42,31,25,0.5) 32%, rgba(42,31,25,0.18) 58%, rgba(42,31,25,0) 82%);}
+  .photo-hero-content{position:relative; z-index:1;}
+  @media(max-width:640px){ .hero-shade{background:linear-gradient(0deg, rgba(42,31,25,0.7) 0%, rgba(42,31,25,0.3) 55%, rgba(42,31,25,0.1) 100%);} }
   @media(min-width:1400px){ .photo-hero{min-height:70vh;} }
   @media(max-width:640px){
     .photo-hero{min-height:46vh; padding-bottom:32px; background-position:center 34%; background-size:cover; padding-left:24px;}
@@ -757,7 +767,16 @@
   </a>
 </nav>
 
-<section class="photo-hero" style="background-image:linear-gradient(90deg, rgba(42,31,25,0.78) 0%, rgba(42,31,25,0.5) 32%, rgba(42,31,25,0.18) 58%, rgba(42,31,25,0) 82%), url('images/img-02.jpg');">
+<section class="photo-hero">
+<div class="hero-slides" aria-hidden="true">
+  <div class="hero-slide" style="animation-delay:-1.62s; background-image:url('images/img-02.jpg'); background-position:center 32%;"></div>
+  <div class="hero-slide" style="animation-delay:2.88s; background-image:url('images/img-05.jpg'); background-position:center 55%;"></div>
+  <div class="hero-slide" style="animation-delay:7.38s; background-image:url('images/img-07.jpg'); background-position:center 78%;"></div>
+  <div class="hero-slide" style="animation-delay:11.88s; background-image:url('images/img-09.jpg'); background-position:center 45%;"></div>
+  <div class="hero-slide" style="animation-delay:16.38s; background-image:url('images/img-06.jpg'); background-position:center 92%;"></div>
+  <div class="hero-slide" style="animation-delay:20.88s; background-image:url('images/img-11.jpg'); background-position:center 50%;"></div>
+  <div class="hero-shade"></div>
+</div>
   <div class="photo-hero-content">
     <span class="eyebrow photo-hero-eyebrow">Bordeaux · Communauté de femmes</span>
     <h1 class="photo-hero-title">Reflet, une autre<br>façon de prendre soin de soi.</h1>
@@ -2752,6 +2771,7 @@
     // Affichage immédiat à chaque visite
     open();
   })();
+
 </script>
 
 </body>
