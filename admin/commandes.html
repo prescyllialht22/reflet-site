@@ -289,8 +289,8 @@
     pilates: { label: "Pilates'expérience", max: 10 },
     danse: { label: 'Danse by REFLET', max: 15 },
     copains: { label: 'Run × Copains', max: 35 },
-    define: { label: 'Pilates Reformer × DEFINE', max: 11 },
-    mome: { label: 'Déjeuner REFLET × MOME', max: 13 },
+    define: { label: 'Pilates Reformer × DEFINE', max: 12 },
+    mome: { label: 'Déjeuner REFLET × MOME', max: 12 },
   };
 
   const LEGACY_FAMILY_MATCH = [
@@ -314,7 +314,7 @@
     let planningDayByFamily = {};
     let monthShortByFamilyDay = {};
     try {
-      const res = await fetch('/data/planning.json');
+      const res = await fetch(Date.now() >= new Date('2026-10-31T10:00:00+02:00').getTime() ? '/data/planning-novembre.json' : '/data/planning.json');
       const planning = await res.json();
       (planning.events || []).forEach(ev => {
         const fam = LEGACY_FAMILY_MATCH.find(f => f.match.test(ev.title || ''));
