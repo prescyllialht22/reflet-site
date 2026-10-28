@@ -5,7 +5,7 @@ const { getStore } = require('@netlify/blobs');
 
 // Limites de places par type d'événement — la vraie limite, vérifiée ici, pas seulement
 // affichée sur le site (qui ne fait qu'un contrôle visuel, pas un verrou).
-const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 13, copains: 35, puppypilates: 15 };
+const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 12, mome: 12, copains: 35, puppypilates: 15, raclette: 13 };
 
 // Pour reconnaître aussi les anciennes commandes dont l'identifiant ne suit pas le format
 // propre "famille-jour" (texte libre utilisé avant la correction de ce système).
