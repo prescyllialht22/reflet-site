@@ -1,65 +1,46 @@
-// Renvoie le décompte actuel des places prises, pour chaque date-clé (ex: "pilates-13"),
-// calculé en direct à partir des VRAIES commandes enregistrées — pas d'un compteur
-// séparé qui peut se désynchroniser. Sert à afficher "Complet" sur le site public.
-//
-// Par rapport à la vérification faite au moment du paiement (create-payment-intent.js),
-// celle-ci ne revérifie pas chaque paiement individuellement auprès de Stripe (pour rester
-// rapide à afficher) — elle reste donc une indication fiable mais pas la protection finale :
-// le vrai verrou anti-dépassement se fait toujours au moment du paiement.
+// Décompte une place pour une réservation gratuite à capacité limitée (ex: DEFINE Pilates Reformer)
+// Vérifie qu'il reste de la place AVANT de décompter, pour éviter le sur-booking autant que possible.
 const { getStore } = require('@netlify/blobs');
 
-const LEGACY_FAMILY_MATCH = [
-  { key: 'puppypilates', match: /puppy/i },
-  { key: 'pilates', match: /pilates.?exp[ée]rience/i },
-  { key: 'danse', match: /danse/i },
-  { key: 'copains', match: /run.*copains/i },
-  { key: 'define', match: /define/i },
-  { key: 'mome', match: /mome/i },
-];
-function extractDay(label){
-  const m = (label || '').match(/(\d{1,2})\s*(sept|septembre|oct|octobre|nov|novembre|d[ée]c|d[ée]cembre|jan|janvier|f[ée]v|f[ée]vrier|mars|avr|avril|mai|juin|juil|juillet|ao[ûu]t)/i);
-  return m ? m[1].padStart(2, '0') : null;
-}
+const CAPACITY_LIMITS = {
+  pilates: 10,
+  danse: 15,
+  define: 12,
+  mome: 12,
+  raclette: 13,
+};
 
-exports.handler = async function () {
+exports.handler = async function (event) {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
   try {
-    const ordersStore = getStore({ name: 'orders', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
-    const { blobs } = await ordersStore.list();
-
-    const counts = {};
-
-    for (const blob of blobs) {
-      if (blob.key.startsWith('by-email:')) continue;
-      const order = await ordersStore.get(blob.key, { type: 'json' });
-      if (!order || !order.items) continue;
-
-      order.items.forEach(item => {
-        if (item.type !== 'event') return;
-
-        if (item.id && item.id.includes('-')) {
-          counts[item.id] = (counts[item.id] || 0) + (item.qty || 1);
-          return;
-        }
-
-        // Anciennes commandes sans identifiant propre : on retrouve la famille et le jour
-        // par le texte, pour ne pas les oublier dans le décompte.
-        const legacy = LEGACY_FAMILY_MATCH.find(f => f.match.test(item.name || ''));
-        if (!legacy) return;
-        const day = extractDay(item.name || '');
-        if (!day) return;
-        const key = `${legacy.key}-${day}`;
-        counts[key] = (counts[key] || 0) + (item.qty || 1);
-      });
+    const { capacityKey } = JSON.parse(event.body);
+    if (!capacityKey) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'capacityKey requis' }) };
     }
 
-    // Réservations gratuites (ex: soirée Raclette) : décomptées à part, on les ajoute ici
-    try {
-      const freeStore = getStore({ name: 'event-capacity', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
-      const free = await freeStore.get('counts', { type: 'json' });
-      Object.keys(free || {}).forEach(k => { if (k.startsWith('raclette-')) counts[k] = free[k]; });
-    } catch (e) { /* on affiche quand même le reste */ }
+    const group = capacityKey.split('-')[0];
+    const limit = CAPACITY_LIMITS[group];
+    if (!limit) {
+      // Pas de limite configurée pour ce type d'événement — on accepte sans compter.
+      return { statusCode: 200, body: JSON.stringify({ ok: true, full: false }) };
+    }
 
-    return { statusCode: 200, body: JSON.stringify({ counts }) };
+    const store = getStore({ name: 'event-capacity', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
+    let counts = await store.get('counts', { type: 'json' });
+    if (!counts) counts = {};
+
+    const current = counts[capacityKey] || 0;
+    if (current >= limit) {
+      return { statusCode: 200, body: JSON.stringify({ ok: false, full: true, remaining: 0 }) };
+    }
+
+    counts[capacityKey] = current + 1;
+    await store.setJSON('counts', counts);
+
+    return { statusCode: 200, body: JSON.stringify({ ok: true, full: false, remaining: limit - counts[capacityKey] }) };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
