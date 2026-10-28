@@ -52,6 +52,13 @@ exports.handler = async function () {
       });
     }
 
+    // Réservations gratuites (ex: soirée Raclette) : décomptées à part, on les ajoute ici
+    try {
+      const freeStore = getStore({ name: 'event-capacity', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
+      const free = await freeStore.get('counts', { type: 'json' });
+      Object.keys(free || {}).forEach(k => { if (k.startsWith('raclette-')) counts[k] = free[k]; });
+    } catch (e) { /* on affiche quand même le reste */ }
+
     return { statusCode: 200, body: JSON.stringify({ counts }) };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
