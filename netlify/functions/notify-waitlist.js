@@ -5,7 +5,8 @@ exports.handler = async function (event) {
   }
 
   try {
-    const { prenom, email } = JSON.parse(event.body);
+    const { prenom, email, sortie } = JSON.parse(event.body);
+    const sortieLabel = sortie || 'Sortie non précisée';
     const resendKey = process.env.RESEND_API_KEY;
 
     if (resendKey) {
@@ -16,10 +17,10 @@ exports.handler = async function (event) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Reflet Sorties <onboarding@resend.dev>',
+          from: 'Reflet <billets@reflet.events>',
           to: 'reflet.events.pm@gmail.com',
-          subject: `✨ Nouvelle inscription liste d'attente sorties : ${prenom || email}`,
-          text: `${prenom || ''} vient de s'inscrire sur la liste d'attente d'une sortie (Rooftop/Brunch).\n\nEmail : ${email}`,
+          subject: `✨ Nouvelle inscription liste d'attente — ${sortieLabel} : ${prenom || email}`,
+          text: `${prenom || ''} vient de s'inscrire sur la liste d'attente pour la sortie : ${sortieLabel}.\n\nEmail : ${email}`,
         }),
       });
     }
