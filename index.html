@@ -464,6 +464,7 @@
   .chip.active{background:var(--travertine); color:var(--marron); border-color:var(--travertine);}
   .chip-disabled{opacity:0.35; cursor:not-allowed; text-decoration:line-through;}
   .sorties-arch{width:58%; aspect-ratio:4/5; margin:0 auto;}
+  @media(max-width:900px){ .sorties .sorties-arch{width:92%; max-width:520px;} }
   .waitlist-form{display:flex; flex-direction:column; gap:12px;}
   .waitlist-form input{
     background:transparent; border:1px solid rgba(237,230,217,0.35);
@@ -2744,8 +2745,19 @@
   // Waitlist form (front-end only placeholder — à connecter à un vrai stockage/CRM ensuite)
   const form = document.getElementById('waitlistForm');
   const msg = document.getElementById('wlMsg');
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    // Soirée Raclette : on décompte la place d'abord, et on bloque dès 13 inscrites
+    if(form.dataset.raclette === '1'){
+      try {
+        const r = await fetch('/.netlify/functions/record-collab-capacity', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ capacityKey: 'raclette-21' })
+        });
+        const j = await r.json();
+        if(j && j.full){ window.refletRacletteFull(); return; }
+      } catch(err) { /* si le décompte est injoignable, on laisse passer l'inscription */ }
+    }
     submitToNetlify(form);
     fetch('/.netlify/functions/notify-waitlist', {
       method: 'POST',
@@ -2797,6 +2809,26 @@
     f.querySelector('button[type=submit]').textContent = 'Je réserve ma place';
     f.querySelector('.waitlist-note').textContent = 'Places limitées. On te confirme ta place par e-mail.';
     document.getElementById('wlMsg').textContent = 'Merci ! Ta demande est bien reçue, on te confirme ta place très vite par e-mail.';
+    f.dataset.raclette = '1';
+    // Message d'annulation
+    const rule = document.createElement('p');
+    rule.style.cssText = 'font-size:12.5px; line-height:1.6; margin:14px 0 0; max-width:none; color:rgba(237,230,217,0.7);';
+    rule.textContent = "Les places étant limitées, merci de nous prévenir au plus vite en cas d'empêchement. Une annulation sans prévenir prive une autre fille de cette place : Reflet se réserve le droit de ne plus accepter les prochaines réservations aux sorties des personnes concernées.";
+    f.appendChild(rule);
+    // Complet : on masque le formulaire
+    window.refletRacletteFull = function(){
+      f.style.display = 'none';
+      if(!document.getElementById('racletteFull')){
+        const m = document.createElement('p');
+        m.id = 'racletteFull';
+        m.style.cssText = 'font-size:16px; color:var(--travertine); margin:0; max-width:none;';
+        m.textContent = 'La soirée Raclette est complète. Merci pour ton enthousiasme, à très vite pour les prochaines sorties ♡';
+        f.parentNode.appendChild(m);
+      }
+    };
+    fetch('/.netlify/functions/get-event-capacity').then(r => r.json()).then(d => {
+      if(d && d.counts && (d.counts['raclette-21'] || 0) >= 13) window.refletRacletteFull();
+    }).catch(() => {});
   })();
 </script>
 
