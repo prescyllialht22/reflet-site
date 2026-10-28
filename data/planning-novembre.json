@@ -1,0 +1,106 @@
+{
+  "month": "Novembre",
+  "events": [
+    {
+      "day": "01",
+      "month_short": "Nov.",
+      "title": "Run × Copains",
+      "tag": "Run",
+      "summary": "10H - Cité du vin",
+      "time": "10H - Dimanche",
+      "description": "Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris ou nous attend gourmandise et rafraichissement pour un moment de rencontres unique ♡",
+      "special": false,
+      "price": "4"
+    },
+    {
+      "day": "07",
+      "month_short": "Nov.",
+      "title": "Brunch chez Mome",
+      "tag": "Collab",
+      "summary": "11H - 15 Rue Teulère",
+      "time": "11H - Samedi",
+      "description": "Pour le mois de Novembre on retourne chez Mome, on se souvient encore du fondant au chocolat... \nUne nouvelle édition, pour se retrouver entre femmes. \nAu programme : Rencontres, sourires, et beaucoup de gourmandise ! \nUne table au coeur de Bordeaux pour partager un bon moment dans une ambiance chaleureuse et décontractée. ♡",
+      "special": false,
+      "price": "20"
+    },
+    {
+      "day": "08",
+      "month_short": "Nov.",
+      "title": "Pilates'expérience",
+      "tag": "Pilates",
+      "summary": "9H - 7 Rue Dufau - place limitée",
+      "time": "9H - Dimanche",
+      "description": "40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "20"
+    },
+    {
+      "day": "14",
+      "month_short": "Nov.",
+      "title": "Danse",
+      "tag": "Danse",
+      "summary": "18H30 - 6 Rue Ramonet",
+      "time": "18H30 - Samedi",
+      "description": "Une parenthèse dansée, ouverte a toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "27"
+    },
+    {
+      "day": "15",
+      "month_short": "Nov.",
+      "title": "Pilates Reformer × DEFINE",
+      "tag": "Collab",
+      "summary": "13H - Studio DEFINE",
+      "time": "13H - Dimanche",
+      "description": "Une séance de Pilates Reformer au studio DEFINE, à tarif préférentiel réservé aux membres Reflet. Places limitées. \nOn se retrouve entre nous après la séance avec une boisson de votre choix.♡",
+      "special": false,
+      "price": "35",
+      "display_tag": "Pilates"
+    },
+    {
+      "day": "20",
+      "month_short": "Nov.",
+      "title": "Run × Copains",
+      "tag": "Run",
+      "summary": "19H - Cité du vin",
+      "time": "19H - Vendredi",
+      "description": "Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris ou nous attend gourmandise et rafraichissement pour un moment de rencontres unique ♡",
+      "special": false,
+      "price": "4"
+    },
+    {
+      "day": "21",
+      "month_short": "Nov.",
+      "title": "Soirée Raclette",
+      "tag": "Soirée",
+      "summary": "19H30 - 27 rue des Argentiers",
+      "time": "19H30 - Samedi",
+      "description": "Une grande table de 15 femmes autour d'une raclette, pour lancer la saison ! \nReflet s'occupe de toute l'organisation, chacune règle sa propre consommation sur place. ♡",
+      "special": false,
+      "price": "",
+      "page": "sorties"
+    },
+    {
+      "day": "28",
+      "month_short": "Nov.",
+      "title": "Danse",
+      "tag": "Danse",
+      "summary": "18H30 - 6 Rue Ramonet",
+      "time": "18H30 - Samedi",
+      "description": "Une parenthèse dansée, ouverte a toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "27"
+    },
+    {
+      "day": "29",
+      "month_short": "Nov.",
+      "title": "Pilates'expérience",
+      "tag": "Pilates",
+      "summary": "9H - 7 Rue Dufau - place limitée",
+      "time": "9H - Dimanche",
+      "description": "40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "20"
+    }
+  ]
+}
