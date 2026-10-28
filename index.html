@@ -210,8 +210,8 @@
   /* HERO : défilé de photos en fondu */
   .photo-hero{position:relative; overflow:hidden;}
   .hero-slides{position:absolute; inset:0; z-index:0;}
-  .hero-slide{position:absolute; inset:0; background-size:cover; background-repeat:no-repeat; opacity:0; animation:heroFade 27s linear infinite;}
-  @keyframes heroFade{0%{opacity:0;} 6%{opacity:1;} 16.67%{opacity:1;} 22.67%{opacity:0;} 100%{opacity:0;}}
+  .hero-slide{position:absolute; inset:0; background-size:cover; background-repeat:no-repeat; opacity:0; animation:heroFade 18s linear infinite;}
+  @keyframes heroFade{0%{opacity:0;} 5.5%{opacity:1;} 16.67%{opacity:1;} 22.2%{opacity:0;} 100%{opacity:0;}}
   @media(prefers-reduced-motion:reduce){ .hero-slide{animation:none;} .hero-slide:first-child{opacity:1;} }
   .hero-shade{position:absolute; inset:0; background:linear-gradient(90deg, rgba(42,31,25,0.78) 0%, rgba(42,31,25,0.5) 32%, rgba(42,31,25,0.18) 58%, rgba(42,31,25,0) 82%);}
   .photo-hero-content{position:relative; z-index:1;}
@@ -769,12 +769,12 @@
 
 <section class="photo-hero">
 <div class="hero-slides" aria-hidden="true">
-  <div class="hero-slide" style="animation-delay:-1.62s; background-image:url('images/img-02.jpg'); background-position:center 32%;"></div>
-  <div class="hero-slide" style="animation-delay:2.88s; background-image:url('images/img-05.jpg'); background-position:center 55%;"></div>
-  <div class="hero-slide" style="animation-delay:7.38s; background-image:url('images/img-07.jpg'); background-position:center 78%;"></div>
-  <div class="hero-slide" style="animation-delay:11.88s; background-image:url('images/img-09.jpg'); background-position:center 45%;"></div>
-  <div class="hero-slide" style="animation-delay:16.38s; background-image:url('images/img-06.jpg'); background-position:center 92%;"></div>
-  <div class="hero-slide" style="animation-delay:20.88s; background-image:url('images/img-11.jpg'); background-position:center 50%;"></div>
+  <div class="hero-slide" style="animation-delay:-1.0s; background-image:url('images/img-02.jpg'); background-position:center 32%;"></div>
+  <div class="hero-slide" style="animation-delay:2.0s; background-image:url('images/img-05.jpg'); background-position:center 55%;"></div>
+  <div class="hero-slide" style="animation-delay:5.0s; background-image:url('images/hero-danse.jpg'); background-position:center 55%;"></div>
+  <div class="hero-slide" style="animation-delay:8.0s; background-image:url('images/hero-rooftop.jpg'); background-position:center 45%;"></div>
+  <div class="hero-slide" style="animation-delay:11.0s; background-image:url('images/hero-pilates.jpg'); background-position:center 92%;"></div>
+  <div class="hero-slide" style="animation-delay:14.0s; background-image:url('images/hero-brunch.jpg'); background-position:center 50%;"></div>
   <div class="hero-shade"></div>
 </div>
   <div class="photo-hero-content">
