@@ -2748,7 +2748,9 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     // Soirée Raclette : on décompte la place d'abord, et on bloque dès 13 inscrites
-    if(form.dataset.raclette === '1'){
+    // Inscription de test (prénom TESTREFLET) : on n'utilise pas de place
+    const isTest = (document.getElementById('wlName').value || '').trim().toUpperCase() === 'TESTREFLET';
+    if(form.dataset.raclette === '1' && !isTest){
       try {
         const r = await fetch('/.netlify/functions/record-collab-capacity', {
           method: 'POST', headers: {'Content-Type': 'application/json'},
