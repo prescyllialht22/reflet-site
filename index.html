@@ -2798,7 +2798,7 @@
   // Section "Les instants Reflet" : à partir de samedi 31 octobre 10h, on ne propose que la soirée Raclette
   (function(){
     if(Date.now() < new Date('2026-10-31T10:00:00+02:00').getTime()) return;
-    const desc = "Samedi 21 novembre à 19h30, une grande table de 15 femmes autour d'une raclette pour lancer la saison. Rendez-vous au 27 rue des Argentiers, à Bordeaux. Reflet s'occupe de toute l'organisation, chacune règle simplement sa propre consommation sur place. Places limitées : 13 participantes.";
+    const desc = "Samedi 21 novembre à 21h30, une grande table de 15 femmes autour d'une raclette pour lancer la saison. Rendez-vous au 27 rue des Argentiers, à Bordeaux. Reflet s'occupe de toute l'organisation, chacune règle simplement sa propre consommation sur place. Places limitées : 13 participantes.";
     const row = document.getElementById('chipRow');
     row.innerHTML = '<button type="button" class="chip active" data-src="images/raclette.jpg" data-alt="Soirée Raclette Reflet" data-desc="' + desc.replace(/"/g,'&quot;') + '">Soirée Raclette</button>';
     const img = document.getElementById('sortiesImg');
@@ -2807,8 +2807,18 @@
     document.getElementById('wlSortie').value = 'Soirée Raclette — 21 novembre';
     const f = document.getElementById('waitlistForm');
     f.querySelector('button[type=submit]').textContent = 'Je réserve ma place';
-    f.querySelector('.waitlist-note').textContent = 'Places limitées. On te confirme ta place par e-mail.';
-    document.getElementById('wlMsg').textContent = 'Merci ! Ta demande est bien reçue, on te confirme ta place très vite par e-mail.';
+    f.querySelector('.waitlist-note').textContent = 'Places limitées : 13 participantes.';
+    // Avertissement avant validation : la place n'est confirmée qu'après l'acompte
+    const warn = document.createElement('div');
+    warn.style.cssText = 'border:1px solid rgba(237,230,217,0.45); border-radius:18px; padding:14px 16px; font-size:13.5px; line-height:1.6; color:var(--travertine);';
+    warn.innerHTML = "<strong>Important : ta place n'est pas encore confirmée.</strong><br>Après ton inscription, tu recevras un e-mail avec les instructions pour verser l'acompte de <strong>10 €</strong>. Lis-le attentivement : sans acompte reçu dans le délai indiqué, ta réservation ne sera pas validée.";
+    const warnLabel = document.createElement('label');
+    warnLabel.className = 'consent-label consent-label-dark';
+    warnLabel.innerHTML = '<input type="checkbox" required><span>J\'ai compris que ma place n\'est confirmée qu\'après réception de l\'acompte de 10 €.</span>';
+    const submitBtn = f.querySelector('button[type=submit]');
+    f.insertBefore(warn, submitBtn);
+    f.insertBefore(warnLabel, submitBtn);
+    document.getElementById('wlMsg').textContent = "Merci ! Ta demande est bien reçue. Surveille tes e-mails (et tes spams) : tu vas recevoir les instructions pour l'acompte de 10 €. Ta place n'est confirmée qu'après son règlement.";
     f.dataset.raclette = '1';
     // Message d'annulation
     const rule = document.createElement('p');
