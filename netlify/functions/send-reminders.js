@@ -51,7 +51,7 @@ async function loadTomorrowEvents(tomorrow) {
 // Consignes pratiques selon le type d'événement (famille = début de l'identifiant, ex. "pilates-08")
 const NOTES = {
   pilates: "Il n'y a pas de vestiaire sur place : pense à venir directement en tenue.",
-  danse: "Pense à prévoir une paire de chaussures propre ou des chaussettes, ça sera nécessaire.",
+  danse: "Pense à prévoir une paire de chaussures propre ou des chaussettes, ce sera nécessaire.",
   define: "Des chaussettes antidérapantes sont obligatoires pour la séance (vente possible sur place).",
   copains: "Le point de rendez-vous est à la Cité du vin, juste derrière l'arrêt de tram.",
 };
@@ -67,11 +67,11 @@ function buildMail(prenom, ev, month, qty, family) {
   const lieuBrut = (ev.summary || '').replace(/^\s*\d{1,2}\s*[hH]\s*\d{0,2}\s*-\s*/, '');
   const lieu = ADRESSES[family] || lieuBrut;
   const desc = (ev.description || '').split('\n').map(l => `<p style="margin:0 0 8px;">${esc(l)}</p>`).join('');
-  const subject = "Oublie pas, ton événement REFLET c'est demain !";
+  const subject = "N'oublie pas, ton événement REFLET c'est demain !";
   const note = NOTES[family] || '';
   const html = `
     <div style="font-family:Arial,sans-serif; color:#2A1F19; max-width:480px; margin:0 auto;">
-      <h2 style="font-family:Georgia,serif; font-weight:normal; font-size:21px; line-height:1.3; margin-bottom:14px;">Coucou ${esc(prenom) || ''}, oublie pas, ton événement REFLET c'est demain !</h2>
+      <h2 style="font-family:Georgia,serif; font-weight:normal; font-size:21px; line-height:1.3; margin-bottom:14px;">Coucou ${esc(prenom) || ''},<br>N'oublie pas, ton événement REFLET c'est demain !</h2>
       <div style="border:1px solid #d9cfbd; border-radius:14px; padding:14px 16px; margin:16px 0;">
         <p style="margin:0 0 6px; font-size:18px; font-family:Georgia,serif;">${esc(ev.title)}</p>
         <p style="margin:0 0 4px;">📅 ${esc(dateLabel)}${quand ? ' — ' + esc(quand) : ''}</p>
@@ -81,7 +81,7 @@ function buildMail(prenom, ev, month, qty, family) {
       ${note ? `<div style="background:#F3ECDF; border-radius:14px; padding:12px 16px; margin:0 0 16px; font-size:14px;"><strong>À savoir :</strong> ${esc(note)}</div>` : ''}
       <div style="font-size:14px; color:#5A4636;">${desc}</div>
       <p style="margin-top:18px; font-size:14px;">Ton billet (QR code) se trouve dans ton e-mail de confirmation.</p>
-      <p style="font-size:14px;">Un empêchement ou retard ? Préviens-nous au plus vite en DM sur le compte Instagram de REFLET (<strong>@reflet.events</strong>). On te remercie !</p>
+      <p style="font-size:14px;">Un empêchement ou un retard ? Préviens-nous au plus vite en DM sur le compte Instagram de REFLET (<strong>@reflet.events</strong>). On te remercie !</p>
       <p style="margin-top:22px;">À demain,<br>Prescyllia &amp; Marie — REFLET</p>
     </div>`;
   return { subject, html };
