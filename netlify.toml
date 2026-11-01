@@ -5,6 +5,10 @@
 [functions]
   node_bundler = "esbuild"
 
+# Rappel automatique la veille des événements : tous les jours à 17h UTC (18h en hiver, 19h en été, heure de Paris)
+[functions."send-reminders"]
+  schedule = "0 17 * * *"
+
 [[redirects]]
   from = "/admin/"
   to = "/admin/index.html"
