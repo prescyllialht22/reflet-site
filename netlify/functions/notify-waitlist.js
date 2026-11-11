@@ -38,7 +38,7 @@ exports.handler = async function (event) {
         const text =
 `Coucou ${nom || ''},
 
-Merci pour ton inscription à la soirée Raclette REFLET du samedi 21 novembre à 21h30 (27 rue des Argentiers, Bordeaux) ♡
+Merci pour ton inscription à la soirée Raclette REFLET du samedi 21 novembre à 19h30 (La Meule du Berger, 30 rue Saint-Rémi, 33000 Bordeaux) ♡
 
 Pour valider définitivement ta place, un acompte de 10 € est demandé par le restaurant.
 
