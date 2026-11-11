@@ -7,7 +7,7 @@ const CAPACITY_LIMITS = {
   danse: 15,
   define: 12,
   mome: 12,
-  raclette: 13,
+  raclette: 16,
 };
 
 exports.handler = async function (event) {
