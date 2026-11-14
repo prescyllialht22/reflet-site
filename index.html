@@ -165,6 +165,13 @@
   header.scrolled{background:rgba(237,230,217,0.94); box-shadow:0 6px 20px rgba(51,37,28,0.10);}
   header.scrolled nav.wrap{padding-top:0; padding-bottom:0;}
 
+
+  /* BOUTON INSTAGRAM FLOTTANT */
+  .ig-float{position:fixed; right:18px; bottom:22px; z-index:70; width:48px; height:48px; border-radius:50%; background:var(--marron); color:var(--travertine); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(51,37,28,0.28); opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .4s ease, transform .4s ease, background .25s ease;}
+  .ig-float.show{opacity:1; transform:none; pointer-events:auto;}
+  .ig-float:hover{background:var(--bronze); transform:translateY(-3px);}
+  @media(max-width:640px){ .ig-float{bottom:calc(84px + env(safe-area-inset-bottom)); right:14px; width:44px; height:44px;} }
+
   /* ARCH */
   .arch{
     border-radius:var(--radius-arch);
@@ -2886,6 +2893,14 @@
   var h = document.querySelector('header');
   if(!h) return;
   function f(){ h.classList.toggle('scrolled', window.scrollY > 40); }
+  window.addEventListener('scroll', f, {passive:true}); f();
+})();
+</script>
+<a class="ig-float" id="igFloat" href="https://instagram.com/reflet.events" target="_blank" rel="noopener" aria-label="Suivre REFLET sur Instagram"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+<script>
+(function(){
+  var b = document.getElementById('igFloat');
+  function f(){ b.classList.toggle('show', window.scrollY > 500); }
   window.addEventListener('scroll', f, {passive:true}); f();
 })();
 </script>
