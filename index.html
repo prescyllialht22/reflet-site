@@ -153,6 +153,18 @@
     .nav-links .btn-pill{padding:10px 20px;}
   }
 
+
+  /* ECRAN D'ACCUEIL (1 fois par jour) */
+  #splash{position:fixed; inset:0; z-index:9999; background:var(--travertine); display:flex; align-items:center; justify-content:center; transition:opacity .9s ease; cursor:pointer;}
+  #splash.out{opacity:0; pointer-events:none;}
+  #splash img{width:34%; max-width:260px; min-width:130px; height:auto; opacity:0; transform:scale(.96); transition:opacity 1s ease, transform 1.2s ease;}
+  #splash.in img{opacity:1; transform:none;}
+  /* MENU : plus fin avec une ombre douce quand on descend */
+  header{transition:box-shadow .4s ease, background .4s ease;}
+  header nav.wrap{transition:padding .3s ease;}
+  header.scrolled{background:rgba(237,230,217,0.94); box-shadow:0 6px 20px rgba(51,37,28,0.10);}
+  header.scrolled nav.wrap{padding-top:0; padding-bottom:0;}
+
   /* ARCH */
   .arch{
     border-radius:var(--radius-arch);
@@ -724,6 +736,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
+
+<div id="splash" aria-hidden="true"><img src="images/img-01.png" alt=""></div>
+<script>
+(function(){
+  var sp = document.getElementById('splash');
+  try{
+    var today = new Date().toISOString().slice(0,10);
+    if(localStorage.getItem('refletSplash') === today){ sp.remove(); return; }
+    localStorage.setItem('refletSplash', today);
+  }catch(e){}
+  var done = false;
+  function hide(){ if(done) return; done = true; sp.classList.add('out'); setTimeout(function(){ sp.remove(); }, 1000); }
+  requestAnimationFrame(function(){ sp.classList.add('in'); });
+  sp.addEventListener('click', hide);
+  setTimeout(hide, 1800);
+  window.addEventListener('load', function(){ setTimeout(hide, 1200); });
+})();
+</script>
 
 <div class="prereg-bar" id="preregBar">🏃‍♀️ Run x Copains dimanche 1er novembre — <button type="button" id="preregBarBtn">je réserve ma place</button></div>
 
@@ -1706,7 +1736,7 @@
   };
 
   // Places limitées — Pilates 10, Danse 15, DEFINE (Reformer) 11 ; le reste est illimité
-  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 12, mome: 12, copains: 35, puppypilates: 15, raclette: 16 };
+  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 12, mome: 12, copains: 35, puppypilates: 15, raclette: 19 };
   let eventCapacityData = null;
   async function loadEventCapacity(){
     if(eventCapacityData) return eventCapacityData;
@@ -2754,9 +2784,16 @@
       try {
         const r = await fetch('/.netlify/functions/record-collab-capacity', {
           method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ capacityKey: 'raclette-21' })
+          body: JSON.stringify({ capacityKey: 'raclette-21', email: (document.getElementById('wlEmail').value || '').trim().toLowerCase() })
         });
         const j = await r.json();
+        if(j && j.duplicate){
+          const old = msg.innerHTML;
+          msg.textContent = 'Tu es déjà inscrite avec cette adresse e-mail 💛 Vérifie ta boîte mail (et tes spams) : tu y as reçu les infos pour l\'acompte.';
+          msg.classList.add('show');
+          setTimeout(() => { msg.classList.remove('show'); msg.innerHTML = old; }, 7000);
+          return;
+        }
         if(j && j.full){ window.refletRacletteFull(); return; }
       } catch(err) { /* si le décompte est injoignable, on laisse passer l'inscription */ }
     }
@@ -2839,10 +2876,18 @@
       }
     };
     fetch('/.netlify/functions/get-event-capacity').then(r => r.json()).then(d => {
-      if(d && d.counts && (d.counts['raclette-21'] || 0) >= 16) window.refletRacletteFull();
+      if(d && d.counts && (d.counts['raclette-21'] || 0) >= 19) window.refletRacletteFull();
     }).catch(() => {});
   })();
 </script>
 
+<script>
+(function(){
+  var h = document.querySelector('header');
+  if(!h) return;
+  function f(){ h.classList.toggle('scrolled', window.scrollY > 40); }
+  window.addEventListener('scroll', f, {passive:true}); f();
+})();
+</script>
 </body>
 </html>
