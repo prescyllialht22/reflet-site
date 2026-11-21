@@ -1,0 +1,27 @@
+{
+  "month": "Novembre",
+  "events": [
+    {
+      "day": "28",
+      "month_short": "Nov.",
+      "title": "Danse",
+      "tag": "Danse",
+      "summary": "18H30 - 6 Rue Ramonet",
+      "time": "18H30 - Samedi",
+      "description": "Une parenthèse dansée, ouverte à toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "27"
+    },
+    {
+      "day": "29",
+      "month_short": "Nov.",
+      "title": "Pilates'expérience",
+      "tag": "Pilates",
+      "summary": "9H - 7 Rue Dufau - place limitée",
+      "time": "9H - Dimanche",
+      "description": "40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "20"
+    }
+  ]
+}
