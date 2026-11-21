@@ -4,7 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REFLET — Bordeaux</title>
-<link rel="preload" href="/data/planning.json" as="fetch" crossorigin="anonymous">
+<script>
+(function(){
+  var now = Date.now();
+  var T_DEBUT_DEC = new Date("2026-11-21T10:00:00+01:00").getTime();
+  var T_FIN_NOV = new Date("2026-11-29T21:00:00+01:00").getTime();
+  var urls;
+  if (now >= T_FIN_NOV) urls = ["/data/planning-decembre.json"];
+  else if (now >= T_DEBUT_DEC) urls = ["/data/planning-fin-novembre.json", "/data/planning-decembre.json"];
+  else if (now >= new Date("2026-10-31T10:00:00+02:00").getTime()) urls = ["/data/planning-novembre.json"];
+  else urls = ["/data/planning.json"];
+  window.PLANNING_URLS = urls;
+  window.PLANNING_URL = urls[0];
+  urls.forEach(function(u){ document.write('<link rel="preload" href="' + u + '" as="fetch" crossorigin="anonymous">'); });
+  window.loadPlanningMerged = function(){
+    if (window._planningMerged) return window._planningMerged;
+    window._planningMerged = Promise.all(urls.map(function(u){ return fetch(u).then(function(r){ return r.json(); }); })).then(function(list){
+      var events = [];
+      list.forEach(function(d){ (d.events || []).forEach(function(ev){ ev._month = d.month || ''; events.push(ev); }); });
+      return { month: list.map(function(d){ return d.month; }).join(' – '), multi: list.length > 1, groups: list, events: events };
+    });
+    return window._planningMerged;
+  };
+})();
+</script>
 <link rel="preload" href="images/img-02.jpg" as="image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,6 +176,25 @@
     .nav-links .btn-pill{padding:10px 20px;}
   }
 
+
+  /* ECRAN D'ACCUEIL (1 fois par jour) */
+  #splash{position:fixed; inset:0; z-index:9999; background:var(--travertine); display:flex; align-items:center; justify-content:center; transition:opacity .9s ease; cursor:pointer;}
+  #splash.out{opacity:0; pointer-events:none;}
+  #splash img{width:34%; max-width:260px; min-width:130px; height:auto; opacity:0; transform:scale(.96); transition:opacity 1s ease, transform 1.2s ease;}
+  #splash.in img{opacity:1; transform:none;}
+  /* MENU : plus fin avec une ombre douce quand on descend */
+  header{transition:box-shadow .4s ease, background .4s ease;}
+  header nav.wrap{transition:padding .3s ease;}
+  header.scrolled{background:rgba(237,230,217,0.94); box-shadow:0 6px 20px rgba(51,37,28,0.10);}
+  header.scrolled nav.wrap{padding-top:0; padding-bottom:0;}
+
+
+  /* BOUTON INSTAGRAM FLOTTANT */
+  .ig-float{position:fixed; right:18px; bottom:22px; z-index:70; width:48px; height:48px; border-radius:50%; background:var(--marron); color:var(--travertine); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(51,37,28,0.28); opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .4s ease, transform .4s ease, background .25s ease;}
+  .ig-float.show{opacity:1; transform:none; pointer-events:auto;}
+  .ig-float:hover{background:var(--bronze); transform:translateY(-3px);}
+  @media(max-width:640px){ .ig-float{bottom:calc(84px + env(safe-area-inset-bottom)); right:14px; width:44px; height:44px;} }
+
   /* ARCH */
   .arch{
     border-radius:var(--radius-arch);
@@ -206,6 +248,16 @@
   }
   .btn-light{background:var(--travertine); color:var(--ink); border:1px solid var(--travertine);}
   .btn-outline-light{background:transparent; color:var(--travertine); border:1px solid rgba(237,230,217,0.6);}
+
+  /* HERO : défilé de photos en fondu */
+  .photo-hero{position:relative; overflow:hidden;}
+  .hero-slides{position:absolute; inset:0; z-index:0;}
+  .hero-slide{position:absolute; inset:0; background-size:cover; background-repeat:no-repeat; opacity:0; animation:heroFade 18s linear infinite;}
+  @keyframes heroFade{0%{opacity:0;} 5.5%{opacity:1;} 16.67%{opacity:1;} 22.2%{opacity:0;} 100%{opacity:0;}}
+  @media(prefers-reduced-motion:reduce){ .hero-slide{animation:none;} .hero-slide:first-child{opacity:1;} }
+  .hero-shade{position:absolute; inset:0; background:linear-gradient(90deg, rgba(42,31,25,0.78) 0%, rgba(42,31,25,0.5) 32%, rgba(42,31,25,0.18) 58%, rgba(42,31,25,0) 82%);}
+  .photo-hero-content{position:relative; z-index:1;}
+  @media(max-width:640px){ .hero-shade{background:linear-gradient(0deg, rgba(42,31,25,0.7) 0%, rgba(42,31,25,0.3) 55%, rgba(42,31,25,0.1) 100%);} }
   @media(min-width:1400px){ .photo-hero{min-height:70vh;} }
   @media(max-width:640px){
     .photo-hero{min-height:46vh; padding-bottom:32px; background-position:center 34%; background-size:cover; padding-left:24px;}
@@ -244,10 +296,17 @@
   .planning-item{cursor:pointer; transition:background .2s ease;}
   .planning-item:hover{background:rgba(140,98,57,0.06);}
   .planning-item-special{position:relative;}
+  .planning-card .planning-month.planning-month-multi{font-size:64px;}
+  .planning-group{grid-column:1 / -1; display:grid; grid-template-columns:1fr 1fr; column-gap:68px;}
+  .planning-group-label{grid-column:1 / -1; text-align:center; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--bronze); margin:34px 0 18px; display:flex; align-items:center; gap:14px;}
+  .planning-group-label::before,.planning-group-label::after{content:''; flex:1; height:1px; background:var(--line);}
+  .planning-group:first-child .planning-group-label{margin-top:0;}
   /* Téléphone : on garde les deux colonnes côte à côte, chaque événement s'empile (date, titre, détails, catégorie) */
   @media(max-width:640px){
     .planning-card{padding:34px 18px 26px; border-radius:32px 32px 16px 16px;}
     .planning-card .planning-month{font-size:68px;}
+    .planning-card .planning-month.planning-month-multi{font-size:42px;}
+    .planning-group{column-gap:22px;}
     .planning-list{margin-top:26px; column-gap:22px;}
     .planning-item{display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:22px 0;}
     .planning-date{font-size:34px;}
@@ -454,6 +513,7 @@
   .chip.active{background:var(--travertine); color:var(--marron); border-color:var(--travertine);}
   .chip-disabled{opacity:0.35; cursor:not-allowed; text-decoration:line-through;}
   .sorties-arch{width:58%; aspect-ratio:4/5; margin:0 auto;}
+  @media(max-width:900px){ .sorties .sorties-arch{width:92%; max-width:520px;} }
   .waitlist-form{display:flex; flex-direction:column; gap:12px;}
   .waitlist-form input{
     background:transparent; border:1px solid rgba(237,230,217,0.35);
@@ -650,6 +710,20 @@
     html{scroll-behavior:auto;}
   }
 
+
+  /* PRÉ-INSCRIPTION */
+  .prereg-bar{display:none; background:var(--marron); color:var(--travertine); text-align:center; padding:11px 16px; font-size:13.5px; line-height:1.4;}
+  .prereg-bar.show{display:block;}
+  .prereg-bar button{background:none; border:none; color:inherit; font:inherit; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:0;}
+  .prereg-form{display:flex; flex-direction:column; gap:12px; margin-top:18px;}
+  .prereg-form input[type=text], .prereg-form input[type=email]{
+    background:transparent; border:1px solid var(--line); border-radius:999px;
+    padding:14px 20px; color:var(--ink); font-size:16px; font-family:'Inter',sans-serif;
+  }
+  .prereg-form input:focus{outline:2px solid var(--bronze); outline-offset:2px;}
+  .prereg-form button[type=submit]{border:none; cursor:pointer; text-align:center; margin-top:4px;}
+  #preregOk{display:none; text-align:center;}
+
   /* MODALS */
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(42,31,25,0.55);
@@ -700,6 +774,26 @@
 </head>
 <body>
 
+<div id="splash" aria-hidden="true"><img src="images/img-01.png" alt=""></div>
+<script>
+(function(){
+  var sp = document.getElementById('splash');
+  try{
+    var today = new Date().toISOString().slice(0,10);
+    if(localStorage.getItem('refletSplash') === today){ sp.remove(); return; }
+    localStorage.setItem('refletSplash', today);
+  }catch(e){}
+  var done = false;
+  function hide(){ if(done) return; done = true; sp.classList.add('out'); setTimeout(function(){ sp.remove(); }, 1000); }
+  requestAnimationFrame(function(){ sp.classList.add('in'); });
+  sp.addEventListener('click', hide);
+  setTimeout(hide, 1800);
+  window.addEventListener('load', function(){ setTimeout(hide, 1200); });
+})();
+</script>
+
+<div class="prereg-bar" id="preregBar">🏃‍♀️ Run x Copains dimanche 1er novembre — <button type="button" id="preregBarBtn">je réserve ma place</button></div>
+
 <div class="logo-banner"><a href="#" class="logo-big"><img src="images/img-01.png" alt="Reflet Events"></a></div>
 
 <header>
@@ -741,7 +835,16 @@
   </a>
 </nav>
 
-<section class="photo-hero" style="background-image:linear-gradient(90deg, rgba(42,31,25,0.78) 0%, rgba(42,31,25,0.5) 32%, rgba(42,31,25,0.18) 58%, rgba(42,31,25,0) 82%), url('images/img-02.jpg');">
+<section class="photo-hero">
+<div class="hero-slides" aria-hidden="true">
+  <div class="hero-slide" style="animation-delay:-1.0s; background-image:url('images/img-02.jpg'); background-position:center 32%;"></div>
+  <div class="hero-slide" style="animation-delay:2.0s; background-image:url('images/img-05.jpg'); background-position:center 55%;"></div>
+  <div class="hero-slide" style="animation-delay:5.0s; background-image:url('images/hero-danse.jpg'); background-position:center 55%;"></div>
+  <div class="hero-slide" style="animation-delay:8.0s; background-image:url('images/hero-rooftop.jpg'); background-position:center 45%;"></div>
+  <div class="hero-slide" style="animation-delay:11.0s; background-image:url('images/hero-pilates.jpg'); background-position:center 92%;"></div>
+  <div class="hero-slide" style="animation-delay:14.0s; background-image:url('images/hero-brunch.jpg'); background-position:center 50%;"></div>
+  <div class="hero-shade"></div>
+</div>
   <div class="photo-hero-content">
     <span class="eyebrow photo-hero-eyebrow">Bordeaux · Communauté de femmes</span>
     <h1 class="photo-hero-title">Reflet, une autre<br>façon de prendre soin de soi.</h1>
@@ -919,8 +1022,8 @@
     </div>
     <div class="team-grid">
       <div class="reveal">
-        <div class="arch team-arch has-photo"><img src="images/img-13.jpg" alt="Bianca, coach danse" loading="lazy" decoding="async"></div>
-        <div class="team-name serif">Bianca</div>
+        <div class="arch team-arch has-photo"><img src="images/charlotte.jpg" alt="Charlotte, coach danse" loading="lazy" decoding="async"></div>
+        <div class="team-name serif">Charlotte</div>
         <div class="team-role">Coach danse</div>
         <p class="team-bio">Professeure de danse, elle anime chaque séance Danse by REFLET avec énergie et bienveillance.</p>
       </div>
@@ -1118,6 +1221,19 @@
     <p id="planningModalTime" style="font-size:14px; color:var(--marron-soft); margin:0 0 14px;"></p>
     <p id="planningModalDesc" style="font-size:14.5px; line-height:1.6; color:var(--marron-soft); margin:0;"></p>
     <a href="#" id="planningModalBillettoLink" class="btn-pill btn-dark" style="display:none; text-align:center; margin-top:20px; border:none; cursor:pointer;">Réserver ma place</a>
+  </div>
+</div>
+
+<!-- MODAL : Run x Copains du 1er novembre -->
+<div class="modal-overlay" id="preregModal">
+  <div class="modal-box" style="max-width:440px; text-align:center;">
+    <button class="modal-close" id="preregClose" aria-label="Fermer">×</button>
+    <h3 class="serif" style="font-size:26px; line-height:1.2; margin:6px 0 14px; text-transform:uppercase; letter-spacing:0.02em;">Run × Copains<br>Dimanche 1 novembre</h3>
+    <p style="font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--bronze); margin:-4px 0 14px;">10h</p>
+    <p style="font-size:14.5px; line-height:1.6; color:var(--marron-soft); margin:0;">Réserve ta place dès maintenant, le paiement de <strong>4 €</strong> se fait en ligne.</p>
+    <button type="button" id="preregMore" style="background:none; border:none; cursor:pointer; font:inherit; font-size:13.5px; color:var(--bronze); text-decoration:underline; text-underline-offset:3px; margin-top:14px; padding:0;">Plus d'infos</button>
+    <p id="preregInfo" style="display:none; font-size:14px; line-height:1.6; color:var(--marron-soft); margin:12px 0 0; text-align:left;">Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous !<br>On prolonge l'instant chez Copains Paris où nous attend gourmandise et rafraîchissement pour un moment de rencontres unique ♡</p>
+    <button type="button" id="preregReserve" class="btn-pill btn-dark" style="display:block; width:100%; border:none; cursor:pointer; margin-top:18px;">Réserver ma place — 4 €</button>
   </div>
 </div>
 
@@ -1357,7 +1473,7 @@
 
       <div class="event-icon-row" id="collabPageIcons"></div>
 
-      <h4 class="event-page-subhead">Le partenariat</h4>
+      <h4 class="event-page-subhead" id="collabPageDescTitle">Le partenariat</h4>
       <p id="collabPageDesc" style="font-size:14.5px; line-height:1.7; color:var(--marron-soft); margin:0 0 22px;"></p>
 
       <h4 class="event-page-subhead">À prévoir / Avantage Reflet</h4>
@@ -1640,7 +1756,7 @@
     danse: {
       tag: 'Danse', title: 'Danse by REFLET', price: 27,
       teaser: "Une parenthèse dansée, ouverte à toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit votre niveau.",
-      coach: 'Bianca', level: 'Tous niveaux', city: '6 rue Ramonet, Bordeaux',
+      coach: 'Charlotte', level: 'Tous niveaux', city: '6 rue Ramonet, Bordeaux',
       desc: "Une heure de danse (hip-hop, commercial, afro, pop...) dans une atmosphère libre et bienveillante. La séance se prolonge autour de gaufres et de thé glacé, pour laisser place aux échanges et prolonger cette parenthèse hors du quotidien.",
       inclus: ["Chaussures de salle propres et différentes de celles avec lesquelles vous arrivez OU chaussettes propres", "Gaufres et thé glacé offerts après la séance"],
       testimonials: allTestimonials
@@ -1657,7 +1773,7 @@
   };
 
   // Places limitées — Pilates 10, Danse 15, DEFINE (Reformer) 11 ; le reste est illimité
-  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 11, mome: 13, copains: 35, puppypilates: 15 };
+  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 12, mome: 12, copains: 35, puppypilates: 15, raclette: 19, noel: 12 };
   let eventCapacityData = null;
   async function loadEventCapacity(){
     if(eventCapacityData) return eventCapacityData;
@@ -1679,8 +1795,7 @@
   async function loadEventPlanning(){
     if(eventPlanningData) return eventPlanningData;
     try {
-      const res = await fetch('/data/planning.json');
-      eventPlanningData = await res.json();
+      eventPlanningData = await window.loadPlanningMerged();
     } catch(err) { eventPlanningData = { events: [] }; }
     return eventPlanningData;
   }
@@ -1700,7 +1815,7 @@
         if(dates.length === 1){
           metaEl.textContent = dates[0].day + ' ' + (dates[0].month_short || '') + ' · ' + dates[0].time;
         } else if(dates.length > 1){
-          metaEl.textContent = dates.length + ' dates ce mois-ci';
+          metaEl.textContent = dates.length + (planning.multi ? ' dates à venir' : ' dates ce mois-ci');
         } else {
           metaEl.textContent = 'Voir Instagram @reflet.events';
         }
@@ -1892,7 +2007,7 @@
     define: {
       tag: 'REFLET × DEFINE', title: 'DEFINE — Pilates Reformer', price: 35,
       teaser: "Un partenariat pour découvrir le Pilates Reformer dans un studio d'exception, à tarif préférentiel Reflet.",
-      city: 'Bordeaux', level: 'Tous niveaux', time: '10h',
+      city: 'Bordeaux', level: 'Tous niveaux', time: '13h',
       desc: "Ce mois-ci, Reflet s'associe à DEFINE pour vous faire découvrir le Pilates Reformer, une pratique douce et exigeante à la fois, dans un cadre premium.",
       inclus: ["Tarif préférentiel réservé aux membres Reflet", "Places limitées", "Paire de chaussettes antidérapantes obligatoire pour la séance", "Une boisson offerte à la fin de la séance"],
       detailPhoto: "images/img-30.jpg"
@@ -1900,8 +2015,8 @@
     mome: {
       tag: 'REFLET × MOME 🤎', title: 'Le déjeuner de Reflet — chez MOME',
       teaser: "Pour cette nouvelle collaboration, Reflet vous donne rendez-vous chez MOME, café-pâtisserie au cœur de Bordeaux, pour un déjeuner convivial entre filles.",
-      city: 'Bordeaux', level: '15 places · sur réservation', price: 20, time: '11h',
-      desc: "Nous serons 15 femmes autour d'une même table pour partager un bon moment, échanger et profiter d'un déjeuner dans une ambiance chaleureuse et décontractée.",
+      city: 'Bordeaux', level: '12 places · sur réservation', price: 20, time: '11h',
+      desc: "Nous serons 12 femmes autour d'une même table pour partager un bon moment, échanger et profiter d'un déjeuner dans une ambiance chaleureuse et décontractée.",
       inclus: ["Réservation directement en ligne", "Places limitées"],
       detailPhoto: "images/img-31.jpg"
     },
@@ -1919,6 +2034,13 @@
       city: '35 Cours d\'Ornano, Bordeaux', level: 'Tous niveaux',
       desc: "En octobre, Reflet vous propose une séance de Puppy Pilates : 30 minutes de Pilates sur tapis pour s'étirer et se reconnecter en douceur, prolongées de 30 minutes de rencontres avec des chiots. Câlins, nouvelles rencontres et douceur seront les maîtres-mots de cet instant — dans le respect du bien-être animal et d'un environnement sain et équilibré pour les chiots.",
       inclus: ["Tapis fourni", "Places limitées — 15 personnes maximum"]
+    },
+    noel: {
+      tag: 'REFLET', title: 'Le Noël de REFLET', descTitle: 'Au programme', price: 15, time: 'Samedi 12 décembre · 10h',
+      teaser: "Venez fêter Noël avec REFLET en avance !",
+      city: 'Osmose, 14 Rue Ravez, 33000 Bordeaux', level: '12 places · sur réservation',
+      desc: "Une table de 12 filles, 12 nouvelles rencontres. Chacune apporte un cadeau d'une valeur de 5 à 10 € et l'offre à une autre participante le jour J, le tout autour d'une jolie table avec une boisson chaude et une touche sucrée. Et qui sait, les mères Noël de REFLET viendront elles aussi, la hotte remplie… ♡",
+      inclus: ["Un cadeau de 5 à 10 € à apporter, offert à une autre participante le jour J", "Une boisson chaude et une touche sucrée", "Places limitées — 12 participantes"]
     }
   };
 
@@ -1934,6 +2056,7 @@
     document.getElementById('collabPageTag').textContent = data.tag;
     document.getElementById('collabPageTitle').textContent = data.title;
     document.getElementById('collabPageTeaser').textContent = data.teaser;
+    document.getElementById('collabPageDescTitle').textContent = data.descTitle || 'Le partenariat';
     document.getElementById('collabPageDesc').textContent = data.desc;
     document.getElementById('collabPageInclus').innerHTML = data.inclus.map(t => `<li>${t}</li>`).join('');
 
@@ -1957,11 +2080,11 @@
     `;
 
     const reserveBtn = document.getElementById('collabPageReserveBtn');
-    reserveBtn.textContent = data.openEvent ? 'Choisir ma date — 4 €' : (data.marieLink ? 'Envoyer "RUN" à Marie' : (data.price ? 'Ajouter au panier' : (data.instagramLink ? 'Voir sur Instagram' : 'Je suis intéressée')));
+    reserveBtn.textContent = data.openEvent ? 'Choisir ma date — 4 €' : (data.marieLink ? 'Envoyer "RUN" à Marie' : (data.price ? 'Ajouter au panier' : (data.instagramLink ? 'Voir sur Instagram' : (data.reserveLabel || 'Je suis intéressée'))));
     reserveBtn.disabled = false;
 
     // Places limitées pour DEFINE, MOME et Puppy Pilates — recherche de leur date dans le planning
-    const capacityConfig = { define: { search: 'define', group: 'define' }, mome: { search: 'mome', group: 'mome' }, puppypilates: { search: 'puppy', group: 'puppypilates' } }[id];
+    const capacityConfig = { define: { search: 'define', group: 'define' }, mome: { search: 'mome', group: 'mome' }, puppypilates: { search: 'puppy', group: 'puppypilates' }, noel: { search: 'noël', group: 'noel' } }[id];
     if(capacityConfig){
       const planning = await loadEventPlanning();
       await loadEventCapacity();
@@ -2543,10 +2666,15 @@
   const planningModalBillettoLink = document.getElementById('planningModalBillettoLink');
   const planningListEl = document.getElementById('planningList');
 
-  fetch('/data/planning.json')
-    .then(r => r.json())
+  window.loadPlanningMerged()
     .then(data => {
       document.getElementById('planningMonth').textContent = data.month || '';
+      // Cartes "collaborations du mois" : on masque celles qui n'ont pas de date ce mois-ci
+      [['define','define'],['mome','mome'],['copains','copains'],['puppypilates','puppy']].forEach(([id, word]) => {
+        const has = (data.events || []).some(ev => (ev.title || '').toLowerCase().includes(word));
+        const card = document.querySelector('.js-open-collab[data-collab="' + id + '"]');
+        if(card && !has) card.style.display = 'none';
+      });
 
       const planningItems = data.events.map(ev => {
         const titleLower = (ev.title || '').toLowerCase();
@@ -2561,13 +2689,15 @@
           autoCapacityKey = `mome-${ev.day}`;
         } else if(titleLower.includes('define')){
           autoCapacityKey = `define-${ev.day}`;
+        } else if(titleLower.includes('raclette')){
+          autoCapacityKey = `raclette-${ev.day}`;
         }
         const capacityKey = ev.capacity_key || autoCapacityKey;
         return `
         <div class="planning-item${ev.special ? ' planning-item-special' : ''}"
-             data-title="${ev.title}" data-date="${ev.day} ${(data.month||'').toLowerCase()}"
+             data-title="${ev.title}" data-date="${ev.day} ${(ev._month || data.month || '').toLowerCase()}"
              data-time="${ev.time}" data-desc="${(ev.description||'').replace(/"/g,'&quot;')}"
-             data-price="${ev.price || ''}" data-capacity-key="${capacityKey}"
+             data-price="${ev.price || ''}" data-capacity-key="${capacityKey}" data-page="${ev.page || ''}"
              ${ev.billetto ? `data-billetto="${ev.billetto}"` : ''}>
           <div class="planning-date">${ev.day}</div>
           <div class="planning-info">
@@ -2578,10 +2708,24 @@
         </div>
       `;
       });
-      const half = Math.ceil(planningItems.length / 2);
-      planningListEl.innerHTML =
-        '<div class="planning-col">' + planningItems.slice(0, half).join('') + '</div>' +
-        '<div class="planning-col">' + planningItems.slice(half).join('') + '</div>';
+      const cols = (items) => {
+        const half = Math.ceil(items.length / 2);
+        return '<div class="planning-col">' + items.slice(0, half).join('') + '</div>' +
+               '<div class="planning-col">' + items.slice(half).join('') + '</div>';
+      };
+      if(data.multi){
+        document.getElementById('planningMonth').classList.add('planning-month-multi');
+        let offset = 0;
+        planningListEl.innerHTML = data.groups.map((g, gi) => {
+          const n = (g.events || []).length;
+          const part = planningItems.slice(offset, offset + n);
+          offset += n;
+          const label = gi === 0 ? 'Fin ' + (g.month || '').toLowerCase() : (g.month || '');
+          return '<div class="planning-group"><div class="planning-group-label">' + label + '</div>' + cols(part) + '</div>';
+        }).join('');
+      } else {
+        planningListEl.innerHTML = cols(planningItems);
+      }
 
     })
     .catch((err) => {
@@ -2593,6 +2737,8 @@
   planningListEl.addEventListener('click', (e) => {
     const item = e.target.closest('.planning-item');
     if(!item) return;
+    if(item.dataset.page === 'sorties'){ const t = document.getElementById('sorties'); if(t) t.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+    if(item.dataset.page && collabPageData[item.dataset.page]){ openCollabPage(item.dataset.page); return; }
     document.getElementById('planningModalTitle').textContent = item.dataset.title;
     document.getElementById('planningModalDate').textContent = item.dataset.date;
     document.getElementById('planningModalTime').textContent = item.dataset.time;
@@ -2686,8 +2832,28 @@
   // Waitlist form (front-end only placeholder — à connecter à un vrai stockage/CRM ensuite)
   const form = document.getElementById('waitlistForm');
   const msg = document.getElementById('wlMsg');
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    // Soirée Raclette : on décompte la place d'abord, et on bloque dès 13 inscrites
+    // Inscription de test (prénom TESTREFLET) : on n'utilise pas de place
+    const isTest = (document.getElementById('wlName').value || '').trim().toUpperCase() === 'TESTREFLET';
+    if(form.dataset.raclette === '1' && !isTest){
+      try {
+        const r = await fetch('/.netlify/functions/record-collab-capacity', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ capacityKey: 'raclette-21', email: (document.getElementById('wlEmail').value || '').trim().toLowerCase() })
+        });
+        const j = await r.json();
+        if(j && j.duplicate){
+          const old = msg.innerHTML;
+          msg.textContent = 'Tu es déjà inscrite avec cette adresse e-mail 💛 Vérifie ta boîte mail (et tes spams) : tu y as reçu les infos pour l\'acompte.';
+          msg.classList.add('show');
+          setTimeout(() => { msg.classList.remove('show'); msg.innerHTML = old; }, 7000);
+          return;
+        }
+        if(j && j.full){ window.refletRacletteFull(); return; }
+      } catch(err) { /* si le décompte est injoignable, on laisse passer l'inscription */ }
+    }
     submitToNetlify(form);
     fetch('/.netlify/functions/notify-waitlist', {
       method: 'POST',
@@ -2698,7 +2864,95 @@
     msg.classList.add('show');
     setTimeout(() => msg.classList.remove('show'), 4000);
   });
+  // Popup Run x Copains du 1er novembre (s'éteint toute seul dimanche 1er novembre à 00h, heure de Paris)
+  (function(){
+    const END = new Date('2026-11-01T00:00:00+01:00').getTime();
+    if(Date.now() >= END) return;
+    const bar = document.getElementById('preregBar');
+    const modal = document.getElementById('preregModal');
+    bar.classList.add('show');
+    const open = () => modal.classList.add('show');
+    const close = () => modal.classList.remove('show');
+    document.getElementById('preregBarBtn').addEventListener('click', open);
+    document.getElementById('preregClose').addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if(e.target === modal) close(); });
+    document.getElementById('preregReserve').addEventListener('click', () => {
+      close();
+      addToCart('copains-01', 'Run × Copains — 01 nov.', 4, 'event');
+    });
+    document.getElementById('preregMore').addEventListener('click', (e) => {
+      const info = document.getElementById('preregInfo');
+      const shown = info.style.display === 'block';
+      info.style.display = shown ? 'none' : 'block';
+      e.target.textContent = shown ? "Plus d'infos" : "Moins d'infos";
+    });
+    // Affichage immédiat à chaque visite
+    open();
+  })();
+
+
+  // Section "Les instants Reflet" : à partir de samedi 31 octobre 10h, on ne propose que la soirée Raclette
+  (function(){
+    if(Date.now() < new Date('2026-10-31T10:00:00+02:00').getTime()) return;
+    const desc = "Samedi 21 novembre à 19h30, une grande table de femmes autour d'une raclette pour lancer la saison. Rendez-vous à La Meule du Berger, 30 rue Saint-Rémi, 33000 Bordeaux. Reflet s'occupe de toute l'organisation, chacune règle simplement sa propre consommation sur place. Places limitées : 16 participantes.";
+    const row = document.getElementById('chipRow');
+    row.innerHTML = '<button type="button" class="chip active" data-src="images/raclette.jpg" data-alt="Soirée Raclette Reflet" data-desc="' + desc.replace(/"/g,'&quot;') + '">Soirée Raclette</button>';
+    const img = document.getElementById('sortiesImg');
+    img.src = 'images/raclette.jpg'; img.alt = 'Soirée Raclette Reflet';
+    document.getElementById('sortiesDesc').textContent = desc;
+    document.getElementById('wlSortie').value = 'Soirée Raclette — 21 novembre';
+    const f = document.getElementById('waitlistForm');
+    f.querySelector('button[type=submit]').textContent = 'Je réserve ma place';
+    f.querySelector('.waitlist-note').textContent = 'Places limitées : 16 participantes.';
+    // Avertissement avant validation : la place n'est confirmée qu'après l'acompte
+    const warn = document.createElement('div');
+    warn.style.cssText = 'border:1px solid rgba(237,230,217,0.45); border-radius:18px; padding:14px 16px; font-size:13.5px; line-height:1.6; color:var(--travertine);';
+    warn.innerHTML = "<strong>Important : ta place n'est pas encore confirmée.</strong><br>Après ton inscription, tu recevras un e-mail avec les instructions pour verser l'acompte de <strong>10 €</strong>. Lis-le attentivement : sans acompte reçu dans le délai indiqué, ta réservation ne sera pas validée.";
+    const warnLabel = document.createElement('label');
+    warnLabel.className = 'consent-label consent-label-dark';
+    warnLabel.innerHTML = '<input type="checkbox" required><span>J\'ai compris que ma place n\'est confirmée qu\'après réception de l\'acompte de 10 €.</span>';
+    const submitBtn = f.querySelector('button[type=submit]');
+    f.insertBefore(warn, submitBtn);
+    f.insertBefore(warnLabel, submitBtn);
+    document.getElementById('wlMsg').textContent = "Merci ! Ta demande est bien reçue. Surveille tes e-mails (et tes spams) : tu vas recevoir les instructions pour l'acompte de 10 €. Ta place n'est confirmée qu'après son règlement.";
+    f.dataset.raclette = '1';
+    // Message d'annulation
+    const rule = document.createElement('p');
+    rule.style.cssText = 'font-size:12.5px; line-height:1.6; margin:14px 0 0; max-width:none; color:rgba(237,230,217,0.7);';
+    rule.textContent = "Les places étant limitées, merci de nous prévenir au plus vite en cas d'empêchement. Une annulation sans prévenir prive une autre fille de cette place : Reflet se réserve le droit de ne plus accepter les prochaines réservations aux sorties des personnes concernées.";
+    f.appendChild(rule);
+    // Complet : on masque le formulaire
+    window.refletRacletteFull = function(){
+      f.style.display = 'none';
+      if(!document.getElementById('racletteFull')){
+        const m = document.createElement('p');
+        m.id = 'racletteFull';
+        m.style.cssText = 'font-size:16px; color:var(--travertine); margin:0; max-width:none;';
+        m.textContent = 'La soirée Raclette est complète. Merci pour ton enthousiasme, à très vite pour les prochaines sorties ♡';
+        f.parentNode.appendChild(m);
+      }
+    };
+    fetch('/.netlify/functions/get-event-capacity').then(r => r.json()).then(d => {
+      if(d && d.counts && (d.counts['raclette-21'] || 0) >= 19) window.refletRacletteFull();
+    }).catch(() => {});
+  })();
 </script>
 
+<script>
+(function(){
+  var h = document.querySelector('header');
+  if(!h) return;
+  function f(){ h.classList.toggle('scrolled', window.scrollY > 40); }
+  window.addEventListener('scroll', f, {passive:true}); f();
+})();
+</script>
+<a class="ig-float" id="igFloat" href="https://instagram.com/reflet.events" target="_blank" rel="noopener" aria-label="Suivre REFLET sur Instagram"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+<script>
+(function(){
+  var b = document.getElementById('igFloat');
+  function f(){ b.classList.toggle('show', window.scrollY > 500); }
+  window.addEventListener('scroll', f, {passive:true}); f();
+})();
+</script>
 </body>
 </html>
