@@ -318,7 +318,7 @@
     try {
       const now = Date.now();
       const files = now >= new Date('2026-11-29T21:00:00+01:00').getTime() ? ['planning-decembre.json']
-        : now >= new Date('2026-11-21T10:00:00+01:00').getTime() ? ['planning-fin-novembre.json', 'planning-decembre.json']
+        : now >= new Date('2026-11-21T19:00:00+01:00').getTime() ? ['planning-fin-novembre.json', 'planning-decembre.json']
         : now >= new Date('2026-10-31T10:00:00+02:00').getTime() ? ['planning-novembre.json'] : ['planning.json'];
       const plannings = await Promise.all(files.map(f => fetch('/data/' + f).then(r => r.json())));
       const planning = { month: plannings.map(d => d.month).join(' – '), events: [] };
