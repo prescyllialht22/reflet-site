@@ -289,7 +289,12 @@
   .noel-deco .planning-item:hover{background:rgba(255,255,255,.05);}
   .noel-deco .planning-group-label{color:#C9A36B;}
   .noel-deco .planning-group-label::before,.noel-deco .planning-group-label::after{background:rgba(237,230,217,.16);}
-  .noel-deco .planning-head{padding-top:30px;}
+  .noel-deco .planning-head{padding-top:46px;}
+  .planning-card.noel-deco .planning-month{background:linear-gradient(100deg,#E2C186 0%,#E2C186 36%,#FFF4D6 50%,#E2C186 64%,#E2C186 100%); background-size:260% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; animation:noelShine 7s ease-in-out infinite;}
+  @keyframes noelShine{0%{background-position:125% 0;} 100%{background-position:-125% 0;}}
+  .noel-deco .eyebrow::before,.noel-deco .eyebrow::after{content:'\2726'; margin:0 9px; color:#E8C98F; font-size:9px; vertical-align:1px;}
+  .noel-bokeh{position:absolute; border-radius:50%; pointer-events:none; z-index:1; background:radial-gradient(circle, rgba(255,214,150,.20) 0%, rgba(255,214,150,0) 70%); animation:noelBokeh var(--bd) ease-in-out var(--bdl) infinite;}
+  @keyframes noelBokeh{0%,100%{transform:translate(0,0) scale(1); opacity:.35;} 50%{transform:translate(var(--bx),var(--by)) scale(1.25); opacity:.9;}}
   .noel-glow{position:absolute; left:0; right:0; top:0; height:170px; pointer-events:none; z-index:1; background:radial-gradient(55% 100% at 50% 0%, rgba(255,214,150,.17), rgba(255,214,150,0) 72%);}
   .noel-wire{position:absolute; left:0; top:0; width:100%; height:60px; pointer-events:none; z-index:2; overflow:visible;}
   .noel-bulb{position:absolute; width:7px; height:11px; margin-left:-3.5px; border-radius:50% 50% 50% 50% / 42% 42% 58% 58%; background:var(--c); pointer-events:none; z-index:2;
@@ -298,7 +303,7 @@
   .noel-bulb::after{content:''; position:absolute; left:1.5px; top:2px; width:2px; height:3px; border-radius:50%; background:rgba(255,255,255,.85);}
   @keyframes noelBulb{0%,100%{opacity:.38; filter:brightness(.7); box-shadow:0 0 3px 0 var(--c), 0 0 8px 2px var(--g);} 40%{opacity:1; filter:brightness(1.7); box-shadow:0 0 7px 2px var(--c), 0 0 22px 8px var(--g);} 55%{opacity:.8; filter:brightness(1.1);} 72%{opacity:1; filter:brightness(1.5);}}
   .noel-snow{position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; z-index:3;}
-  @media (prefers-reduced-motion: reduce){ .noel-bulb{animation:none; opacity:.95;} .noel-snow{display:none;} }
+  @media (prefers-reduced-motion: reduce){ .noel-bulb{animation:none; opacity:.95;} .noel-snow{display:none;} .planning-card.noel-deco .planning-month{animation:none; background-position:50% 0;} .noel-bokeh{animation:none; opacity:.5;} }
   .planning-head{text-align:center;}
   .planning-card .planning-month{font-family:'Italianno',cursive; font-weight:400; font-size:88px; line-height:1; margin-top:2px; color:var(--bronze);}
   .planning-list{margin-top:38px; display:grid; grid-template-columns:1fr 1fr; column-gap:68px;}
@@ -2740,6 +2745,11 @@
         card.classList.add('noel-deco');
         const NS = 'http://www.w3.org/2000/svg';
         const glow = document.createElement('div'); glow.className = 'noel-glow'; card.appendChild(glow);
+        [[8,18,120,20,-14,18,0],[78,10,90,16,12,22,-5],[22,46,70,18,10,-16,-9],[88,52,130,24,-18,-10,-3],[12,78,100,22,16,-12,-12],[60,70,80,19,-12,14,-7],[45,30,60,15,8,10,-2]].forEach(b => {
+          const e = document.createElement('div'); e.className = 'noel-bokeh';
+          e.style.cssText = 'left:' + b[0] + '%;top:' + b[1] + '%;width:' + b[2] + 'px;height:' + b[2] + 'px;--bd:' + b[3] + 's;--bx:' + b[4] + 'px;--by:' + b[5] + 'px;--bdl:' + b[6] + 's';
+          card.appendChild(e);
+        });
         const wire = document.createElementNS(NS, 'svg'); wire.setAttribute('class', 'noel-wire'); card.appendChild(wire);
         const bulbs = [];
         const palette = [['#FFE6B8','rgba(255,205,130,.55)'],['#FFD58F','rgba(255,190,100,.55)'],['#FFF1D6','rgba(255,225,170,.5)']];
@@ -2752,6 +2762,32 @@
           const path = document.createElementNS(NS, 'path');
           path.setAttribute('d', d); path.setAttribute('fill', 'none'); path.setAttribute('stroke', '#7A5E3F'); path.setAttribute('stroke-width', '1.1'); path.setAttribute('stroke-opacity', '.9');
           wire.appendChild(path);
+          let seed = 12345; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+          const greens = ['#2F4B39', '#3B5E46', '#27402F'], gp = ['', '', ''], berries = [], q = (t, a, b, c) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * b + t * t * c;
+          for(let i = 0; i < n; i++){
+            const x0 = i * S, xc = i * S + S / 2, x1 = (i + 1) * S;
+            for(let j = 0; j <= 46; j++){
+              const t = j / 46, x = q(t, x0, xc, x1), y = q(t, Y0, Y0 + 2 * D, Y0);
+              const tx = 2 * (1 - t) * (xc - x0) + 2 * t * (x1 - xc), ty = 2 * (1 - t) * (2 * D) + 2 * t * (-2 * D), th = Math.atan2(ty, tx);
+              [1, -1].forEach(sg => {
+                const a = th + sg * (0.9 + rnd() * 0.6), L = 6 + rnd() * 8, ci = Math.floor(rnd() * 3);
+                gp[ci] += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + 'l' + (Math.cos(a) * L).toFixed(1) + ' ' + (Math.sin(a) * L).toFixed(1);
+              });
+              if(j % 9 === 4){ berries.push([x + (rnd() - 0.5) * 6, y + 3 + rnd() * 4]); berries.push([x + 3 + rnd() * 3, y + 5 + rnd() * 3]); }
+            }
+          }
+          const gg = document.createElementNS(NS, 'g'); gg.setAttribute('fill', 'none'); gg.setAttribute('stroke-linecap', 'round'); gg.setAttribute('stroke-width', '1.4');
+          gp.forEach((dd, ci) => { const pa = document.createElementNS(NS, 'path'); pa.setAttribute('d', dd); pa.setAttribute('stroke', greens[ci]); gg.appendChild(pa); });
+          wire.insertBefore(gg, path);
+          berries.forEach(b => { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', b[0].toFixed(1)); c.setAttribute('cy', b[1].toFixed(1)); c.setAttribute('r', '1.9'); c.setAttribute('fill', '#A8283B'); wire.appendChild(c); });
+          const bs = W < 600 ? 0.8 : 1.05;
+          for(let i = 0; i <= n; i++){
+            const bw = document.createElementNS(NS, 'g'); bw.setAttribute('transform', 'translate(' + (i * S) + ' ' + (Y0 + 4) + ') scale(' + bs + ')');
+            bw.innerHTML = '<path d="M0 0 C-5 12 -10 22 -4 24 C0 20 0 8 0 0Z" fill="#6B1824"/><path d="M0 0 C5 12 10 22 4 24 C0 20 0 8 0 0Z" fill="#6B1824"/>' +
+              '<path d="M0 0 C-8 -9 -19 -8 -17 1 C-15 8 -6 6 0 0Z" fill="#8B2233" stroke="#B0495A" stroke-width=".6"/><path d="M0 0 C8 -9 19 -8 17 1 C15 8 6 6 0 0Z" fill="#8B2233" stroke="#B0495A" stroke-width=".6"/>' +
+              '<path d="M-3 -4 C-8 -6 -13 -5 -14 -1" fill="none" stroke="#C4677A" stroke-width=".7" opacity=".7"/><circle r="2.8" fill="#7A1E2D" stroke="#B0495A" stroke-width=".6"/>';
+            wire.appendChild(bw);
+          }
           let k = 0;
           for(let i = 0; i < n; i++){
             [0.16, 0.5, 0.84].forEach(t => {
@@ -2777,7 +2813,7 @@
             gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.35, 'rgba(255,255,255,0.85)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
             g.fillStyle = gr; g.fillRect(0, 0, r * 8, r * 8); return c;
           });
-          let W = 0, H = 0, dpr = 1, flakes = [], visible = true, last = 0, glints = [], nextGlint = 0;
+          let W = 0, H = 0, dpr = 1, flakes = [], visible = true, last = 0, glints = [], nextGlint = 0, shoot = null, nextShoot = 3;
           const mk = (layer, rand) => {
             const L = [{ s: 0, v: [14, 22], a: [0.35, 0.6], r: [3, 5], sw: [6, 14] }, { s: 1, v: [26, 40], a: [0.55, 0.85], r: [3.5, 6], sw: [10, 22] }, { s: 2, v: [48, 68], a: [0.75, 0.95], r: [5, 8], sw: [14, 28] }][layer];
             const u = (p) => p[0] + Math.random() * (p[1] - p[0]);
@@ -2819,6 +2855,17 @@
               if(Math.random() < 0.55 && bulbs.length){ const b = bulbs[Math.floor(Math.random() * bulbs.length)]; gx = b.offsetLeft; gy = b.offsetTop + 4; }
               else { gx = Math.random() * W; gy = Math.random() * H; }
               glints.push({ x: gx, y: gy, life: 0, dur: 0.9 + Math.random() * 1.1, s: 5 + Math.random() * 8 });
+            }
+            nextShoot -= dt;
+            if(!shoot && nextShoot <= 0){ shoot = { x: W * (0.1 + Math.random() * 0.5), y: 6 + Math.random() * 30, t: 0 }; nextShoot = 7 + Math.random() * 6; }
+            if(shoot){
+              shoot.t += dt; const p = shoot.t / 1.1;
+              if(p >= 1) shoot = null; else {
+                const x = shoot.x + p * W * 0.34, y = shoot.y + p * 90, tl = 70, a = Math.sin(Math.PI * p);
+                const gr = ctx.createLinearGradient(x, y, x - tl, y - tl * 0.26); gr.addColorStop(0, 'rgba(255,240,205,' + a + ')'); gr.addColorStop(1, 'rgba(255,240,205,0)');
+                ctx.globalAlpha = 1; ctx.strokeStyle = gr; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - tl, y - tl * 0.26); ctx.stroke();
+                ctx.fillStyle = 'rgba(255,248,225,' + a + ')'; ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 6.283); ctx.fill();
+              }
             }
             for(let i = glints.length - 1; i >= 0; i--){
               const g = glints[i]; g.life += dt;
