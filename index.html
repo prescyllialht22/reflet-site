@@ -7,7 +7,7 @@
 <script>
 (function(){
   var now = Date.now();
-  var T_DEBUT_DEC = new Date("2026-11-21T10:00:00+01:00").getTime();
+  var T_DEBUT_DEC = new Date("2026-11-21T19:00:00+01:00").getTime();
   var T_FIN_NOV = new Date("2026-11-29T21:00:00+01:00").getTime();
   var urls;
   if (now >= T_FIN_NOV) urls = ["/data/planning-decembre.json"];
@@ -274,6 +274,31 @@
     border-radius:48px 48px 20px 20px; padding:52px 48px 44px;
     max-width:860px; margin:0 auto;
   }
+
+  /* DECO NOËL — nuit de Noël : fond marron profond, guirlande lumineuse, neige */
+  .planning-card.noel-deco{position:relative; overflow:hidden; border-color:rgba(232,201,143,.28);
+    background:radial-gradient(110% 60% at 50% 0%, #41301F 0%, #2C2019 48%, #221712 100%);}
+  .noel-deco .eyebrow{color:#C9A36B;}
+  .planning-card.noel-deco .planning-month{color:#EBCF9A;}
+  .noel-deco .planning-date{color:#D9B57C;}
+  .noel-deco .planning-info strong{color:#F4EDE2;}
+  .noel-deco .planning-info span{color:rgba(237,230,217,.72);}
+  .noel-deco .event-tag{color:#C9A36B;}
+  .noel-deco .planning-item{border-top-color:rgba(237,230,217,.14);}
+  .noel-deco .planning-item:first-child{border-top:none;}
+  .noel-deco .planning-item:hover{background:rgba(255,255,255,.05);}
+  .noel-deco .planning-group-label{color:#C9A36B;}
+  .noel-deco .planning-group-label::before,.noel-deco .planning-group-label::after{background:rgba(237,230,217,.16);}
+  .noel-deco .planning-head{padding-top:30px;}
+  .noel-glow{position:absolute; left:0; right:0; top:0; height:170px; pointer-events:none; z-index:1; background:radial-gradient(55% 100% at 50% 0%, rgba(255,214,150,.17), rgba(255,214,150,0) 72%);}
+  .noel-wire{position:absolute; left:0; top:0; width:100%; height:60px; pointer-events:none; z-index:2; overflow:visible;}
+  .noel-bulb{position:absolute; width:7px; height:11px; margin-left:-3.5px; border-radius:50% 50% 50% 50% / 42% 42% 58% 58%; background:var(--c); pointer-events:none; z-index:2;
+    box-shadow:0 0 5px 1px var(--c), 0 0 14px 4px var(--g); animation:noelBulb var(--d) ease-in-out var(--dl) infinite;}
+  .noel-bulb::before{content:''; position:absolute; left:50%; top:-3px; width:4px; height:4px; margin-left:-2px; background:#4A3827; border-radius:1px 1px 0 0;}
+  .noel-bulb::after{content:''; position:absolute; left:1.5px; top:2px; width:2px; height:3px; border-radius:50%; background:rgba(255,255,255,.85);}
+  @keyframes noelBulb{0%,100%{opacity:.72; filter:brightness(.9);} 45%{opacity:1; filter:brightness(1.25);} 70%{opacity:.88;}}
+  .noel-snow{position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; z-index:3;}
+  @media (prefers-reduced-motion: reduce){ .noel-bulb{animation:none; opacity:.95;} .noel-snow{display:none;} }
   .planning-head{text-align:center;}
   .planning-card .planning-month{font-family:'Italianno',cursive; font-weight:400; font-size:88px; line-height:1; margin-top:2px; color:var(--bronze);}
   .planning-list{margin-top:38px; display:grid; grid-template-columns:1fr 1fr; column-gap:68px;}
@@ -2036,7 +2061,7 @@
       inclus: ["Tapis fourni", "Places limitées — 15 personnes maximum"]
     },
     noel: {
-      tag: 'REFLET', title: 'Le Noël de REFLET', descTitle: 'Au programme', price: 15, time: 'Samedi 12 décembre · 10h',
+      tag: 'REFLET', title: 'Le Noël de REFLET', descTitle: 'Au programme', price: 15, detailPhoto: 'images/noel.jpg', time: 'Samedi 12 décembre · 10h',
       teaser: "Venez fêter Noël avec REFLET en avance !",
       city: 'Osmose, 14 Rue Ravez, 33000 Bordeaux', level: '12 places · sur réservation',
       desc: "Une table de 12 filles, 12 nouvelles rencontres. Chacune apporte un cadeau d'une valeur de 5 à 10 € et l'offre à une autre participante le jour J, le tout autour d'une jolie table avec une boisson chaude et une touche sucrée. Et qui sait, les mères Noël de REFLET viendront elles aussi, la hotte remplie… ♡",
@@ -2708,6 +2733,90 @@
         </div>
       `;
       });
+
+      // Déco de Noël (décembre uniquement) : guirlande lumineuse + neige
+      if((data.groups || []).some(g => /décembre/i.test(g.month || '')) && !document.querySelector('.noel-snow')){
+        const card = document.getElementById('planning');
+        card.classList.add('noel-deco');
+        const NS = 'http://www.w3.org/2000/svg';
+        const glow = document.createElement('div'); glow.className = 'noel-glow'; card.appendChild(glow);
+        const wire = document.createElementNS(NS, 'svg'); wire.setAttribute('class', 'noel-wire'); card.appendChild(wire);
+        const bulbs = [];
+        const palette = [['#FFE6B8','rgba(255,205,130,.55)'],['#FFD58F','rgba(255,190,100,.55)'],['#FFF1D6','rgba(255,225,170,.5)']];
+        function buildGarland(){
+          const W = card.clientWidth; if(!W) return;
+          bulbs.forEach(b => b.remove()); bulbs.length = 0; wire.innerHTML = '';
+          const n = Math.max(3, Math.round(W / (W < 600 ? 95 : 130))), S = W / n, D = W < 600 ? 14 : 20, Y0 = 3;
+          let d = 'M0 ' + Y0;
+          for(let i = 0; i < n; i++){ d += ' Q ' + (i * S + S / 2) + ' ' + (Y0 + 2 * D) + ' ' + ((i + 1) * S) + ' ' + Y0; }
+          const path = document.createElementNS(NS, 'path');
+          path.setAttribute('d', d); path.setAttribute('fill', 'none'); path.setAttribute('stroke', '#7A5E3F'); path.setAttribute('stroke-width', '1.1'); path.setAttribute('stroke-opacity', '.9');
+          wire.appendChild(path);
+          let k = 0;
+          for(let i = 0; i < n; i++){
+            [0.16, 0.5, 0.84].forEach(t => {
+              const x = (1 - t) * (1 - t) * (i * S) + 2 * (1 - t) * t * (i * S + S / 2) + t * t * ((i + 1) * S);
+              const y = (1 - t) * (1 - t) * Y0 + 2 * (1 - t) * t * (Y0 + 2 * D) + t * t * Y0;
+              const c = palette[(k * 7 + i) % palette.length];
+              const el = document.createElement('span'); el.className = 'noel-bulb';
+              el.style.left = x + 'px'; el.style.top = (y + 1) + 'px';
+              el.style.setProperty('--c', c[0]); el.style.setProperty('--g', c[1]);
+              el.style.setProperty('--d', (2.4 + ((k * 37) % 28) / 10) + 's');
+              el.style.setProperty('--dl', '-' + (((k * 53) % 40) / 10) + 's');
+              card.appendChild(el); bulbs.push(el); k++;
+            });
+          }
+        }
+        buildGarland();
+        if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+          const cv = document.createElement('canvas'); cv.className = 'noel-snow'; card.appendChild(cv);
+          const ctx = cv.getContext('2d');
+          const sprites = [3, 5, 8].map(r => {
+            const c = document.createElement('canvas'); c.width = c.height = r * 8; const g = c.getContext('2d');
+            const gr = g.createRadialGradient(r * 4, r * 4, 0, r * 4, r * 4, r * 4);
+            gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.35, 'rgba(255,255,255,0.85)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+            g.fillStyle = gr; g.fillRect(0, 0, r * 8, r * 8); return c;
+          });
+          let W = 0, H = 0, dpr = 1, flakes = [], visible = true, last = 0;
+          const mk = (layer, rand) => {
+            const L = [{ s: 0, v: [14, 22], a: [0.35, 0.6], r: [3, 5], sw: [6, 14] }, { s: 1, v: [26, 40], a: [0.55, 0.85], r: [3.5, 6], sw: [10, 22] }, { s: 2, v: [48, 68], a: [0.75, 0.95], r: [5, 8], sw: [14, 28] }][layer];
+            const u = (p) => p[0] + Math.random() * (p[1] - p[0]);
+            return { x: Math.random() * W, y: rand ? Math.random() * H : -12, layer, spr: L.s, v: u(L.v), a: u(L.a), r: u(L.r), sw: u(L.sw), f: 0.35 + Math.random() * 0.6, ph: Math.random() * 6.283 };
+          };
+          const size = () => {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            W = card.clientWidth; H = card.clientHeight;
+            cv.width = W * dpr; cv.height = H * dpr;
+            const count = Math.min(150, Math.max(40, Math.round(W * H / 7500)));
+            const want = [0.4, 0.4, 0.2].map(f => Math.round(count * f));
+            flakes = flakes.filter(f => f.x <= W + 40);
+            [0, 1, 2].forEach(l => { let have = flakes.filter(f => f.layer === l).length; while(have < want[l]){ flakes.push(mk(l, true)); have++; } });
+            buildGarland();
+          };
+          size();
+          if(window.ResizeObserver){ new ResizeObserver(() => size()).observe(card); } else { window.addEventListener('resize', size); }
+          let running = false;
+          const start = () => { if(running) return; running = true; last = 0; requestAnimationFrame(tick); };
+          new IntersectionObserver(es => { visible = es[0].isIntersecting; if(visible) start(); }).observe(card);
+          function tick(t){
+            if(!visible){ running = false; return; }
+            const dt = last ? Math.min((t - last) / 1000, 0.1) : 0; last = t;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+            for(let i = 0; i < flakes.length; i++){
+              const f = flakes[i];
+              f.y += f.v * dt; f.x += 5 * dt; f.ph += f.f * dt;
+              if(f.y > H + 12){ Object.assign(f, mk(f.layer, false)); }
+              if(f.x > W + 20) f.x = -20;
+              const x = f.x + Math.sin(f.ph) * f.sw;
+              ctx.globalAlpha = f.a;
+              ctx.drawImage(sprites[f.spr], x - f.r, f.y - f.r, f.r * 2, f.r * 2);
+            }
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(tick);
+          }
+          start();
+        }
+      }
       const cols = (items) => {
         const half = Math.ceil(items.length / 2);
         return '<div class="planning-col">' + items.slice(0, half).join('') + '</div>' +
