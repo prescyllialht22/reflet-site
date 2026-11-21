@@ -296,7 +296,7 @@
     box-shadow:0 0 5px 1px var(--c), 0 0 14px 4px var(--g); animation:noelBulb var(--d) ease-in-out var(--dl) infinite;}
   .noel-bulb::before{content:''; position:absolute; left:50%; top:-3px; width:4px; height:4px; margin-left:-2px; background:#4A3827; border-radius:1px 1px 0 0;}
   .noel-bulb::after{content:''; position:absolute; left:1.5px; top:2px; width:2px; height:3px; border-radius:50%; background:rgba(255,255,255,.85);}
-  @keyframes noelBulb{0%,100%{opacity:.72; filter:brightness(.9);} 45%{opacity:1; filter:brightness(1.25);} 70%{opacity:.88;}}
+  @keyframes noelBulb{0%,100%{opacity:.38; filter:brightness(.7); box-shadow:0 0 3px 0 var(--c), 0 0 8px 2px var(--g);} 40%{opacity:1; filter:brightness(1.7); box-shadow:0 0 7px 2px var(--c), 0 0 22px 8px var(--g);} 55%{opacity:.8; filter:brightness(1.1);} 72%{opacity:1; filter:brightness(1.5);}}
   .noel-snow{position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; z-index:3;}
   @media (prefers-reduced-motion: reduce){ .noel-bulb{animation:none; opacity:.95;} .noel-snow{display:none;} }
   .planning-head{text-align:center;}
@@ -2761,7 +2761,7 @@
               const el = document.createElement('span'); el.className = 'noel-bulb';
               el.style.left = x + 'px'; el.style.top = (y + 1) + 'px';
               el.style.setProperty('--c', c[0]); el.style.setProperty('--g', c[1]);
-              el.style.setProperty('--d', (2.4 + ((k * 37) % 28) / 10) + 's');
+              el.style.setProperty('--d', (1.3 + ((k * 37) % 18) / 10) + 's');
               el.style.setProperty('--dl', '-' + (((k * 53) % 40) / 10) + 's');
               card.appendChild(el); bulbs.push(el); k++;
             });
@@ -2777,7 +2777,7 @@
             gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.35, 'rgba(255,255,255,0.85)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
             g.fillStyle = gr; g.fillRect(0, 0, r * 8, r * 8); return c;
           });
-          let W = 0, H = 0, dpr = 1, flakes = [], visible = true, last = 0;
+          let W = 0, H = 0, dpr = 1, flakes = [], visible = true, last = 0, glints = [], nextGlint = 0;
           const mk = (layer, rand) => {
             const L = [{ s: 0, v: [14, 22], a: [0.35, 0.6], r: [3, 5], sw: [6, 14] }, { s: 1, v: [26, 40], a: [0.55, 0.85], r: [3.5, 6], sw: [10, 22] }, { s: 2, v: [48, 68], a: [0.75, 0.95], r: [5, 8], sw: [14, 28] }][layer];
             const u = (p) => p[0] + Math.random() * (p[1] - p[0]);
@@ -2810,6 +2810,25 @@
               const x = f.x + Math.sin(f.ph) * f.sw;
               ctx.globalAlpha = f.a;
               ctx.drawImage(sprites[f.spr], x - f.r, f.y - f.r, f.r * 2, f.r * 2);
+            }
+            ctx.globalAlpha = 1;
+            nextGlint -= dt;
+            if(nextGlint <= 0 && glints.length < 16){
+              nextGlint = 0.12 + Math.random() * 0.25;
+              let gx, gy;
+              if(Math.random() < 0.55 && bulbs.length){ const b = bulbs[Math.floor(Math.random() * bulbs.length)]; gx = b.offsetLeft; gy = b.offsetTop + 4; }
+              else { gx = Math.random() * W; gy = Math.random() * H; }
+              glints.push({ x: gx, y: gy, life: 0, dur: 0.9 + Math.random() * 1.1, s: 5 + Math.random() * 8 });
+            }
+            for(let i = glints.length - 1; i >= 0; i--){
+              const g = glints[i]; g.life += dt;
+              const k = g.life / g.dur; if(k >= 1){ glints.splice(i, 1); continue; }
+              const a = Math.sin(Math.PI * k), L = g.s * (0.4 + 0.6 * a);
+              ctx.globalAlpha = a * 0.95; ctx.strokeStyle = '#FFE9BF'; ctx.lineWidth = 1; ctx.lineCap = 'round';
+              ctx.beginPath(); ctx.moveTo(g.x - L, g.y); ctx.lineTo(g.x + L, g.y); ctx.moveTo(g.x, g.y - L); ctx.lineTo(g.x, g.y + L); ctx.stroke();
+              ctx.lineWidth = 0.6; const d2 = L * 0.45;
+              ctx.beginPath(); ctx.moveTo(g.x - d2, g.y - d2); ctx.lineTo(g.x + d2, g.y + d2); ctx.moveTo(g.x - d2, g.y + d2); ctx.lineTo(g.x + d2, g.y - d2); ctx.stroke();
+              ctx.fillStyle = '#FFF6E0'; ctx.beginPath(); ctx.arc(g.x, g.y, 1.1, 0, 6.283); ctx.fill();
             }
             ctx.globalAlpha = 1;
             requestAnimationFrame(tick);
