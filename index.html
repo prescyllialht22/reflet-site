@@ -4,7 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REFLET — Bordeaux</title>
-<script>window.PLANNING_URL = (Date.now() >= new Date("2026-10-31T10:00:00+02:00").getTime()) ? "/data/planning-novembre.json" : "/data/planning.json"; document.write('<link rel="preload" href="' + window.PLANNING_URL + '" as="fetch" crossorigin="anonymous">');</script>
+<script>
+(function(){
+  var now = Date.now();
+  var T_DEBUT_DEC = new Date("2026-11-21T10:00:00+01:00").getTime();
+  var T_FIN_NOV = new Date("2026-11-29T21:00:00+01:00").getTime();
+  var urls;
+  if (now >= T_FIN_NOV) urls = ["/data/planning-decembre.json"];
+  else if (now >= T_DEBUT_DEC) urls = ["/data/planning-fin-novembre.json", "/data/planning-decembre.json"];
+  else if (now >= new Date("2026-10-31T10:00:00+02:00").getTime()) urls = ["/data/planning-novembre.json"];
+  else urls = ["/data/planning.json"];
+  window.PLANNING_URLS = urls;
+  window.PLANNING_URL = urls[0];
+  urls.forEach(function(u){ document.write('<link rel="preload" href="' + u + '" as="fetch" crossorigin="anonymous">'); });
+  window.loadPlanningMerged = function(){
+    if (window._planningMerged) return window._planningMerged;
+    window._planningMerged = Promise.all(urls.map(function(u){ return fetch(u).then(function(r){ return r.json(); }); })).then(function(list){
+      var events = [];
+      list.forEach(function(d){ (d.events || []).forEach(function(ev){ ev._month = d.month || ''; events.push(ev); }); });
+      return { month: list.map(function(d){ return d.month; }).join(' – '), multi: list.length > 1, groups: list, events: events };
+    });
+    return window._planningMerged;
+  };
+})();
+</script>
 <link rel="preload" href="images/img-02.jpg" as="image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -273,10 +296,17 @@
   .planning-item{cursor:pointer; transition:background .2s ease;}
   .planning-item:hover{background:rgba(140,98,57,0.06);}
   .planning-item-special{position:relative;}
+  .planning-card .planning-month.planning-month-multi{font-size:64px;}
+  .planning-group{grid-column:1 / -1; display:grid; grid-template-columns:1fr 1fr; column-gap:68px;}
+  .planning-group-label{grid-column:1 / -1; text-align:center; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--bronze); margin:34px 0 18px; display:flex; align-items:center; gap:14px;}
+  .planning-group-label::before,.planning-group-label::after{content:''; flex:1; height:1px; background:var(--line);}
+  .planning-group:first-child .planning-group-label{margin-top:0;}
   /* Téléphone : on garde les deux colonnes côte à côte, chaque événement s'empile (date, titre, détails, catégorie) */
   @media(max-width:640px){
     .planning-card{padding:34px 18px 26px; border-radius:32px 32px 16px 16px;}
     .planning-card .planning-month{font-size:68px;}
+    .planning-card .planning-month.planning-month-multi{font-size:42px;}
+    .planning-group{column-gap:22px;}
     .planning-list{margin-top:26px; column-gap:22px;}
     .planning-item{display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:22px 0;}
     .planning-date{font-size:34px;}
@@ -1443,7 +1473,7 @@
 
       <div class="event-icon-row" id="collabPageIcons"></div>
 
-      <h4 class="event-page-subhead">Le partenariat</h4>
+      <h4 class="event-page-subhead" id="collabPageDescTitle">Le partenariat</h4>
       <p id="collabPageDesc" style="font-size:14.5px; line-height:1.7; color:var(--marron-soft); margin:0 0 22px;"></p>
 
       <h4 class="event-page-subhead">À prévoir / Avantage Reflet</h4>
@@ -1743,7 +1773,7 @@
   };
 
   // Places limitées — Pilates 10, Danse 15, DEFINE (Reformer) 11 ; le reste est illimité
-  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 12, mome: 12, copains: 35, puppypilates: 15, raclette: 19 };
+  const CAPACITY_LIMITS = { pilates: 10, danse: 15, define: 12, mome: 12, copains: 35, puppypilates: 15, raclette: 19, noel: 12 };
   let eventCapacityData = null;
   async function loadEventCapacity(){
     if(eventCapacityData) return eventCapacityData;
@@ -1765,8 +1795,7 @@
   async function loadEventPlanning(){
     if(eventPlanningData) return eventPlanningData;
     try {
-      const res = await fetch(window.PLANNING_URL);
-      eventPlanningData = await res.json();
+      eventPlanningData = await window.loadPlanningMerged();
     } catch(err) { eventPlanningData = { events: [] }; }
     return eventPlanningData;
   }
@@ -1786,7 +1815,7 @@
         if(dates.length === 1){
           metaEl.textContent = dates[0].day + ' ' + (dates[0].month_short || '') + ' · ' + dates[0].time;
         } else if(dates.length > 1){
-          metaEl.textContent = dates.length + ' dates ce mois-ci';
+          metaEl.textContent = dates.length + (planning.multi ? ' dates à venir' : ' dates ce mois-ci');
         } else {
           metaEl.textContent = 'Voir Instagram @reflet.events';
         }
@@ -2005,6 +2034,13 @@
       city: '35 Cours d\'Ornano, Bordeaux', level: 'Tous niveaux',
       desc: "En octobre, Reflet vous propose une séance de Puppy Pilates : 30 minutes de Pilates sur tapis pour s'étirer et se reconnecter en douceur, prolongées de 30 minutes de rencontres avec des chiots. Câlins, nouvelles rencontres et douceur seront les maîtres-mots de cet instant — dans le respect du bien-être animal et d'un environnement sain et équilibré pour les chiots.",
       inclus: ["Tapis fourni", "Places limitées — 15 personnes maximum"]
+    },
+    noel: {
+      tag: 'REFLET', title: 'Le Noël de REFLET', descTitle: 'Au programme', price: 15, time: 'Samedi 12 décembre · 10h',
+      teaser: "Venez fêter Noël avec REFLET en avance !",
+      city: 'Osmose, 14 Rue Ravez, 33000 Bordeaux', level: '12 places · sur réservation',
+      desc: "Une table de 12 filles, 12 nouvelles rencontres. Chacune apporte un cadeau d'une valeur de 5 à 10 € et l'offre à une autre participante le jour J, le tout autour d'une jolie table avec une boisson chaude et une touche sucrée. Et qui sait, les mères Noël de REFLET viendront elles aussi, la hotte remplie… ♡",
+      inclus: ["Un cadeau de 5 à 10 € à apporter, offert à une autre participante le jour J", "Une boisson chaude et une touche sucrée", "Places limitées — 12 participantes"]
     }
   };
 
@@ -2020,6 +2056,7 @@
     document.getElementById('collabPageTag').textContent = data.tag;
     document.getElementById('collabPageTitle').textContent = data.title;
     document.getElementById('collabPageTeaser').textContent = data.teaser;
+    document.getElementById('collabPageDescTitle').textContent = data.descTitle || 'Le partenariat';
     document.getElementById('collabPageDesc').textContent = data.desc;
     document.getElementById('collabPageInclus').innerHTML = data.inclus.map(t => `<li>${t}</li>`).join('');
 
@@ -2047,7 +2084,7 @@
     reserveBtn.disabled = false;
 
     // Places limitées pour DEFINE, MOME et Puppy Pilates — recherche de leur date dans le planning
-    const capacityConfig = { define: { search: 'define', group: 'define' }, mome: { search: 'mome', group: 'mome' }, puppypilates: { search: 'puppy', group: 'puppypilates' } }[id];
+    const capacityConfig = { define: { search: 'define', group: 'define' }, mome: { search: 'mome', group: 'mome' }, puppypilates: { search: 'puppy', group: 'puppypilates' }, noel: { search: 'noël', group: 'noel' } }[id];
     if(capacityConfig){
       const planning = await loadEventPlanning();
       await loadEventCapacity();
@@ -2629,8 +2666,7 @@
   const planningModalBillettoLink = document.getElementById('planningModalBillettoLink');
   const planningListEl = document.getElementById('planningList');
 
-  fetch(window.PLANNING_URL)
-    .then(r => r.json())
+  window.loadPlanningMerged()
     .then(data => {
       document.getElementById('planningMonth').textContent = data.month || '';
       // Cartes "collaborations du mois" : on masque celles qui n'ont pas de date ce mois-ci
@@ -2659,7 +2695,7 @@
         const capacityKey = ev.capacity_key || autoCapacityKey;
         return `
         <div class="planning-item${ev.special ? ' planning-item-special' : ''}"
-             data-title="${ev.title}" data-date="${ev.day} ${(data.month||'').toLowerCase()}"
+             data-title="${ev.title}" data-date="${ev.day} ${(ev._month || data.month || '').toLowerCase()}"
              data-time="${ev.time}" data-desc="${(ev.description||'').replace(/"/g,'&quot;')}"
              data-price="${ev.price || ''}" data-capacity-key="${capacityKey}" data-page="${ev.page || ''}"
              ${ev.billetto ? `data-billetto="${ev.billetto}"` : ''}>
@@ -2672,10 +2708,24 @@
         </div>
       `;
       });
-      const half = Math.ceil(planningItems.length / 2);
-      planningListEl.innerHTML =
-        '<div class="planning-col">' + planningItems.slice(0, half).join('') + '</div>' +
-        '<div class="planning-col">' + planningItems.slice(half).join('') + '</div>';
+      const cols = (items) => {
+        const half = Math.ceil(items.length / 2);
+        return '<div class="planning-col">' + items.slice(0, half).join('') + '</div>' +
+               '<div class="planning-col">' + items.slice(half).join('') + '</div>';
+      };
+      if(data.multi){
+        document.getElementById('planningMonth').classList.add('planning-month-multi');
+        let offset = 0;
+        planningListEl.innerHTML = data.groups.map((g, gi) => {
+          const n = (g.events || []).length;
+          const part = planningItems.slice(offset, offset + n);
+          offset += n;
+          const label = gi === 0 ? 'Fin ' + (g.month || '').toLowerCase() : (g.month || '');
+          return '<div class="planning-group"><div class="planning-group-label">' + label + '</div>' + cols(part) + '</div>';
+        }).join('');
+      } else {
+        planningListEl.innerHTML = cols(planningItems);
+      }
 
     })
     .catch((err) => {
