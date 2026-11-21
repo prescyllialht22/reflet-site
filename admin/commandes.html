@@ -291,6 +291,7 @@
     copains: { label: 'Run × Copains', max: 35 },
     define: { label: 'Pilates Reformer × DEFINE', max: 12 },
     mome: { label: 'Déjeuner REFLET × MOME', max: 12 },
+    noel: { label: 'Le Noël de REFLET', max: 12 },
   };
 
   const LEGACY_FAMILY_MATCH = [
@@ -300,6 +301,7 @@
     { key: 'copains', match: /run.*copains/i },
     { key: 'define', match: /define/i },
     { key: 'mome', match: /mome/i },
+    { key: 'noel', match: /no[ëe]l/i },
   ];
 
   function extractDay(label){
@@ -314,8 +316,13 @@
     let planningDayByFamily = {};
     let monthShortByFamilyDay = {};
     try {
-      const res = await fetch(Date.now() >= new Date('2026-10-31T10:00:00+02:00').getTime() ? '/data/planning-novembre.json' : '/data/planning.json');
-      const planning = await res.json();
+      const now = Date.now();
+      const files = now >= new Date('2026-11-29T21:00:00+01:00').getTime() ? ['planning-decembre.json']
+        : now >= new Date('2026-11-21T10:00:00+01:00').getTime() ? ['planning-fin-novembre.json', 'planning-decembre.json']
+        : now >= new Date('2026-10-31T10:00:00+02:00').getTime() ? ['planning-novembre.json'] : ['planning.json'];
+      const plannings = await Promise.all(files.map(f => fetch('/data/' + f).then(r => r.json())));
+      const planning = { month: plannings.map(d => d.month).join(' – '), events: [] };
+      plannings.forEach(d => (d.events || []).forEach(ev => planning.events.push(Object.assign({ month_short: (d.month || '').slice(0, 3) + '.' }, ev))));
       (planning.events || []).forEach(ev => {
         const fam = LEGACY_FAMILY_MATCH.find(f => f.match.test(ev.title || ''));
         if(fam){
