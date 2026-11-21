@@ -21,6 +21,7 @@ function capacityKeyFor(ev) {
   if (t.includes('copains')) return `copains-${ev.day}`;
   if (t.includes('mome')) return `mome-${ev.day}`;
   if (t.includes('define')) return `define-${ev.day}`;
+  if (t.includes('noël') || t.includes('noel')) return `noel-${ev.day}`;
   return null;
 }
 
@@ -33,7 +34,7 @@ function parisTomorrow() {
 
 async function loadTomorrowEvents(tomorrow) {
   const found = [];
-  for (const file of ['planning.json', 'planning-novembre.json']) {
+  for (const file of ['planning.json', 'planning-novembre.json', 'planning-decembre.json']) {
     try {
       const res = await fetch(`${SITE_URL}/data/${file}`);
       if (!res.ok) continue;
@@ -54,11 +55,13 @@ const NOTES = {
   danse: "Pense à prévoir une paire de chaussures propre ou des chaussettes, ce sera nécessaire.",
   define: "Des chaussettes antidérapantes sont obligatoires pour la séance (vente possible sur place).",
   copains: "Le point de rendez-vous est à la Cité du vin, juste derrière l'arrêt de tram.",
+  noel: "N'oublie pas d'apporter ton cadeau (entre 5 et 10 €), que tu offriras à une autre participante.",
 };
 
 // Adresses exactes à afficher dans le rappel (quand le planning n'en donne pas assez)
 const ADRESSES = {
   define: 'Studio DEFINE, 9 Rue du Temple, 33000 Bordeaux',
+  noel: 'Osmose, 14 Rue Ravez, 33000 Bordeaux',
 };
 
 function buildMail(prenom, ev, month, qty, family) {
@@ -88,6 +91,31 @@ function buildMail(prenom, ev, month, qty, family) {
 }
 
 exports.handler = async function (event, context) {
+  // MODE TEST : en ouvrant /.netlify/functions/send-reminders?test=1 dans un navigateur, envoie UN exemple
+  // de rappel à l'adresse de Prescyllia seulement (jamais à quelqu'un d'autre). Limité à 1 envoi / 2 min.
+  if (event.queryStringParameters && event.queryStringParameters.test === '1') {
+    try {
+      const resendKey = process.env.RESEND_API_KEY;
+      if (!resendKey) return { statusCode: 200, body: 'RESEND_API_KEY manquante' };
+      const store = getStore({ name: 'reminders', siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
+      const last = await store.get('test-last');
+      if (last && Date.now() - new Date(last).getTime() < 120000) return { statusCode: 200, body: 'Un test vient déjà d\'être envoyé, patiente 2 minutes.' };
+      await store.set('test-last', new Date().toISOString());
+      const res = await fetch(`${SITE_URL}/data/planning-novembre.json`);
+      const data = await res.json();
+      const ev = (data.events || []).find(e => e.tag === 'Pilates') || data.events[0];
+      const { subject, html } = buildMail('Prescyllia', ev, data.month || 'Novembre', 1, String(capacityKeyFor(ev) || '').split('-')[0]);
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: 'Reflet <billets@reflet.events>', to: 'prescyllialht22@gmail.com', reply_to: 'reflet.events.pm@gmail.com', subject: '[TEST] ' + subject, html }),
+      });
+      return { statusCode: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: r.ok ? 'Mail de test envoyé à prescyllialht22@gmail.com, regarde ta boîte (et les spams) !' : 'Échec de l\'envoi : ' + (await r.text()) };
+    } catch (err) {
+      return { statusCode: 200, body: 'Erreur : ' + err.message };
+    }
+  }
+
   // Appel planifié (automatique) OU appel manuel réservé à l'admin
   let scheduled = false;
   try { scheduled = !!JSON.parse(event.body || '{}').next_run; } catch (e) { /* pas planifié */ }
