@@ -6,6 +6,9 @@
 <title>REFLET — Bordeaux</title>
 <script>
 (function(){
+  // ====== INTERRUPTEUR « Les instants Reflet » : false = section masquée, true = section visible ======
+  window.REFLET_SORTIES = false;
+  if(!window.REFLET_SORTIES) document.documentElement.classList.add('no-sorties');
   var now = Date.now();
   var T_DEBUT_DEC = new Date("2026-11-21T19:00:00+01:00").getTime();
   var T_FIN_NOV = new Date("2026-11-29T21:00:00+01:00").getTime();
@@ -516,6 +519,7 @@
   }
 
   /* SORTIES / WAITLIST */
+  .no-sorties .sorties, .no-sorties a[href="#sorties"]{display:none !important;}
   .sorties{background:var(--marron); color:var(--travertine);}
   .sorties .eyebrow{color:var(--taupe);}
   .sorties-desc-toggle{display:none;}
@@ -3068,6 +3072,7 @@
 
   // Section "Les instants Reflet" : à partir de samedi 31 octobre 10h, on ne propose que la soirée Raclette
   (function(){
+    if(!window.REFLET_SORTIES) return;
     if(Date.now() < new Date('2026-10-31T10:00:00+02:00').getTime()) return;
     const desc = "Samedi 21 novembre à 19h30, une grande table de femmes autour d'une raclette pour lancer la saison. Rendez-vous à La Meule du Berger, 30 rue Saint-Rémi, 33000 Bordeaux. Reflet s'occupe de toute l'organisation, chacune règle simplement sa propre consommation sur place. Places limitées : 16 participantes.";
     const row = document.getElementById('chipRow');
