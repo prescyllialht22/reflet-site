@@ -1,0 +1,17 @@
+{
+  "month": "Janvier",
+  "events": [
+    {
+      "day": "22",
+      "month_short": "Janv.",
+      "title": "Les un an de REFLET EVENTS",
+      "tag": "Soirée",
+      "summary": "19H30 - Maison Mère, 4 rue de la Maison Daurade",
+      "time": "19H30 - Vendredi",
+      "description": "",
+      "special": true,
+      "price": "40",
+      "capacity_key": "unan-22"
+    }
+  ]
+}
