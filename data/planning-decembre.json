@@ -1,64 +1,72 @@
-	
-month	"Décembre"
-events	
-0	
-day	"05"
-month_short	"Déc."
-title	"Danse"
-tag	"Danse"
-summary	"18H30 - 6 Rue Ramonet"
-time	"18H30 - Samedi"
-description	"Une parenthèse dansée, ouverte à toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡"
-special	false
-price	"27"
-1	
-day	"06"
-month_short	"Déc."
-title	"Run × Copains"
-tag	"Run"
-summary	"10H - Cité du vin"
-time	"10H - Dimanche"
-description	"Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris où nous attend gourmandise et rafraîchissement pour un moment de rencontres unique ♡"
-special	false
-price	"4"
-2	
-day	"12"
-month_short	"Déc."
-title	"Le Noël de REFLET"
-tag	"Noël"
-summary	"10H - Osmose, 14 Rue Ravez"
-time	"10H - Samedi"
-description	"Venez fêter Noël avec REFLET en avance ! \nUne table de 12 filles, 12 nouvelles rencontres. Chacune apporte un cadeau d'une valeur de 5 à 10 € et l'offre à une autre participante le jour J, le tout autour d'une jolie table avec une boisson chaude et une touche sucrée. ♡"
-special	false
-price	"15"
-page	"noel"
-3	
-day	"13"
-month_short	"Déc."
-title	"Pilates'expérience"
-tag	"Pilates"
-summary	"9H - 7 Rue Dufau - place limitée"
-time	"9H - Dimanche"
-description	"40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡"
-special	false
-price	"20"
-4	
-day	"18"
-month_short	"Déc."
-title	"Run × Copains"
-tag	"Run"
-summary	"19H - Cité du vin"
-time	"19H - Vendredi"
-description	"Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris où nous attend gourmandise et rafraîchissement pour un moment de rencontres unique ♡"
-special	false
-price	"4"
-5	
-day	"19"
-month_short	"Déc."
-title	"Danse"
-tag	"Danse"
-summary	"18H30 - 6 Rue Ramonet"
-time	"18H30 - Samedi"
-description	"Une parenthèse dansée, ouverte à toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡"
-special	false
-price	"27"
+{
+  "month": "Décembre",
+  "events": [
+    {
+      "day": "05",
+      "month_short": "Déc.",
+      "title": "Danse",
+      "tag": "Danse",
+      "summary": "18H30 - 6 Rue Ramonet",
+      "time": "18H30 - Samedi",
+      "description": "Une parenthèse dansée, ouverte à toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "27"
+    },
+    {
+      "day": "06",
+      "month_short": "Déc.",
+      "title": "Run × Copains",
+      "tag": "Run",
+      "summary": "10H - Cité du vin",
+      "time": "10H - Dimanche",
+      "description": "Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris où nous attend gourmandise et rafraîchissement pour un moment de rencontres unique ♡",
+      "special": false,
+      "price": "4"
+    },
+    {
+      "day": "12",
+      "month_short": "Déc.",
+      "title": "Le Noël de REFLET",
+      "tag": "Noël",
+      "summary": "10H - Osmose, 14 Rue Ravez",
+      "time": "10H - Samedi",
+      "description": "Venez fêter Noël avec REFLET en avance ! \nUne table de 12 filles, 12 nouvelles rencontres. Chacune apporte un cadeau d'une valeur de 5 à 10 € et l'offre à une autre participante le jour J, le tout autour d'une jolie table avec une boisson chaude et une touche sucrée. ♡",
+      "special": false,
+      "price": "15",
+      "page": "noel"
+    },
+    {
+      "day": "13",
+      "month_short": "Déc.",
+      "title": "Pilates'expérience",
+      "tag": "Pilates",
+      "summary": "9H - 7 Rue Dufau - place limitée",
+      "time": "9H - Dimanche",
+      "description": "40 minutes de pilates sur tapis, matériel fourni, tous niveaux. Prolongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "20"
+    },
+    {
+      "day": "18",
+      "month_short": "Déc.",
+      "title": "Run × Copains",
+      "tag": "Run",
+      "summary": "19H - Cité du vin",
+      "time": "19H - Vendredi",
+      "description": "Session de Run, 3-4 km sans allure imposée, seulement un sourire ! Musique et bonne ambiance toujours au rendez-vous ! \nOn prolonge l'instant chez Copains Paris où nous attend gourmandise et rafraîchissement pour un moment de rencontres unique ♡",
+      "special": false,
+      "price": "4"
+    },
+    {
+      "day": "19",
+      "month_short": "Déc.",
+      "title": "Danse",
+      "tag": "Danse",
+      "summary": "18H30 - 6 Rue Ramonet",
+      "time": "18H30 - Samedi",
+      "description": "Une parenthèse dansée, ouverte à toutes, pour se dépenser, lâcher prise et partager un joli moment, quel que soit le niveau. \nProlongé d'une pause douceur by Copains. Que demander de plus ? ♡",
+      "special": false,
+      "price": "27"
+    }
+  ]
+}
